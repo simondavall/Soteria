@@ -134,7 +134,7 @@ static async Task SeedData(WebApplication app)
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
     var appManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-    string[] roles = ["Admin", "User"];
+    string[] roles = ["Admin", "ArtemisUser"];
 
     foreach (var role in roles) {
         if (!await roleManager.RoleExistsAsync(role)) {
@@ -145,29 +145,4 @@ static async Task SeedData(WebApplication app)
             });
         }
     }
-
-    // Client app
-    if (await appManager.FindByClientIdAsync("mvc-client") == null) {
-        await appManager.CreateAsync(new OpenIddictApplicationDescriptor {
-            ClientId = "mvc-client",
-            ClientSecret = "super-secret",
-            ConsentType = OpenIddictConstants.ConsentTypes.Explicit,
-            DisplayName = "MVC Client",
-            RedirectUris = { new Uri("https://localhost:7226/signin-oidc") },
-            PostLogoutRedirectUris = { new Uri("https://localhost:7226/signout-callback-oidc") },
-            Permissions =
-            {
-          OpenIddictConstants.Permissions.Endpoints.Authorization,
-          OpenIddictConstants.Permissions.Endpoints.Token,
-          OpenIddictConstants.Permissions.Endpoints.EndSession,
-          OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-          OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
-          OpenIddictConstants.Permissions.Scopes.Profile,
-          OpenIddictConstants.Permissions.Scopes.Email,
-          OpenIddictConstants.Permissions.Scopes.Roles,
-          OpenIddictConstants.Permissions.ResponseTypes.Code
-        }
-        });
-    }
 }
-

@@ -106,7 +106,8 @@ public class AuthorizationController : Controller
             .SetClaim(Claims.Email, user.Email)
             .SetClaim(Claims.Name, user.UserName)
             .SetClaim(Claims.PreferredUsername, user.DisplayName)
-            .SetClaims(Claims.Role, new List<string> { "user", "admin" }.ToImmutableArray());
+            // todo: Need to add roles allocated to user, but need to be able to allocate roles first.
+            .SetClaims(Claims.Role, new List<string> { "ArtemisUser", "Admin" }.ToImmutableArray());
 
         identity.SetDestinations(GetDestinations);
 
