@@ -139,6 +139,9 @@ public class AuthorizationController : Controller
                 yield return Destinations.IdentityToken;
                 break;
 
+            // Never include the security stamp in the access and identity tokens, as it's a secret value.
+            case "AspNet.Identity.SecurityStamp": yield break;
+
             default:
                 yield return Destinations.AccessToken;
                 break;

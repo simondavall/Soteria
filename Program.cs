@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Soteria.Data;
 using Soteria.Models;
 using OpenIddict.Abstractions;
@@ -71,7 +72,10 @@ builder.Services.AddOpenIddict()
 
         options.SetAccessTokenLifetime(TimeSpan.FromMinutes(15));
         options.SetRefreshTokenLifetime(TimeSpan.FromDays(7));
-
+        
+        options.AddEncryptionKey(new SymmetricSecurityKey(
+            Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
+        
         options.DisableAccessTokenEncryption();
 
         options.RegisterScopes(

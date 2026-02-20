@@ -6,7 +6,7 @@ using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.ComponentModel.DataAnnotations;
 
-namespace Soteria.Pages;
+namespace Soteria.Pages.Client;
 
 public class CreateClientModel : PageModel
 {
