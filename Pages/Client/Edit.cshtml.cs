@@ -114,7 +114,7 @@ public class EditClientModel : PageModel
         if (changesDetected) {
             await _applicationManager.UpdateAsync(application, descriptor);
 
-            //todo: After updating client, how do I refresh the client details locally (cookie update)
+            //todo-sdv: After updating client, how do I refresh the client details locally (cookie update)
             StatusMessage = "Your client profile has been updated";
         } else {
 

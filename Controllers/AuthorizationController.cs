@@ -106,7 +106,7 @@ public class AuthorizationController : Controller
             .SetClaim(Claims.Email, user.Email)
             .SetClaim(Claims.Name, user.UserName)
             .SetClaim(Claims.PreferredUsername, user.DisplayName)
-            // todo: Need to add roles allocated to user, but need to be able to allocate roles first.
+            // todo-sdv: Need to add roles allocated to user, but need to be able to allocate roles first.
             .SetClaims(Claims.Role, new List<string> { "ArtemisUser", "Admin" }.ToImmutableArray());
 
         identity.SetDestinations(GetDestinations);
@@ -118,7 +118,7 @@ public class AuthorizationController : Controller
     [HttpPost("~/connect/logout")]
     public async Task<IActionResult> LogoutPost()
     {
-        //todo: check that I actually need this sign out.
+        //todo-sdv: check that I actually need this sign out.
         await HttpContext.SignOutAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
         return SignOut(
