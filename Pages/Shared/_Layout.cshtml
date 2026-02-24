@@ -7,6 +7,8 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/identity-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/new-identity-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Soteria.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -31,10 +33,24 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <div class="app">
+
+        <!-- LEFT COLUMN -->
+        <aside class="left">
+            @RenderSection("LeftPanel", required: false)
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
             @RenderBody()
         </main>
+
+        <!-- RIGHT COLUMN -->
+        <aside class="right">
+            @RenderSection("RightPanel", required: false)
+        </aside>
+
     </div>
 
     <footer class="border-top footer text-muted">
