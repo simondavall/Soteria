@@ -81,7 +81,7 @@ namespace Soteria.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                NewEmail = email,
+                NewEmail = string.Empty,
             };
 
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);

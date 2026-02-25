@@ -7,7 +7,7 @@
 
 
 <partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
+<h2>@ViewData["Title"]</h2>
 <div class="card">
     <form id="profile-form" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
@@ -25,7 +25,7 @@
             <input asp-for="Input.DisplayName" class="form-input" placeholder="Name to display"/>
             <span asp-validation-for="Input.DisplayName" class="text-error"></span>
         </div>
-        <button id="update-profile-button" type="submit" class="btn">Save</button>
+        <button id="update-profile-button" type="submit" class="btn">Save Profile</button>
     </form>
 </div>
 

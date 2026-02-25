@@ -1,31 +1,547 @@
-html {
-  font-size: 14px;
+/* =========================================================
+   Soteria – Global Styles
+   Supports:
+   - Home (ticket list)
+   - Ticket detail/edit
+   - 3 column layout
+   - Dark mode (system)
+========================================================= */
+
+/* ---------- Theme Variables ---------- */
+
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --border: #e5e7eb;
+  --text: #1f2937;
+  --muted: #6b7280;
+
+  --primary: #6366f1;
+  --accent: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --hover: #f9fafb;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --panel: #020617;
+    --border: #1e293b;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+
+    --primary: #373669;
+    --accent: #4ade80;
+    --danger: #f87171;
+    --warning: #fbbf24;
+    --hover: #0b1220;
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+/* ---------- Base Reset ---------- */
 
-html {
-  position: relative;
-  min-height: 100%;
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
-  margin-bottom: 60px;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* ---------- Top Bar ---------- */
+
+.topbar {
+  height: 56px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.topbar h1 {
+  font-size: 18px;
+  margin: 0;
 }
+
+/* ---------- 3 Column Layout ---------- */
+
+.app {
+  display: grid;
+  grid-template-columns: 360px 1fr 360px;
+  height: calc(100vh - 56px);
+}
+
+.left,
+.right {
+  background: var(--panel);
+  padding: 16px;
+}
+
+.left {
+  border-right: 1px solid var(--border);
+}
+
+.right {
+  border-left: 1px solid var(--border);
+}
+
+.main {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* ---------- Typography ---------- */
+
+h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;              /* works better for <a> */
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+
+  background: var(--primary);
+  color: white;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  text-decoration: none;             /* remove underline */
+  line-height: 1.2;                  /* prevent anchor height quirks */
+}
+
+.btn:hover {
+  opacity: 0.95;
+  text-decoration: none;
+}
+
+.btn:visited {
+  color: white;
+}
+
+a.btn {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.link {
+  color: var(--primary);
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* =========================================================
+   HOME PAGE – Ticket List
+========================================================= */
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tickets {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ticket {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.ticket:last-child {
+  border-bottom: none;
+}
+
+.ticket:hover {
+  background: var(--hover);
+}
+
+.ticket-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ticket-id {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ticket-title {
+  font-weight: 500;
+}
+
+.ticket-age {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ---------- Badges ---------- */
+
+.badge {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge {
+    background: #020617;
+  }
+}
+
+.priority-high { color: var(--danger); }
+.priority-medium { color: var(--warning); }
+.priority-low { color: var(--accent); }
+
+/* ---------- Pagination ---------- */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.page-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* =========================================================
+   DETAIL PAGE – Cards & Forms
+========================================================= */
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+  gap: 12px;
+}
+
+/* ---------- Form Elements ---------- */
+
+label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 18px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ---------- Comments ---------- */
+
+.comment {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.comment-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ---------- Metadata Block ---------- */
+
+.meta-item {
+  margin-bottom: 12px;
+}
+
+.meta-label {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.meta-value {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   TOPBAR NAVIGATION
+========================================================= */
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.top-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-logout {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-logout:hover {
+  background: var(--hover);
+}
+
+/* =========================================================
+   LEFT COLUMN NAVIGATION
+========================================================= */
+
+.left-section {
+  margin-bottom: 24px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+  height: 48px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.footer-link {
+  text-decoration: none;
+  color: var(--muted);
+  margin-left: 16px;
+}
+
+.footer-link:hover {
+  color: var(--text);
+}
+
+/* =========================================================
+   NAV ITEMS (used everywhere)
+   Originally right-column style
+========================================================= */
+
+.nav-item {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-item:hover {
+  background: var(--hover);
+  transform: translateX(1px);
+}
+
+.nav-item.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* =========================================================
+   CARD FORM LAYOUT (applies to all forms inside .card)
+========================================================= */
+
+/* Constrain form width */
+.card form {
+  max-width: 520px;
+  width: 100%;
+}
+
+/* Proper spacing between fields */
+.card .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+/* Add space above buttons */
+.card form button,
+.card form .btn {
+  margin-top: 8px;
+}
+
+/* Narrow form controls */
+.card form input,
+.card form select,
+.card form textarea {
+  max-width: 520px;
+  font-size: 15px;
+}
+
+/* Placeholder styling */
+.card form input::placeholder,
+.card form textarea::placeholder {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: right;
+  opacity: 0.9;
+}
+
+/* =========================================================
+   VALIDATION SUMMARY
+========================================================= */
+
+.validation-summary-errors {
+  border: 1px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+.validation-summary-errors ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.validation-summary-errors li {
+  color: var(--danger);
+}
+
+.validation-summary-valid {
+  display: none; /* hide when no errors */
+}
+
+/* Field validation messages */
+.text-error,
+.field-validation-error {
+  font-size: 13px;
+  color: var(--danger);
+  margin-top: 4px;
+}
+
+/* =========================================================
+   STATUS MESSAGES (Success / Error)
+========================================================= */
+
+.status-message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.status-success {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+.status-danger {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+}
+
+/* Close button */
+.status-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: inherit;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.status-close:hover {
+  opacity: 0.7;
+}
+
+.status-message {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
