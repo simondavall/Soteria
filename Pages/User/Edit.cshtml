@@ -26,7 +26,7 @@
 
         @for (int i = 0; i < Model.Roles.Count; i++)
         {
-            <div class="role-item">
+            <div class="card-item">
                 <input type="checkbox" asp-for="Roles[i].Selected" id="role_@i" />
                 <label for="role_@i">@Model.Roles[i].RoleName</label>
                 <input type="hidden" asp-for="Roles[i].RoleName" />

@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Soteria.Pages.Client;
 
+[Authorize(Roles = "Admin")]
 public class CreateClientModel : PageModel
 {
     private readonly IOpenIddictApplicationManager _manager;

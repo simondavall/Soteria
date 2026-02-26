@@ -553,19 +553,19 @@ textarea {
    ROLE CHECKBOX LIST
 ========================================================= */
 
-.role-item {
+.card-item {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.role-item input[type="checkbox"] {
+.card-item input[type="checkbox"] {
   width: auto;
   margin: 0;
 }
 
-.role-item label {
+.card-item label {
   font-size: 15px;
   color: var(--text);
   cursor: pointer;

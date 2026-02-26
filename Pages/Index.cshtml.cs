@@ -1,5 +1,6 @@
 #nullable disable
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ public struct UserLink
     public string Link { get; set; }
 }
 
+[Authorize(Roles = "Admin")]
 public class IndexModel : PageModel
 {
     private readonly IOpenIddictApplicationManager _applicationManager;

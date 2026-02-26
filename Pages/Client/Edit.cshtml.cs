@@ -1,12 +1,14 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenIddict.Abstractions;
 
 namespace Soteria.Pages.Client;
 
+[Authorize(Roles = "Admin")]
 public class EditClientModel : PageModel
 {
     private readonly IOpenIddictApplicationManager _applicationManager;
