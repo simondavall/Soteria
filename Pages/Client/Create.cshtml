@@ -4,41 +4,37 @@
     ViewData["Title"] = "Create Client";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <form id="createClientForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new client.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ClientId" class="form-control" autocomplete="client-id" aria-required="true" placeholder="client id" />
-                <label asp-for="Input.ClientId">Client Id</label>
-                <span asp-validation-for="Input.ClientId" class="text-danger"></span>
-            </div>
-             <div class="form-floating mb-3">
-                <input asp-for="Input.ClientSecret" class="form-control" autocomplete="client-secret" aria-required="true" placeholder="keep it safe" />
-                <label asp-for="Input.ClientSecret">Client Secret</label>
-                <span asp-validation-for="Input.ClientSecret" class="text-danger"></span>
-            </div>
-             <div class="form-floating mb-3">
-                <input asp-for="Input.DisplayName" class="form-control" autocomplete="display-name" aria-required="true" placeholder="display name" />
-                <label asp-for="Input.DisplayName">Display Name</label>
-                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
-            </div>
-             <div class="form-floating mb-3">
-                <input asp-for="Input.RedirectUri" class="form-control" autocomplete="redirect-uri" aria-required="true" placeholder="redirect uri" />
-                <label asp-for="Input.RedirectUri">Redirect Uri</label>
-                <span asp-validation-for="Input.RedirectUri" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PostLogoutRedirectUri" class="form-control" autocomplete="post-logout-redirect-uri" aria-required="true" placeholder="post logout redirect uri" />
-                <label asp-for="Input.PostLogoutRedirectUri">Post Logout Redirect Uri</label>
-                <span asp-validation-for="Input.PostLogoutRedirectUri" class="text-danger"></span>
-            </div>
-            <button id="createClientSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Create Client</button>
-        </form>
-    </div>
+<h2>@ViewData["Title"]</h2>
+<div class="card">
+    <form id="createClientForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-error" role="alert"></div>
+        <div class="form-group">
+            <label asp-for="Input.ClientId">Client Id</label>
+            <input asp-for="Input.ClientId" class="form-input" autocomplete="client-id" aria-required="true" placeholder="client id" />
+            <span asp-validation-for="Input.ClientId" class="text-error"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="Input.ClientSecret">Client Secret</label>
+            <input asp-for="Input.ClientSecret" class="form-input" autocomplete="client-secret" aria-required="true" placeholder="keep it safe" />
+            <span asp-validation-for="Input.ClientSecret" class="text-error"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="Input.DisplayName">Display Name</label>
+            <input asp-for="Input.DisplayName" class="form-input" autocomplete="display-name" aria-required="true" placeholder="display name" />
+            <span asp-validation-for="Input.DisplayName" class="text-error"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="Input.RedirectUri">Redirect Uri</label>
+            <input asp-for="Input.RedirectUri" class="form-input" autocomplete="redirect-uri" aria-required="true" placeholder="redirect uri" />
+            <span asp-validation-for="Input.RedirectUri" class="text-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Input.PostLogoutRedirectUri">Post Logout Redirect Uri</label>
+            <input asp-for="Input.PostLogoutRedirectUri" class="form-input" autocomplete="post-logout-redirect-uri" aria-required="true" placeholder="post logout redirect uri" />
+            <span asp-validation-for="Input.PostLogoutRedirectUri" class="text-error"></span>
+        </div>
+        <button id="createClientSubmit" type="submit" class="btn">Create Client</button>
+    </form>
 </div>
 
 @section Scripts {

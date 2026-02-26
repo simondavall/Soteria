@@ -1,19 +1,22 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Soteria Admin";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-
-    <h3>Clients</h3>
+<h2>Clients</h2>
+<div class="card">
     @foreach(var clientLink in Model.ClientLinks){
-      <ul><a href="@clientLink.Link">@clientLink.Name</a></ul>
+      <a class="nav-item" href="@clientLink.Link">@clientLink.Name</a>
     }
-    <h3>Users</h3>
+    <a class="btn" href="/Client/Create">Add new client</a>
+</div>
+
+<h2>Users</h2>
+<div class="card">
     @foreach(var userLink in Model.UserLinks){
-      var text = $"{userLink.DisplayName} - {userLink.Email}";
-      <ul><a href="@userLink.Link">@text</a></ul>
+      var text = $"{userLink.DisplayName} ({userLink.Email})";
+      <a class="nav-item" href="@userLink.Link">@text</a>
     }
+    <a class="btn" href="/User/Create">Add new user</a>
 </div>

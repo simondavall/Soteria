@@ -3,41 +3,39 @@
 @{
     ViewData["Title"] = "Edit Client";
 }
-<h3>@ViewData["Title"]</h3>
+<h2>@ViewData["Title"]</h2>
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="create-client-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="ClientId" class="form-control" aria-required="true" disabled />
-                <label asp-for="ClientId">Client Id</label>
-                <span asp-validation-for="ClientId" class="text-danger"></span>
-            </div>
-             <div class="form-floating mb-3">
-                <input asp-for="Input.ClientSecret" class="form-control" aria-required="true" placeholder="add a new client secret" />
-                <label asp-for="Input.ClientSecret">Client Secret</label>
-                <span asp-validation-for="Input.ClientSecret" class="text-danger"></span>
-            </div>
-             <div class="form-floating mb-3">
-                <input asp-for="Input.DisplayName" class="form-control" aria-required="true" placeholder="display name" />
-                <label asp-for="Input.DisplayName">Display Name</label>
-                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
-            </div>
-             <div class="form-floating mb-3">
-                <input asp-for="Input.RedirectUri" class="form-control" aria-required="true" placeholder="redirect uri" />
-                <label asp-for="Input.RedirectUri">Redirect Uri</label>
-                <span asp-validation-for="Input.RedirectUri" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PostLogoutRedirectUri" class="form-control" aria-required="true" placeholder="post logout redirect uri" />
-                <label asp-for="Input.PostLogoutRedirectUri">Post Logout Redirect Uri</label>
-                <span asp-validation-for="Input.PostLogoutRedirectUri" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="ApplicationId" />   
-            <button id="update-client-button" type="submit" class="w-100 btn btn-lg btn-primary">Update Client</button>
-        </form>
-    </div>
+<div class="card">
+    <form id="create-client-form" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-error" role="alert"></div>
+        <div class="form-group">
+            <label asp-for="ClientId">Client Id</label>
+            <input asp-for="ClientId" class="form-input" aria-required="true" disabled />
+            <span asp-validation-for="ClientId" class="text-error"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="Input.ClientSecret">Client Secret</label>
+            <input asp-for="Input.ClientSecret" class="form-input" aria-required="true" placeholder="Add a new client secret" />
+            <span asp-validation-for="Input.ClientSecret" class="text-error"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="Input.DisplayName">Display Name</label>
+            <input asp-for="Input.DisplayName" class="form-input" aria-required="true" placeholder="Display name" />
+            <span asp-validation-for="Input.DisplayName" class="text-error"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="Input.RedirectUri">Redirect Uri</label>
+            <input asp-for="Input.RedirectUri" class="form-input" aria-required="true" placeholder="Redirect uri" />
+            <span asp-validation-for="Input.RedirectUri" class="text-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Input.PostLogoutRedirectUri">Post Logout Redirect Uri</label>
+            <input asp-for="Input.PostLogoutRedirectUri" class="form-input" aria-required="true" placeholder="Post logout redirect uri" />
+            <span asp-validation-for="Input.PostLogoutRedirectUri" class="text-error"></span>
+        </div>
+        <input type="hidden" asp-for="ApplicationId" />
+        <button id="update-client-button" type="submit" class="btn">Update Client</button>
+    </form>
 </div>
 
 @section Scripts {
