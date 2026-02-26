@@ -1,0 +1,44 @@
+@page "{id}"
+@model EditUserModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<h2>@ViewData["Title"]</h2>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="card">
+    <form method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-error"></div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input value="@Model.Email" class="form-input" disabled />
+        </div>
+
+        <div class="form-group">
+            <label>User Name</label>
+            <input value="@Model.UserName" class="form-input" disabled />
+        </div>
+
+        <h3>Roles</h3>
+
+        @for (int i = 0; i < Model.Roles.Count; i++)
+        {
+            <div class="role-item">
+                <input type="checkbox" asp-for="Roles[i].Selected" id="role_@i" />
+                <label for="role_@i">@Model.Roles[i].RoleName</label>
+                <input type="hidden" asp-for="Roles[i].RoleName" />
+            </div>
+        }
+
+        <input type="hidden" asp-for="UserId" />
+
+        <button type="submit" class="btn">Update User</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

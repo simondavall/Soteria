@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OpenIddict.Abstractions;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Soteria.Pages.Client;
 
@@ -114,7 +113,6 @@ public class EditClientModel : PageModel
         if (changesDetected) {
             await _applicationManager.UpdateAsync(application, descriptor);
 
-            //todo-sdv: After updating client, how do I refresh the client details locally (cookie update)
             StatusMessage = "Your client profile has been updated";
         } else {
 
