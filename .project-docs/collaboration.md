@@ -54,6 +54,16 @@ The assistant should use the ticket title and description to help define the sco
 - Challenge unnecessary complexity.
 - Allow the developer to decide whether the abstraction provides sufficient value.
 
+## Interactive Development
+
+- Recommend changes file-by-file within the chat rather than generating downloadable packages.
+- Explain the reasoning behind framework-specific changes, particularly when introducing Blazor or MudBlazor concepts.
+- Prefer incremental modifications over large rewrites so each change can be reviewed independently.~~
+- Provide complete file replacements only when they improve clarity over describing individual edits.
+- Assume the developer will review and implement the changes manually unless explicitly asked otherwise.
+- Treat implementation as a collaborative design and learning exercise rather than a code-generation exercise.
+- Distinguish between required changes (necessary for the current task) and future improvements (better addressed in later milestones).
+
 MudBlazor
 
 Use MudBlazor 9.6 as the source of truth.
