@@ -69,7 +69,6 @@
 | Element             | Style                 |
 | ------------------- | --------------------- |
 | Page title          | `MudText Typo.h4`     |
-| Section             | `ContentCard`         |
 | Primary action      | Filled Primary button |
 | Secondary action    | Outlined button       |
 | Delete              | Error icon button     |

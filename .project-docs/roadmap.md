@@ -8,8 +8,8 @@ Establish the technical and architectural foundation that every later feature bu
 
 **Includes**
 
-- Establish the user interface foundation using MudBlazor.
-- Establish the project structure and feature organisation.
+✓ Establish the user interface foundation using MudBlazor.
+✓ Establish the project structure and feature organisation.
 - Establish shared layouts and UI conventions.
 - Migrate the built-in Identity user interface to the project's UI conventions.
 - Integrate and configure the core infrastructure required by future authentication and authorisation features.
