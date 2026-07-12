@@ -12,14 +12,14 @@
 - Configured the MudBlazor providers.
 - Verified MudBlazor styling, interactivity, dialogs, popovers and snackbars.
 - Verified that the existing Identity and template functionality continues to work.
+- Migrate the template navigation and pages towards the Soteria UI conventions.
 
 # Current Task/Feature
 
-## Establish the shared application layout and navigation.
+## Migrate the initial Identity pages to MudBlazor.
 
-- Replace the template layout with a MudBlazor application layout.
-- Replace the template navigation with MudBlazor navigation components.
-- Establish responsive drawer behaviour.
-- Establish the application header.
-- Remove obsolete template styling where appropriate.
-- Verify authenticated and unauthenticated navigation.
+- Convert the Login page to MudBlazor.
+- Convert the Register page to MudBlazor.
+- Preserve existing Identity behaviour and validation.
+- Verify static server-side rendering and authentication flows.
+- Identify repeated UI patterns without introducing speculative abstractions.
