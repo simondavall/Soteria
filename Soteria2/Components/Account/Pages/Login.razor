@@ -13,7 +13,8 @@
         <EditForm EditContext="_editContext"
                   method="post"
                   OnSubmit="LoginUserAsync"
-                  FormName="login">
+                  FormName="login"
+                  novalidate>
             <DataAnnotationsValidator/>
 
             <MudStack Spacing="3">
@@ -23,35 +24,39 @@
 
                 <MudDivider/>
 
-                <ValidationSummary class="validation-message"
-                                   role="alert"/>
+                <div class="account-field"
+                     data-validation-field>
+                    <label for="email">Email</label>
 
-                <MudTextField T="string"
-                              @bind-Value="Input.Email"
-                              For="@(() => Input.Email)"
-                              Label="Email"
-                              Variant="Variant.Outlined"
-                              InputType="InputType.Email"
-                              AutoComplete="username webauthn"
-                              name="Input.Email"
-                              aria-required="true"
-                              FullWidth="true"/>
+                    <InputText id="email"
+                               class="account-input"
+                               @bind-Value="Input.Email"
+                               autocomplete="username webauthn"
+                               aria-required="true"
+                               placeholder="name@example.com"/>
 
-                <MudTextField T="string"
-                              @bind-Value="Input.Password"
-                              For="@(() => Input.Password)"
-                              Label="Password"
-                              Variant="Variant.Outlined"
-                              InputType="InputType.Password"
-                              AutoComplete="current-password"
-                              name="Input.Password"
-                              aria-required="true"
-                              FullWidth="true"/>
+                    <ValidationMessage For="@(() => Input.Email)"/>
+                </div>
 
-                <MudCheckBox T="bool"
-                             @bind-Value="Input.RememberMe"
-                             Label="Remember me"
-                             name="Input.RememberMe"/>
+                <div class="account-field"
+                     data-validation-field>
+                    <label for="password">Password</label>
+
+                    <InputText id="password"
+                               class="account-input"
+                               type="password"
+                               @bind-Value="Input.Password"
+                               autocomplete="current-password"
+                               aria-required="true"
+                               placeholder="Password"/>
+
+                    <ValidationMessage For="@(() => Input.Password)"/>
+                </div>
+
+                <label class="account-checkbox">
+                    <InputCheckbox @bind-Value="Input.RememberMe"/>
+                    <span>Remember me</span>
+                </label>
 
                 <MudButton ButtonType="ButtonType.Submit"
                            Variant="Variant.Filled"
