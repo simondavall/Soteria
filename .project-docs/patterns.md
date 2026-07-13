@@ -8,16 +8,17 @@ Identity pages that participate directly in ASP.NET Core Identity workflows (log
 
 Implementation
 
-Keep the page as static SSR (ExcludeFromInteractiveRouting).
-Use EditForm with [SupplyParameterFromForm].
-Use built-in Blazor form components (InputText, InputCheckbox, etc.) for inputs.
-Use MudBlazor for page layout, typography, spacing, buttons, links, and dividers.
-Use account.css for consistent form styling.
-Use account-form.js to clear stale validation feedback after user input or autofill.
-Display validation with field-level ValidationMessage components.
-Display workflow-level Identity errors through StatusMessage.
-Avoid ValidationSummary where field-level messages provide equivalent feedback.
-Preserve scaffolded Identity behaviour and security semantics.
+- Keep the page as static SSR (ExcludeFromInteractiveRouting).
+- Use EditForm with [SupplyParameterFromForm].
+- Use built-in Blazor form components (InputText, InputCheckbox, etc.) for inputs.
+- Use MudBlazor for page layout, typography, spacing, buttons, links, and dividers.
+- Use account.css for consistent form styling.
+- Use account-form.js to clear stale validation feedback after user input or autofill.
+- Display validation with field-level ValidationMessage components.
+- Display workflow-level Identity errors through StatusMessage.
+- Avoid ValidationSummary where field-level messages provide equivalent feedback.
+- Preserve scaffolded Identity behaviour and security semantics.
+- Treat encoded query-string tokens as untrusted input and handle decoding failures without exposing exceptions.
 
 Reason
 
