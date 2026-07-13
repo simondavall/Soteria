@@ -10,7 +10,7 @@
     font-weight: 500;
 }
 
-.account-field ::deep .account-input {
+.account-field .account-input {
     width: 100%;
     min-height: 3.5rem;
     box-sizing: border-box;
@@ -23,20 +23,20 @@
     outline: none;
 }
 
-.account-field ::deep .account-input:hover {
+.account-field .account-input:hover {
     border-color: var(--mud-palette-text-primary);
 }
 
-.account-field ::deep .account-input:focus {
+.account-field .account-input:focus {
     border-color: var(--mud-palette-primary);
     box-shadow: 0 0 0 1px var(--mud-palette-primary);
 }
 
-.account-field ::deep .account-input.invalid {
+.account-field .account-input.invalid {
     border-color: var(--mud-palette-error);
 }
 
-.account-field ::deep .validation-message {
+.account-field .validation-message {
     color: var(--mud-palette-error);
     font-size: 0.75rem;
 }
@@ -48,7 +48,7 @@
     cursor: pointer;
 }
 
-.account-checkbox ::deep input {
+.account-checkbox input {
     width: 1.125rem;
     height: 1.125rem;
     accent-color: var(--mud-palette-primary);

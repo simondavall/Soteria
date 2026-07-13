@@ -2,6 +2,18 @@
     const fieldSelector = "[data-validation-field]";
     const inputSelector = `${fieldSelector} input, ${fieldSelector} textarea`;
 
+    const knownValues = new WeakMap();
+
+    function getInputs() {
+        return document.querySelectorAll(inputSelector);
+    }
+
+    function rememberCurrentValues() {
+        getInputs().forEach(input => {
+            knownValues.set(input, input.value);
+        });
+    }
+
     function clearFieldValidation(input) {
         if (!input.value) {
             return;
@@ -34,22 +46,36 @@
         }
 
         clearFieldValidation(input);
+        knownValues.set(input, input.value);
     }
 
-    function clearAutofilledFieldValidation() {
-        document.querySelectorAll(inputSelector)
-            .forEach(clearFieldValidation);
+    function clearChangedAutofilledFields() {
+        getInputs().forEach(input => {
+            const knownValue = knownValues.get(input);
+
+            if (knownValue === undefined) {
+                knownValues.set(input, input.value);
+                return;
+            }
+
+            if (input.value === knownValue) {
+                return;
+            }
+
+            clearFieldValidation(input);
+            knownValues.set(input, input.value);
+        });
     }
 
-    function checkForDelayedAutofill() {
-        clearAutofilledFieldValidation();
+    function initialisePage() {
+        rememberCurrentValues();
 
         // Some password managers populate fields shortly after page load
         // without consistently raising input or change events.
         const delays = [100, 300, 750, 1500];
 
         delays.forEach(delay => {
-            window.setTimeout(clearAutofilledFieldValidation, delay);
+            window.setTimeout(clearChangedAutofilledFields, delay);
         });
     }
 
@@ -59,17 +85,17 @@
     if (document.readyState === "loading") {
         document.addEventListener(
             "DOMContentLoaded",
-            checkForDelayedAutofill,
+            initialisePage,
             { once: true });
     } else {
-        checkForDelayedAutofill();
+        initialisePage();
     }
 
-    window.addEventListener("pageshow", checkForDelayedAutofill);
+    window.addEventListener("pageshow", initialisePage);
 
     if (window.Blazor) {
         Blazor.addEventListener(
             "enhancedload",
-            checkForDelayedAutofill);
+            initialisePage);
     }
 })();
