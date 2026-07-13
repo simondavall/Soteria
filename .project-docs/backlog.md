@@ -12,6 +12,11 @@
 - SCIM provisioning.
 - Federation.
 
+# Identity UI
+
+- Migrate `PasskeySubmit` to MudBlazor once the surrounding Identity pages have been migrated and common patterns have emerged.
+- Migrate `ExternalLoginPicker` to MudBlazor after reviewing its usage across the Identity pages.
+
 # Enhancements
 
 # Technical Debt
