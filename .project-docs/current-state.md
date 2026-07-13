@@ -10,16 +10,13 @@
 - Added and configured MudBlazor 9.6.
 - Established the initial application theme.
 - Configured the MudBlazor providers.
-- Verified MudBlazor styling, interactivity, dialogs, popovers and snackbars.
-- Verified that the existing Identity and template functionality continues to work.
-- Migrate the template navigation and pages towards the Soteria UI conventions.
+- Established the shared application layout.
+- Migrated the Login and Register pages to the project UI conventions.
 
 # Current Task/Feature
 
-## Migrate the initial Identity pages to MudBlazor.
+## Continue migrating the Identity user interface.
 
-- Convert the Login page to MudBlazor.
-- Convert the Register page to MudBlazor.
-- Preserve existing Identity behaviour and validation.
-- Verify static server-side rendering and authentication flows.
-- Identify repeated UI patterns without introducing speculative abstractions.
+- Migrate the remaining account pages to the project UI conventions.
+- Continue identifying proven UI patterns.
+- Introduce shared components only where duplication has been demonstrated.

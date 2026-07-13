@@ -12,6 +12,15 @@
 - SCIM provisioning.
 - Federation.
 
+# Identity UI
+
+- Migrate `PasskeySubmit` to MudBlazor once the surrounding Identity pages have been migrated and common patterns have emerged.
+- Migrate `ExternalLoginPicker` to MudBlazor after reviewing its usage across the Identity pages.
+
+# Identity
+
+- Review registration password validation so password requirements are derived from the configured ASP.NET Core Identity password options rather than duplicated in the Register page model. Consider validation behaviour, user-facing password guidance, and how to keep client/server validation consistent.
+
 # Enhancements
 
 # Technical Debt
