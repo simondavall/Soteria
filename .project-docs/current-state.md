@@ -12,12 +12,16 @@
 - Configured the MudBlazor providers.
 - Established the shared application layout.
 - Migrated the Login and Register pages to the project UI conventions.
+- Added development email sender for identity.
 
 # Current Task/Feature
 
-## Improve the development environment.
+## Migrate the password recovery workflow to the project UI conventions.
 
-- Replace the Identity no-op email sender with a development email sender.
-- Log Identity emails using the ASP.NET Core logging infrastructure.
-- Make email-driven Identity workflows testable during development.
-- Preserve the existing Identity email sender contract.
+- Migrate ForgotPassword.
+- Migrate ForgotPasswordConfirmation.
+- Migrate ResetPassword.
+- Migrate ResetPasswordConfirmation.
+- Migrate InvalidPasswordReset.
+- Preserve static SSR and Identity behaviour.
+- Continue validating the emerging account page patterns.
