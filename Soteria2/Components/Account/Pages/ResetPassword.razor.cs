@@ -42,8 +42,16 @@ public partial class ResetPassword
             return;
         }
 
-        Input.Code = Encoding.UTF8.GetString(
-            WebEncoders.Base64UrlDecode(Code));
+        try
+        {
+            Input.Code = Encoding.UTF8.GetString(
+                WebEncoders.Base64UrlDecode(Code));
+        }
+        catch (FormatException)
+        {
+            RedirectManager.RedirectTo(
+                "Account/InvalidPasswordReset");
+        }
     }
 
     private async Task OnValidSubmitAsync()

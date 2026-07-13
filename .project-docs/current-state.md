@@ -14,11 +14,14 @@
 - Migrated the Login and Register pages to the project UI conventions.
 - Added development email sender for identity.
 - Migrated the password recovery workflow to the project UI conventions.
+- Migrated the email confirmation workflow to the project UI conventions.
+- Preserved registration ReturnUrl through email confirmation and login.
+- Added defensive decoding for Identity tokens received through query strings.
 
 # Current Task/Feature
 
 ## Continue migrating the Identity account pages.
 
-- Migrate the email confirmation workflow.
+- Migrate alternate login and account-access outcomes.
 - Preserve static SSR and Identity behaviour.
-- Continue applying the established account page pattern.
+- Apply the established account page pattern where appropriate.
