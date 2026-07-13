@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Soteria2.Components;
 using Soteria2.Components.Account;
+using Soteria2.Components.Account.Email;
 using Soteria2.Data;
 
 namespace Soteria2;
@@ -44,8 +45,8 @@ public class Program
             .AddEntityFrameworkStores<SoteriaDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
-
-        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+        
+        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
         var app = builder.Build();
 
