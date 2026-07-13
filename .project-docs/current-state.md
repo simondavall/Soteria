@@ -15,8 +15,9 @@
 
 # Current Task/Feature
 
-## Continue migrating the Identity user interface.
+## Improve the development environment.
 
-- Migrate the remaining account pages to the project UI conventions.
-- Continue identifying proven UI patterns.
-- Introduce shared components only where duplication has been demonstrated.
+- Replace the Identity no-op email sender with a development email sender.
+- Log Identity emails using the ASP.NET Core logging infrastructure.
+- Make email-driven Identity workflows testable during development.
+- Preserve the existing Identity email sender contract.
