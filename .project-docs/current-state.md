@@ -13,15 +13,12 @@
 - Established the shared application layout.
 - Migrated the Login and Register pages to the project UI conventions.
 - Added development email sender for identity.
+- Migrated the password recovery workflow to the project UI conventions.
 
 # Current Task/Feature
 
-## Migrate the password recovery workflow to the project UI conventions.
+## Continue migrating the Identity account pages.
 
-- Migrate ForgotPassword.
-- Migrate ForgotPasswordConfirmation.
-- Migrate ResetPassword.
-- Migrate ResetPasswordConfirmation.
-- Migrate InvalidPasswordReset.
+- Migrate the email confirmation workflow.
 - Preserve static SSR and Identity behaviour.
-- Continue validating the emerging account page patterns.
+- Continue applying the established account page pattern.
