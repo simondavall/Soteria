@@ -17,6 +17,7 @@
 - Migrated the email confirmation workflow to the project UI conventions.
 - Preserved registration ReturnUrl through email confirmation and login.
 - Added defensive decoding for Identity tokens received through query strings.
+- Migrated alternate authentication and access pages
 
 # Current Task/Feature
 
