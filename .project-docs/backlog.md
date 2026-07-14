@@ -14,8 +14,7 @@
 
 # Identity UI
 
-- Migrate `PasskeySubmit` to MudBlazor once the surrounding Identity pages have been migrated and common patterns have emerged.
-- Migrate `ExternalLoginPicker` to MudBlazor after reviewing its usage across the Identity pages.
+- Migrate the external-login workflow to the project UI conventions when external identity providers are introduced.
 
 # Identity
 

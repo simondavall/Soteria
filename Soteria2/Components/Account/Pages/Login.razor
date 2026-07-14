@@ -6,7 +6,7 @@
     Log in
 </MudText>
 
-<MudGrid Spacing="6">
+<MudGrid>
     <MudItem xs="12" md="7">
         <StatusMessage Message="@_errorMessage"/>
 
@@ -100,17 +100,5 @@
                 </MudStack>
             </MudStack>
         </EditForm>
-    </MudItem>
-
-    <MudItem xs="12" md="5">
-        <MudStack Spacing="3">
-            <MudText Typo="Typo.h6">
-                Use another service to log in
-            </MudText>
-
-            <MudDivider/>
-
-            <ExternalLoginPicker/>
-        </MudStack>
     </MudItem>
 </MudGrid>
