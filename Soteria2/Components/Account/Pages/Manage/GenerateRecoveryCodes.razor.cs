@@ -29,8 +29,11 @@ public partial class GenerateRecoveryCodes
 
         if (!isTwoFactorEnabled)
         {
-            throw new InvalidOperationException(
-                "Cannot generate recovery codes because two-factor authentication is not enabled.");
+            RedirectManager.RedirectToWithStatus(
+                "Account/Manage/TwoFactorAuthentication",
+                "Cannot generate recovery codes. " +
+                "Two factor authentication is not enabled.",
+                HttpContext);
         }
     }
 
