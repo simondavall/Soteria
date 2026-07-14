@@ -1,42 +1,47 @@
 ﻿@page "/Account/Manage/PersonalData"
 
-@using Microsoft.AspNetCore.Identity
-@using Soteria2.Data
+<PageTitle>Personal data</PageTitle>
 
-@inject UserManager<ApplicationUser> UserManager
-@inject IdentityRedirectManager RedirectManager
-
-<PageTitle>Personal Data</PageTitle>
+<MudText Typo="Typo.h5" GutterBottom="true">
+    Personal data
+</MudText>
 
 <StatusMessage/>
-<h3>Personal Data</h3>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form action="Account/Manage/DownloadPersonalData" method="post">
-            <AntiforgeryToken/>
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a href="Account/Manage/DeletePersonalData" class="btn btn-danger">Delete</a>
-        </p>
-    </div>
-</div>
+<MudGrid>
+    <MudItem xs="12" md="7">
+        <MudStack Spacing="3">
+            <MudText>
+                Your account contains personal data that you have given us.
+                This page allows you to download or delete that data.
+            </MudText>
 
-@code {
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+            <MudAlert Severity="Severity.Warning"
+                      Variant="Variant.Outlined">
+                Deleting this data will permanently remove your account,
+                and this cannot be recovered.
+            </MudAlert>
 
-    protected override async Task OnInitializedAsync()
-    {
-        var user = await UserManager.GetUserAsync(HttpContext.User);
-        if (user is null)
-        {
-            RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
-        }
-    }
+            <MudStack Row="true"
+                      Spacing="2"
+                      Class="flex-wrap">
+                <form action="Account/Manage/DownloadPersonalData"
+                      method="post">
+                    <AntiforgeryToken/>
 
-}
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary">
+                        Download
+                    </MudButton>
+                </form>
+
+                <MudButton Href="Account/Manage/DeletePersonalData"
+                           Variant="Variant.Outlined"
+                           Color="Color.Error">
+                    Delete
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudItem>
+</MudGrid>

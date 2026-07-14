@@ -19,6 +19,8 @@
 - Added defensive decoding for Identity tokens received through query strings.
 - Migrated alternate authentication and access pages
 - Migrated the account management shell to the project UI conventions.
+- Migrated the credential management pages to MudBlazor
+- Migrated two-factor authentication management pages
 
 # Current Task/Feature
 
