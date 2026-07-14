@@ -18,11 +18,12 @@
 - Preserved registration ReturnUrl through email confirmation and login.
 - Added defensive decoding for Identity tokens received through query strings.
 - Migrated alternate authentication and access pages
+- Migrated the account management shell to the project UI conventions.
 
 # Current Task/Feature
 
-## Continue migrating the Identity account pages.
+## Continue migrating the Identity Manage pages.
 
-- Migrate alternate login and account-access outcomes.
+- Migrate the remaining account management pages.
 - Preserve static SSR and Identity behaviour.
-- Apply the established account page pattern where appropriate.
+- Continue applying the established account page pattern.
