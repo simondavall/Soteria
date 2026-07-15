@@ -11,10 +11,10 @@ public partial class ResetPassword
 {
     private IEnumerable<IdentityError>? _identityErrors;
 
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
     
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
     [SupplyParameterFromQuery] private string? Code { get; set; }
 
     private string? Message =>
@@ -46,7 +46,7 @@ public partial class ResetPassword
 
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input.Email);
+        var user = await UserManager.FindByEmailAsync(Input!.Email);
         if (user is null)
         {
             // Don't reveal that the user does not exist.

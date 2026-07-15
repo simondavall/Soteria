@@ -10,15 +10,15 @@ namespace Soteria.Components.Account.Pages;
 public partial class Login
 {
     private string? _errorMessage;
-    private EditContext _editContext = default!;
+    private EditContext _editContext = null!;
 
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private ILogger<Login> Logger { get; set; } = default!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private ILogger<Login> Logger { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     private string RegisterUrl =>
@@ -44,7 +44,7 @@ public partial class Login
 
     private async Task LoginUserAsync()
     {
-        if (!string.IsNullOrEmpty(Input.Passkey?.Error))
+        if (!string.IsNullOrEmpty(Input!.Passkey?.Error))
         {
             _errorMessage = $"Error: {Input.Passkey.Error}";
             return;

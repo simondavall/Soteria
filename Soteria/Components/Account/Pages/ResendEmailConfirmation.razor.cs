@@ -13,11 +13,11 @@ public partial class ResendEmailConfirmation
     private const string ConfirmationMessage = "Verification email sent. Please check your email.";
     private string? _message;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = default!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override void OnInitialized()
     {
@@ -26,7 +26,7 @@ public partial class ResendEmailConfirmation
 
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input.Email);
+        var user = await UserManager.FindByEmailAsync(Input!.Email);
         if (user is null)
         {
             _message = ConfirmationMessage;

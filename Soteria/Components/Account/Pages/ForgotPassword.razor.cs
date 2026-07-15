@@ -10,12 +10,12 @@ namespace Soteria.Components.Account.Pages;
 
 public partial class ForgotPassword
 {
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = default!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override void OnInitialized()
     {
@@ -24,7 +24,7 @@ public partial class ForgotPassword
 
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input.Email);
+        var user = await UserManager.FindByEmailAsync(Input!.Email);
         if (user is null || !await UserManager.IsEmailConfirmedAsync(user))
         {
             // Don't reveal that the user doesn't exist or isn't confirmed.

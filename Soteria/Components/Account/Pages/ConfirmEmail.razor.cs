@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text;
+﻿using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -13,16 +12,16 @@ public partial class ConfirmEmail
     private bool _emailConfirmed;
     private bool _isAuthenticated;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [SupplyParameterFromQuery] private string? UserId { get; set; }
     [SupplyParameterFromQuery] private string? Code { get; set; }
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
-    private string _loginUrl =>
+    private string LoginUrl =>
         NavigationManager.GetUriWithQueryParameters(
             "Account/Login",
             new Dictionary<string, object?>

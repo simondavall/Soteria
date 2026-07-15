@@ -9,16 +9,11 @@ public partial class LoginWithRecoveryCode
 {
     private string? _message;
 
-    [Inject]
-    private SignInManager<ApplicationUser> SignInManager { get; set; } =
-        default!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private ILogger<LoginWithRecoveryCode> Logger { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [Inject] private ILogger<LoginWithRecoveryCode> Logger { get; set; } = default!;
-
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
-
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -39,7 +34,7 @@ public partial class LoginWithRecoveryCode
 
     private async Task OnValidSubmitAsync()
     {
-        var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
+        var recoveryCode = Input!.RecoveryCode.Replace(" ", string.Empty);
         var result = await SignInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
 
         if (result.Succeeded)
