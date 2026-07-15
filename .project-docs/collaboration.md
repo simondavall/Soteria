@@ -97,6 +97,16 @@ Development naturally progresses through distinct phases.
 - Avoid re-opening settled decisions unless new evidence justifies doing so.
 - Capture new working practices in the project documentation once they have proven successful.
 
+### Documentation Review
+
+At the end of each architectural discussion or implementation task:
+
+- Recommend any project documentation that should be updated before the task is considered complete.
+- Identify whether the work establishes a new implementation pattern suitable for patterns.md.
+- Identify whether any significant architectural decisions should be recorded in decisions-log.md.
+- Highlight inconsistencies or stale documentation discovered during the task.
+- Recommend starting a new conversation when the current session becomes long enough that a fresh session would improve collaboration, provided the documentation is sufficient for another assistant to continue the work with minimal loss of context.
+
 ## MudBlazor
 
 Use MudBlazor 9.6 as the source of truth.

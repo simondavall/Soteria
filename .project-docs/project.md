@@ -85,16 +85,18 @@ The project values:
 - Consistent user experience.
 
 # Documentation overview
-| Document              | Purpose                                      |
-| --------------------- | -------------------------------------------- |
-| project.md            | What the project is.                         |
-| decisions.md          | Architectural decisions and project rules.   |
-| patterns.md           | Proven implementation patterns.              |
-| current-state.md      | Current progress and next feature.           |
-| backlog.md            | Future work and enhancements.                |
-| collaboration.md      | How the assistant should collaborate.        |
-| coding-conventions.md | Coding style and conventions.                |
-| decisions-log.md      | Record of important architectural decisions. |
+| Document              | Purpose                                                   |
+|-----------------------|-----------------------------------------------------------|
+| project.md            | What the project is.                                      |
+| roadmap.md            | What capabilities are delivered, and in what order.       |
+| delivery-plan.md      | How we intend to deliver the current and upcoming phases. |
+| current-state.md      | Current progress and next feature.                        |
+| decisions.md          | Architectural decisions and project rules.                |
+| patterns.md           | Proven implementation patterns.                           |
+| backlog.md            | Future work and enhancements.                             |
+| collaboration.md      | How the assistant should collaborate.                     |
+| coding-conventions.md | Coding style and conventions.                             |
+| decisions-log.md      | Record of important architectural decisions.              |
 
 # Non-goals
 The project deliberately does not aim to:

@@ -1,53 +1,76 @@
-﻿This document describes the planned sequence of development for the project. It provides a high-level view of the intended implementation order and major milestones. Unlike the backlog, which records everything that could be done, the roadmap reflects what is expected to be done next.
-
-# Phase 1 – Project Foundation
+﻿# Phase 1 – Application Foundation
 
 **Goal**
 
-Establish the technical and architectural foundation that every later feature builds upon.
+Establish the technical, architectural and presentation foundation for Soteria.
 
 **Includes**
 
-- ✓ Establish the user interface foundation using MudBlazor.
 - ✓ Establish the project structure and feature organisation.
-- ✓ Establish shared layouts and UI conventions.
-- ✓ Migrate the built-in Identity user interface to the project's UI conventions.
-- Integrate and configure the core infrastructure required by future authentication and authorisation features.
-- Introduce shared UI components where proven through implementation.
+- ✓ Add and configure MudBlazor.
+- ✓ Establish the shared application layout and UI conventions.
+- ✓ Migrate the built-in ASP.NET Core Identity UI to the project UI conventions.
+- ✓ Preserve the ASP.NET Core Identity behaviour and static SSR workflows.
+- ✓ Establish proven implementation patterns for Identity workflows.
 
 **Deliverable**
 
-A polished foundation that provides authentication through a consistent MudBlazor user interface and establishes the architecture for future development.
+Soteria provides a consistent MudBlazor user experience while preserving the behaviour of the built-in ASP.NET Core Identity implementation.
 
-# Phase 2 – Client Application Management
+---
+
+# Phase 2 – OpenID Connect Provider Foundation
 
 **Goal**
 
-Allow web applications to delegate authentication to Soteria.
+Enable Soteria to act as an OpenID Connect Provider capable of authenticating a consuming web application.
+
+**Includes**
+
+- Establish the OpenID Connect provider architecture.
+- Configure OpenIddict.
+- Support Authorization Code Flow with PKCE.
+- Register an initial development client.
+- Authenticate a consuming web application.
+- Establish the initial scopes and claims.
+- Establish development signing and encryption credentials.
+
+**Deliverable**
+
+A consuming web application can successfully authenticate users through Soteria using OpenID Connect.
+
+---
+
+# Phase 3 – Client Application Management
+
+**Goal**
+
+Allow administrators to manage applications that delegate authentication to Soteria.
 
 **Includes**
 
 - Register client applications.
-- Configure OpenID Connect settings.
 - Configure redirect URIs.
-- Configure client authentication (for example, client secrets or PKCE where appropriate).
-- Authenticate a consuming application using OpenID Connect.
+- Configure client authentication.
+- Configure OpenID Connect settings.
 - Enable or disable client applications.
 - Manage application metadata.
 
 **Deliverable**
 
-A client application can be registered with Soteria and successfully authenticate users using OpenID Connect.
+Client applications can be managed through Soteria and successfully authenticate users.
 
-# Phase 3 – Identity Management
+---
+
+# Phase 4 – Identity Management
 
 **Goal**
 
-Provide central management of user identities.
+Provide central administration of user identities.
 
 **Includes**
 
-- Create, edit, enable, and disable users.
+- Create, edit, enable and disable users.
 - Search and manage users.
 - Manage passwords.
 - Manage email addresses.
@@ -58,9 +81,11 @@ Provide central management of user identities.
 
 **Deliverable**
 
-Soteria can manage user identities independently of any consuming application.
+Soteria manages user identities independently of consuming applications.
 
-# Phase 4 – Application Access Management
+---
+
+# Phase 5 – Application Access Management
 
 **Goal**
 
@@ -71,7 +96,6 @@ Control which users can access each client application and what authorisation in
 - Grant and revoke application access.
 - Manage application roles.
 - Manage application claims.
-- Manage application-specific authorisation information issued to consuming applications.
 - Determine the authorisation information issued to client applications.
 - Additional access management features as the project evolves.
 
@@ -79,6 +103,8 @@ Control which users can access each client application and what authorisation in
 
 Client applications trust Soteria as the source of truth for both authentication and authorisation.
 
+---
+
 # Future Enhancements
 
-Future enhancements that fall outside the planned implementation phases will be recorded here as the project evolves.
+Future enhancements outside the planned implementation phases will be recorded here as the project evolves.
