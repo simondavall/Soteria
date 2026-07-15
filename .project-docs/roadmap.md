@@ -37,7 +37,7 @@ Enable Soteria to act as an OpenID Connect Provider capable of authenticating a 
 
 **Deliverable**
 
-A consuming web application can successfully authenticate users through Soteria using OpenID Connect.
+A consuming web application can successfully authenticate users through Soteria using OpenID Connect and securely access a protected resource API using OAuth-issued JWT access tokens.
 
 ---
 
