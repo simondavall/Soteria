@@ -17,19 +17,22 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 ## Milestone 2.1 – Provider Architecture
 
 - ✓ Review and restructure the project roadmap and delivery planning model.
-- Define the OpenID Connect provider architecture.
-- Define the authentication flow between Soteria and consuming applications.
-- Define the initial client application model.
+- ✓ Define the OpenID Connect provider architecture.
+- ✓ Define the authentication flow between Soteria and consuming applications.
+- ✓ Define the initial client application model.
 - Define the initial scopes and claims.
 - Define development signing and encryption certificate strategy.
-- Define the boundary between hard-coded configuration and future configuration.
+- ✓ Define the boundary between hard-coded configuration and future configuration.
 - Define access-token renewal and refresh-token lifecycle
 
 ---
 
-## Milestone 2.2 – Reference Client Application
+## Milestone 2.2 – Reference Applications
 
 - Create the reference web application.
+- Create the reference resource API.
+- Configure the reference web application to authenticate using ASP.NET Core Identity.
+- Configure the reference resource API for local development.
 
 ---
 
@@ -40,8 +43,9 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 - Configure OpenID Connect endpoints.
 - Configure Authorization Code Flow with PKCE.
 - Configure development signing and encryption credentials.
-- Configure OpenID Connect authentication.
-- Verify communication with Soteria during development.
+- Replace the reference web application's local authentication with OpenID Connect.
+- Verify OpenID Connect authentication.
+
 
 ---
 
@@ -58,18 +62,24 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 
 - Connect OpenIddict to ASP.NET Core Identity.
 - Implement the authorisation workflow.
+- Define access-token renewal and refresh-token lifecycle.
+- Implement access-token renewal and refresh-token lifecycle.
 - Define consent behaviour for managed client applications.
 - Implement the agreed consent behaviour.
 - Issue identity claims.
+- Issue access tokens.
+- Issue refresh tokens.
 - Support logout.
 
 ---
 
 ## Milestone 2.6 – End-to-End Verification
 
-- Authenticate the reference application.
+- Authenticate the reference web application.
 - Verify successful authentication.
 - Verify unsuccessful authentication scenarios.
+- Verify protected API access.
+- Verify access-token renewal.
 - Verify logout.
 - Record permanent regression verification.
 
