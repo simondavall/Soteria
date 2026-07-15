@@ -2,14 +2,13 @@
 
 <PageTitle>Confirm email</PageTitle>
 
-<MudText Typo="Typo.h4"
-         GutterBottom="true">
+<MudText Typo="Typo.h4" GutterBottom="true">
     Confirm email
 </MudText>
 
 <StatusMessage Message="@_statusMessage"/>
 
-@if (_emailConfirmed)
+@if (_emailConfirmed && !_isAuthenticated)
 {
     <MudLink Href="@_loginUrl">
         Log in

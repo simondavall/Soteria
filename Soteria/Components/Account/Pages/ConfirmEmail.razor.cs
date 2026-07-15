@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -10,27 +11,16 @@ public partial class ConfirmEmail
 {
     private string? _statusMessage;
     private bool _emailConfirmed;
+    private bool _isAuthenticated;
 
-    [Inject]
-    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
 
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; } = default!;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? UserId { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Code { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [SupplyParameterFromQuery] private string? UserId { get; set; }
+    [SupplyParameterFromQuery] private string? Code { get; set; }
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     private string _loginUrl =>
         NavigationManager.GetUriWithQueryParameters(
@@ -49,24 +39,17 @@ public partial class ConfirmEmail
         }
 
         var user = await UserManager.FindByIdAsync(UserId);
-
         if (user is null)
         {
-            HttpContext.Response.StatusCode =
-                StatusCodes.Status404NotFound;
-
-            _statusMessage =
-                $"Error loading user with ID '{UserId}'.";
-
+            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            _statusMessage = $"Error loading user with ID '{UserId}'.";
             return;
         }
 
         string code;
-
         try
         {
-            code = Encoding.UTF8.GetString(
-                WebEncoders.Base64UrlDecode(Code));
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
         }
         catch (FormatException)
         {
@@ -74,14 +57,9 @@ public partial class ConfirmEmail
             return;
         }
 
-        var result = await UserManager.ConfirmEmailAsync(
-            user,
-            code);
-
+        var result = await UserManager.ConfirmEmailAsync(user, code);
         _emailConfirmed = result.Succeeded;
-
-        _statusMessage = result.Succeeded
-            ? "Thank you for confirming your email."
-            : "Error confirming your email.";
+        _isAuthenticated = HttpContext.User.Identity?.IsAuthenticated ?? false;
+        _statusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
     }
 }
