@@ -18,8 +18,9 @@
 - Property injection only for Blazor components.
 
 # Validation
-- Use MudForm.
-- Required fields validated in the editor.
+- Use MudForm for interactive MudBlazor editors.
+- Use EditForm with built-in Blazor inputs for static SSR Identity workflows.
+- Prefer field-level validation messages over ValidationSummary where practical.
 
 # Async
 - Prefer async all the way.
