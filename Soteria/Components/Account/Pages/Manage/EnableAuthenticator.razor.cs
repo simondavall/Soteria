@@ -11,9 +11,7 @@ namespace Soteria.Components.Account.Pages.Manage;
 
 public partial class EnableAuthenticator
 {
-    private const string AuthenticatorUriFormat =
-        "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
-
+    private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
     private const string AuthenticatorIssuer = "Soteria";
 
     private string? _message;
@@ -22,31 +20,20 @@ public partial class EnableAuthenticator
     private IEnumerable<string>? _recoveryCodes;
     private const int QrCodeQuietZone = 4;
     private MarkupString _qrCodeSvg;
-    
-    [Inject]
-    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
 
-    [Inject]
-    private UrlEncoder UrlEncoder { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private UrlEncoder UrlEncoder { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
+    [Inject] private ILogger<EnableAuthenticator> Logger { get; set; } = null!;
 
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; } = default!;
-
-    [Inject]
-    private ILogger<EnableAuthenticator> Logger { get; set; } = default!;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Input ??= new InputModel();
 
         _user = await UserManager.GetUserAsync(HttpContext.User);
-
         if (_user is null)
         {
             RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
@@ -64,7 +51,7 @@ public partial class EnableAuthenticator
             return;
         }
 
-        var verificationCode = Input.Code
+        var verificationCode = Input!.Code
             .Replace(" ", string.Empty)
             .Replace("-", string.Empty);
 
@@ -78,14 +65,11 @@ public partial class EnableAuthenticator
         }
 
         await UserManager.SetTwoFactorEnabledAsync(_user, true);
-
         var userId = await UserManager.GetUserIdAsync(_user);
 
         Logger.LogInformation("User with ID '{UserId}' enabled two-factor authentication.", userId);
 
-        _message =
-            "Your authenticator app has been verified.";
-
+        _message = "Your authenticator app has been verified.";
         if (await UserManager.CountRecoveryCodesAsync(_user) == 0)
         {
             _recoveryCodes = await UserManager.GenerateNewTwoFactorRecoveryCodesAsync(_user, 10);
@@ -96,16 +80,12 @@ public partial class EnableAuthenticator
         }
     }
 
-    private async Task LoadSharedKeyAndQrCodeAsync(
-        ApplicationUser user)
+    private async Task LoadSharedKeyAndQrCodeAsync(ApplicationUser user)
     {
-        var unformattedKey =
-            await UserManager.GetAuthenticatorKeyAsync(user);
-
+        var unformattedKey = await UserManager.GetAuthenticatorKeyAsync(user);
         if (string.IsNullOrEmpty(unformattedKey))
         {
             await UserManager.ResetAuthenticatorKeyAsync(user);
-
             unformattedKey = await UserManager.GetAuthenticatorKeyAsync(user);
         }
 
@@ -113,7 +93,7 @@ public partial class EnableAuthenticator
 
         var email = await UserManager.GetEmailAsync(user);
         var authenticatorUri = GenerateQrCodeUri(email!, unformattedKey!);
-        
+
         var qrCode = QrCode.EncodeText(authenticatorUri, QrCode.Ecc.Medium);
         _qrCodeSvg = new MarkupString(qrCode.ToSvgString(QrCodeQuietZone));
     }
@@ -126,7 +106,7 @@ public partial class EnableAuthenticator
         while (currentPosition + 4 < unformattedKey.Length)
         {
             result
-                .Append(unformattedKey.AsSpan(currentPosition,4))
+                .Append(unformattedKey.AsSpan(currentPosition, 4))
                 .Append(' ');
 
             currentPosition += 4;
@@ -140,9 +120,7 @@ public partial class EnableAuthenticator
         return result.ToString().ToLowerInvariant();
     }
 
-    private string GenerateQrCodeUri(
-        string email,
-        string unformattedKey)
+    private string GenerateQrCodeUri(string email, string unformattedKey)
     {
         return string.Format(
             CultureInfo.InvariantCulture,
