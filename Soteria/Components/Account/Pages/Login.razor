@@ -1,0 +1,101 @@
+﻿@page "/Account/Login"
+
+<PageTitle>Log in</PageTitle>
+
+<MudText Typo="Typo.h4" GutterBottom="true">
+    Log in
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="7">
+        <StatusMessage Message="@_errorMessage"/>
+
+        <EditForm EditContext="_editContext"
+                  method="post"
+                  OnSubmit="LoginUserAsync"
+                  FormName="login"
+                  novalidate>
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6">
+                    Use a local account to log in
+                </MudText>
+
+                <MudDivider/>
+
+                <div class="account-field" data-validation-field>
+                    <label for="email">Email</label>
+
+                    <InputText id="email"
+                               class="account-input"
+                               @bind-Value="Input.Email"
+                               autocomplete="username webauthn"
+                               aria-required="true"
+                               placeholder="name@example.com"/>
+
+                    <ValidationMessage For="@(() => Input.Email)"/>
+                </div>
+
+                <div class="account-field" data-validation-field>
+                    <label for="password">Password</label>
+
+                    <InputText id="password"
+                               class="account-input"
+                               type="password"
+                               @bind-Value="Input.Password"
+                               autocomplete="current-password"
+                               aria-required="true"
+                               placeholder="Password"/>
+
+                    <ValidationMessage For="@(() => Input.Password)"/>
+                </div>
+
+                <label class="account-checkbox">
+                    <InputCheckbox @bind-Value="Input.RememberMe"/>
+                    <span>Remember me</span>
+                </label>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Size="Size.Large">
+                    Log in
+                </MudButton>
+
+                <MudDivider/>
+
+                <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                    <MudText Typo="Typo.caption"
+                             Color="Color.Secondary">
+                        OR
+                    </MudText>
+
+                    <PasskeySubmit Operation="PasskeyOperation.Request"
+                                   Name="Input.Passkey"
+                                   EmailName="Input.Email"
+                                   class="btn btn-link">
+                        Log in with a passkey
+                    </PasskeySubmit>
+                </MudStack>
+
+                <MudDivider/>
+
+                <MudStack Spacing="1">
+                    <MudLink Href="Account/ForgotPassword">
+                        Forgot your password?
+                    </MudLink>
+
+                    <MudLink Href="@RegisterUrl">
+                        Register as a new user
+                    </MudLink>
+
+                    <MudLink Href="Account/ResendEmailConfirmation">
+                        Resend email confirmation
+                    </MudLink>
+                </MudStack>
+            </MudStack>
+        </EditForm>
+    </MudItem>
+</MudGrid>

@@ -1,0 +1,43 @@
+﻿@page "/Account/Manage/ResetAuthenticator"
+
+<PageTitle>Reset authenticator key</PageTitle>
+
+<MudText Typo="Typo.h5"
+         GutterBottom="true">
+    Reset authenticator key
+</MudText>
+
+<StatusMessage/>
+
+<MudAlert Severity="Severity.Warning"
+          Variant="Variant.Outlined"
+          Class="mb-4">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2">
+            Resetting your authenticator key will prevent your current
+            authenticator configuration from working.
+        </MudText>
+
+        <MudText>
+            This process disables two-factor authentication until you
+            configure and verify the authenticator app again.
+        </MudText>
+
+        <MudText>
+            If you do not complete the new configuration, you may lose
+            access to your account.
+        </MudText>
+    </MudStack>
+</MudAlert>
+
+<form @formname="reset-authenticator"
+      @onsubmit="OnSubmitAsync"
+      method="post">
+    <AntiforgeryToken/>
+
+    <MudButton ButtonType="ButtonType.Submit"
+               Variant="Variant.Filled"
+               Color="Color.Error">
+        Reset authenticator key
+    </MudButton>
+</form>

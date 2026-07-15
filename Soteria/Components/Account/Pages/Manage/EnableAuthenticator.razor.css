@@ -1,0 +1,31 @@
+﻿.authenticator-qr-code {
+    width: min(18rem, 100%);
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: var(--mud-default-borderradius);
+}
+
+.authenticator-qr-code svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.authenticator-qr-code svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.authenticator-key {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.authenticator-key code {
+    color: var(--mud-palette-text-primary);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+}

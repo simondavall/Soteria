@@ -1,0 +1,47 @@
+﻿@page "/Account/Manage/PersonalData"
+
+<PageTitle>Personal data</PageTitle>
+
+<MudText Typo="Typo.h5" GutterBottom="true">
+    Personal data
+</MudText>
+
+<StatusMessage/>
+
+<MudGrid>
+    <MudItem xs="12" md="7">
+        <MudStack Spacing="3">
+            <MudText>
+                Your account contains personal data that you have given us.
+                This page allows you to download or delete that data.
+            </MudText>
+
+            <MudAlert Severity="Severity.Warning"
+                      Variant="Variant.Outlined">
+                Deleting this data will permanently remove your account,
+                and this cannot be recovered.
+            </MudAlert>
+
+            <MudStack Row="true"
+                      Spacing="2"
+                      Class="flex-wrap">
+                <form action="Account/Manage/DownloadPersonalData"
+                      method="post">
+                    <AntiforgeryToken/>
+
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary">
+                        Download
+                    </MudButton>
+                </form>
+
+                <MudButton Href="Account/Manage/DeletePersonalData"
+                           Variant="Variant.Outlined"
+                           Color="Color.Error">
+                    Delete
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudItem>
+</MudGrid>

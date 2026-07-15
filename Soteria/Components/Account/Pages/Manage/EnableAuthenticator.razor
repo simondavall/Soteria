@@ -1,0 +1,116 @@
+﻿@page "/Account/Manage/EnableAuthenticator"
+
+<PageTitle>Configure authenticator app</PageTitle>
+
+@if (_recoveryCodes is not null)
+{
+    <ShowRecoveryCodes RecoveryCodes="@_recoveryCodes.ToArray()"
+                       StatusMessage="@_message"/>
+}
+else
+{
+    <MudText Typo="Typo.h4"
+             GutterBottom="true">
+        Configure authenticator app
+    </MudText>
+
+    <StatusMessage Message="@_message"/>
+
+    <MudText Class="mb-4">
+        Follow these steps to configure an authenticator app.
+    </MudText>
+
+    <MudStack Spacing="4">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h6">
+                1. Install an authenticator app
+            </MudText>
+
+            <MudText>
+                Install a TOTP-compatible authenticator app, such as
+                Microsoft Authenticator or Google Authenticator.
+            </MudText>
+        </MudStack>
+
+        <MudDivider/>
+
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h6">
+                2. Scan the QR code
+            </MudText>
+
+            <MudText>
+                Scan this QR code with your authenticator app.
+            </MudText>
+
+            <div class="authenticator-qr-code">
+                @_qrCodeSvg
+            </div>
+
+            <MudText>
+                If you cannot scan the QR code, enter this setup key manually:
+            </MudText>
+
+            <MudPaper Outlined="true"
+                      Class="pa-3 authenticator-key">
+                <code>@_sharedKey</code>
+            </MudPaper>
+
+            <MudText Typo="Typo.body2">
+                Spaces and letter casing do not matter.
+            </MudText>
+        </MudStack>
+
+        <MudDivider/>
+
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h6">
+                3. Verify the authenticator
+            </MudText>
+
+            <MudText>
+                Enter the code currently shown by your authenticator app.
+            </MudText>
+
+            <MudGrid>
+                <MudItem xs="12"
+                         md="7">
+                    <EditForm Model="Input"
+                              FormName="send-code"
+                              OnValidSubmit="OnValidSubmitAsync"
+                              method="post"
+                              novalidate>
+                        <DataAnnotationsValidator/>
+
+                        <MudStack Spacing="3">
+                            <div class="account-field"
+                                 data-validation-field>
+                                <label for="verification-code">
+                                    Verification code
+                                </label>
+
+                                <InputText id="verification-code"
+                                           class="account-input"
+                                           @bind-Value="Input.Code"
+                                           autocomplete="one-time-code"
+                                           inputmode="numeric"
+                                           aria-required="true"
+                                           placeholder="123456"/>
+
+                                <ValidationMessage For="@(() => Input.Code)"/>
+                            </div>
+
+                            <MudButton ButtonType="ButtonType.Submit"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       FullWidth="true"
+                                       Size="Size.Large">
+                                Verify
+                            </MudButton>
+                        </MudStack>
+                    </EditForm>
+                </MudItem>
+            </MudGrid>
+        </MudStack>
+    </MudStack>
+}

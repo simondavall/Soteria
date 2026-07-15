@@ -1,0 +1,53 @@
+﻿@page "/Account/Manage"
+
+<PageTitle>Profile</PageTitle>
+
+<MudText Typo="Typo.h5"
+         GutterBottom="true">
+    Profile
+</MudText>
+
+<StatusMessage/>
+
+<MudGrid>
+    <MudItem xs="12"
+             md="7">
+        <EditForm Model="Input"
+                  FormName="profile"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  method="post"
+                  novalidate>
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+                <div class="account-field">
+                    <label for="username">Username</label>
+
+                    <InputText id="username"
+                               class="account-input"
+                               @bind-Value="_username"
+                               disabled/>
+                </div>
+
+                <div class="account-field"
+                     data-validation-field>
+                    <label for="phone-number">Phone number</label>
+
+                    <InputText id="phone-number"
+                               class="account-input"
+                               @bind-Value="Input.PhoneNumber"
+                               autocomplete="tel"
+                               placeholder="Phone number"/>
+
+                    <ValidationMessage For="@(() => Input.PhoneNumber)"/>
+                </div>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary">
+                    Save
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </MudItem>
+</MudGrid>

@@ -1,0 +1,57 @@
+﻿@page "/Account/LoginWithRecoveryCode"
+
+<PageTitle>Recovery code verification</PageTitle>
+
+<MudText Typo="Typo.h4" GutterBottom="true">
+    Recovery code verification
+</MudText>
+
+<StatusMessage Message="@_message"/>
+
+<MudText Class="mb-4">
+    You have requested to log in with a recovery code. This login will
+    not be remembered until you provide an authenticator app code during
+    login, or disable two-factor authentication and log in again.
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12"
+             md="7">
+        <EditForm Model="Input"
+                  FormName="login-with-recovery-code"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  method="post"
+                  novalidate>
+            <input type="hidden"
+                   name="ReturnUrl"
+                   value="@ReturnUrl"/>
+
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+                <div class="account-field" data-validation-field>
+                    <label for="recovery-code">
+                        Recovery code
+                    </label>
+
+                    <InputText id="recovery-code"
+                               class="account-input"
+                               @bind-Value="Input.RecoveryCode"
+                               autocomplete="one-time-code"
+                               aria-required="true"
+                               placeholder="Recovery code"/>
+
+                    <ValidationMessage For="@(() => Input.RecoveryCode)"/>
+                </div>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Size="Size.Large">
+                    Log in
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </MudItem>
+</MudGrid>

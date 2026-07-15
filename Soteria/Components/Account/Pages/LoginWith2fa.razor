@@ -1,0 +1,79 @@
+﻿@page "/Account/LoginWith2fa"
+
+<PageTitle>Two-factor authentication</PageTitle>
+
+<MudText Typo="Typo.h4" GutterBottom="true">
+    Two-factor authentication
+</MudText>
+
+<StatusMessage Message="@Message"/>
+
+<MudText Class="mb-4">
+    Your login is protected with an authenticator app. Enter your authenticator code below.
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="7">
+
+        <EditForm Model="Input"
+                  FormName="login-with-2fa"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  method="post"
+                  novalidate>
+
+            <input type="hidden"
+                   name="ReturnUrl"
+                   value="@ReturnUrl"/>
+
+            <input type="hidden"
+                   name="RememberMe"
+                   value="@RememberMe"/>
+
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+
+                <div class="account-field"
+                     data-validation-field>
+
+                    <label for="two-factor-code">
+                        Authenticator code
+                    </label>
+
+                    <InputText id="two-factor-code"
+                               class="account-input"
+                               @bind-Value="Input.TwoFactorCode"
+                               autocomplete="off"
+                               placeholder="123456"/>
+
+                    <ValidationMessage For="@(() => Input.TwoFactorCode)"/>
+
+                </div>
+
+                <label class="account-checkbox">
+                    <InputCheckbox @bind-Value="Input.RememberMachine"/>
+                    <span>Remember this machine</span>
+                </label>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           Size="Size.Large">
+                    Log in
+                </MudButton>
+
+            </MudStack>
+
+        </EditForm>
+
+    </MudItem>
+</MudGrid>
+
+<MudText Class="mt-4">
+    Don't have access to your authenticator device?
+</MudText>
+
+<MudLink Href="@($"Account/LoginWithRecoveryCode?ReturnUrl={ReturnUrl}")">
+    Log in with a recovery code
+</MudLink>

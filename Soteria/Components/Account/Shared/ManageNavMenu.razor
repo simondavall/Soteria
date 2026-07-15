@@ -1,0 +1,46 @@
+﻿<MudNavMenu>
+    <MudNavLink Href="Account/Manage"
+                Match="NavLinkMatch.All"
+                Icon="@Icons.Material.Filled.Person">
+        Profile
+    </MudNavLink>
+
+    <MudNavLink Href="Account/Manage/Email"
+                Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Email">
+        Email
+    </MudNavLink>
+
+    <MudNavLink Href="Account/Manage/ChangePassword"
+                Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Lock">
+        Password
+    </MudNavLink>
+
+    @if (_hasExternalLogins)
+    {
+        <MudNavLink Href="Account/Manage/ExternalLogins"
+                    Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.Login">
+            External logins
+        </MudNavLink>
+    }
+
+    <MudNavLink Href="Account/Manage/TwoFactorAuthentication"
+                Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Security">
+        Two-factor authentication
+    </MudNavLink>
+
+    <MudNavLink Href="Account/Manage/Passkeys"
+                Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Key">
+        Passkeys
+    </MudNavLink>
+
+    <MudNavLink Href="Account/Manage/PersonalData"
+                Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.ManageAccounts">
+        Personal data
+    </MudNavLink>
+</MudNavMenu>

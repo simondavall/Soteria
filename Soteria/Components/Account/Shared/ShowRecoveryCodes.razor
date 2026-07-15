@@ -1,0 +1,37 @@
+﻿<StatusMessage Message="@StatusMessage"/>
+
+<MudText Typo="Typo.h5" GutterBottom="true">
+    Recovery codes
+</MudText>
+
+<MudAlert Severity="Severity.Warning"
+          Variant="Variant.Outlined"
+          Class="mb-4">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2">
+            Put these codes in a safe place.
+        </MudText>
+
+        <MudText>
+            If you lose your device and do not have the recovery codes,
+            you will lose access to your account.
+        </MudText>
+    </MudStack>
+</MudAlert>
+
+<div class="recovery-code-container">
+    <MudPaper Outlined="true"
+              Class="pa-4">
+        <pre class="recovery-code-list">@string.Join(
+            Environment.NewLine,
+            RecoveryCodes)</pre>
+    </MudPaper>
+</div>
+
+@code {
+    [Parameter]
+    public string[] RecoveryCodes { get; set; } = [];
+
+    [Parameter]
+    public string? StatusMessage { get; set; }
+}

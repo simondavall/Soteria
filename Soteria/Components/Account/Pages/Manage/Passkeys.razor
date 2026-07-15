@@ -1,0 +1,102 @@
+﻿@page "/Account/Manage/Passkeys"
+@using System.Buffers.Text
+
+<PageTitle>Manage passkeys</PageTitle>
+
+<MudText Typo="Typo.h5"
+         GutterBottom="true">
+    Manage passkeys
+</MudText>
+
+<StatusMessage/>
+
+<MudStack Spacing="3">
+    @if (_currentPasskeys is { Count: > 0 })
+    {
+        <MudTable Items="@_currentPasskeys"
+                  Hover="true"
+                  Elevation="0"
+                  Outlined="true">
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh Class="text-right">Actions</MudTh>
+            </HeaderContent>
+
+            <RowTemplate>
+                <MudTd DataLabel="Name">
+                    @(context.Name ?? "Unnamed passkey")
+                </MudTd>
+
+                <MudTd DataLabel="Actions"
+                       Class="text-right">
+                    @{
+                        var credentialId =
+                            Base64Url.EncodeToString(
+                                context.CredentialId);
+                    }
+
+                    <form @formname="@($"update-passkey-{credentialId}")"
+                          @onsubmit="UpdatePasskeyAsync"
+                          method="post">
+                        <AntiforgeryToken/>
+
+                        <input type="hidden"
+                               name="CredentialId"
+                               value="@credentialId"/>
+
+                        <MudStack Row="true"
+                                  Justify="Justify.FlexEnd"
+                                  Spacing="1">
+                            <MudTooltip Text="Rename this passkey">
+                                <MudIconButton ButtonType="ButtonType.Submit"
+                                               Icon="@Icons.Material.Filled.Edit"
+                                               Color="Color.Primary"
+                                               name="Action"
+                                               value="rename"/>
+                            </MudTooltip>
+
+                            <MudTooltip Text="Remove this passkey from your account">
+                                <MudIconButton ButtonType="ButtonType.Submit"
+                                               Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               name="Action"
+                                               value="delete"/>
+                            </MudTooltip>
+                        </MudStack>
+                    </form>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info"
+                  Variant="Variant.Outlined">
+            No passkeys are registered.
+        </MudAlert>
+    }
+
+    <form @formname="add-passkey"
+          @onsubmit="AddPasskeyAsync"
+          method="post">
+        <AntiforgeryToken/>
+
+        @if (_currentPasskeys is { Count: >= MaxPasskeyCount })
+        {
+            <MudAlert Severity="Severity.Error"
+                      Variant="Variant.Outlined">
+                You have reached the maximum number of allowed passkeys.
+                Delete one before adding another.
+            </MudAlert>
+        }
+        else
+        {
+            <PasskeySubmit Operation="PasskeyOperation.Create"
+                           Name="Input"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary">
+                Add a new passkey
+            </PasskeySubmit>
+        }
+    </form>
+</MudStack>

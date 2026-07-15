@@ -1,0 +1,43 @@
+﻿@page "/Account/Manage/RenamePasskey/{Id}"
+
+<PageTitle>Rename passkey</PageTitle>
+
+<MudText Typo="Typo.h5" GutterBottom="true">
+    @(_passkey?.Name is { } name ? $"Rename \"{name}\"" : "Name your passkey")
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12"
+             md="7">
+        <EditForm Model="Input"
+                  OnValidSubmit="RenameAsync"
+                  FormName="rename-passkey"
+                  method="post"
+                  novalidate>
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+                <div class="account-field"
+                     data-validation-field>
+                    <label for="passkey-name">
+                        Passkey name
+                    </label>
+
+                    <InputText id="passkey-name"
+                               class="account-input"
+                               @bind-Value="Input.Name"
+                               aria-required="true"
+                               placeholder="My passkey"/>
+
+                    <ValidationMessage For="@(() => Input.Name)"/>
+                </div>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary">
+                    Continue
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </MudItem>
+</MudGrid>

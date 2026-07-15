@@ -1,0 +1,16 @@
+﻿@page "/Account/ConfirmEmail"
+
+<PageTitle>Confirm email</PageTitle>
+
+<MudText Typo="Typo.h4" GutterBottom="true">
+    Confirm email
+</MudText>
+
+<StatusMessage Message="@_statusMessage"/>
+
+@if (_emailConfirmed && !_isAuthenticated)
+{
+    <MudLink Href="@LoginUrl">
+        Log in
+    </MudLink>
+}

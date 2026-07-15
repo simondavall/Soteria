@@ -1,0 +1,44 @@
+﻿@page "/Account/Manage/Disable2fa"
+
+<PageTitle>Disable two-factor authentication</PageTitle>
+
+<MudText Typo="Typo.h5"
+         GutterBottom="true">
+    Disable two-factor authentication
+</MudText>
+
+<StatusMessage/>
+
+<MudAlert Severity="Severity.Warning"
+          Variant="Variant.Outlined"
+          Class="mb-4">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2">
+            This action only disables two-factor authentication.
+        </MudText>
+
+        <MudText>
+            Disabling two-factor authentication does not change the key
+            used by your authenticator app.
+        </MudText>
+
+        <MudText>
+            To replace the authenticator key, use
+            <MudLink Href="Account/Manage/ResetAuthenticator">
+                Reset authenticator app
+            </MudLink>.
+        </MudText>
+    </MudStack>
+</MudAlert>
+
+<form @formname="disable-2fa"
+      @onsubmit="OnSubmitAsync"
+      method="post">
+    <AntiforgeryToken/>
+
+    <MudButton ButtonType="ButtonType.Submit"
+               Variant="Variant.Filled"
+               Color="Color.Error">
+        Disable two-factor authentication
+    </MudButton>
+</form>

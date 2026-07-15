@@ -1,0 +1,51 @@
+﻿@page "/Account/Manage/GenerateRecoveryCodes"
+
+<PageTitle>Generate recovery codes</PageTitle>
+
+@if (_recoveryCodes is not null)
+{
+    <ShowRecoveryCodes RecoveryCodes="@_recoveryCodes.ToArray()"
+                       StatusMessage="@_message"/>
+}
+else
+{
+    <MudText Typo="Typo.h5"
+             GutterBottom="true">
+        Generate recovery codes
+    </MudText>
+
+    <MudAlert Severity="Severity.Warning"
+              Variant="Variant.Outlined"
+              Class="mb-4">
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.subtitle2">
+                Put these codes in a safe place.
+            </MudText>
+
+            <MudText>
+                If you lose your device and do not have the recovery codes,
+                you will lose access to your account.
+            </MudText>
+
+            <MudText>
+                Generating new recovery codes does not change the key used
+                by your authenticator app. To change that key,
+                <MudLink Href="Account/Manage/ResetAuthenticator">
+                    reset your authenticator app
+                </MudLink>.
+            </MudText>
+        </MudStack>
+    </MudAlert>
+
+    <form @formname="generate-recovery-codes"
+          @onsubmit="OnSubmitAsync"
+          method="post">
+        <AntiforgeryToken/>
+
+        <MudButton ButtonType="ButtonType.Submit"
+                   Variant="Variant.Filled"
+                   Color="Color.Error">
+            Generate new recovery codes
+        </MudButton>
+    </form>
+}

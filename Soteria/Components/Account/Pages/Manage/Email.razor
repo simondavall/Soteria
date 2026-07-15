@@ -1,0 +1,84 @@
+﻿@page "/Account/Manage/Email"
+
+<PageTitle>Manage email</PageTitle>
+
+<MudText Typo="Typo.h5"
+         GutterBottom="true">
+    Manage email
+</MudText>
+
+<StatusMessage Message="@_message"/>
+
+<form @onsubmit="OnSendEmailVerificationAsync"
+      @formname="send-verification"
+      id="send-verification-form"
+      method="post">
+    <AntiforgeryToken/>
+</form>
+
+<MudGrid>
+    <MudItem xs="12"
+             md="7">
+        <EditForm Model="Input"
+                  FormName="change-email"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  method="post"
+                  novalidate>
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+                <div class="account-field">
+                    <label for="current-email">
+                        Current email
+                    </label>
+
+                    <div class="account-input-with-status">
+                        <input id="current-email"
+                               class="account-input"
+                               value="@_email"
+                               disabled/>
+
+                        @if (_isEmailConfirmed)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                                     Color="Color.Success"
+                                     Title="Email confirmed"/>
+                        }
+                    </div>
+                </div>
+
+                @if (!_isEmailConfirmed)
+                {
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Form="send-verification-form"
+                               Variant="Variant.Text"
+                               Color="Color.Primary">
+                        Send verification email
+                    </MudButton>
+                }
+
+                <div class="account-field"
+                     data-validation-field>
+                    <label for="new-email">
+                        New email
+                    </label>
+
+                    <InputText id="new-email"
+                               class="account-input"
+                               @bind-Value="Input.NewEmail"
+                               autocomplete="email"
+                               aria-required="true"
+                               placeholder="name@example.com"/>
+
+                    <ValidationMessage For="@(() => Input.NewEmail)"/>
+                </div>
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary">
+                    Change email
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </MudItem>
+</MudGrid>

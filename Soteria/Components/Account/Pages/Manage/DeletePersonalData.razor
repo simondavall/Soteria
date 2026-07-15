@@ -1,0 +1,53 @@
+﻿@page "/Account/Manage/DeletePersonalData"
+
+<PageTitle>Delete personal data</PageTitle>
+
+<MudText Typo="Typo.h5" GutterBottom="true">
+    Delete personal data
+</MudText>
+
+<StatusMessage Message="@_message"/>
+
+<MudAlert Severity="Severity.Error"
+          Variant="Variant.Outlined"
+          Class="mb-4">
+    Deleting this data will permanently remove your account,
+    and this cannot be recovered.
+</MudAlert>
+
+<MudGrid>
+    <MudItem xs="12" md="7">
+        <EditForm Model="Input"
+                  FormName="delete-user"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  method="post"
+                  novalidate>
+            <DataAnnotationsValidator/>
+
+            <MudStack Spacing="3">
+                @if (_requirePassword)
+                {
+                    <div class="account-field" data-validation-field>
+                        <label for="password">Password</label>
+
+                        <InputText id="password"
+                                   class="account-input"
+                                   type="password"
+                                   @bind-Value="Input.Password"
+                                   autocomplete="current-password"
+                                   aria-required="true"
+                                   placeholder="Password"/>
+
+                        <ValidationMessage For="@(() => Input.Password)"/>
+                    </div>
+                }
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Error">
+                    Delete data and close my account
+                </MudButton>
+            </MudStack>
+        </EditForm>
+    </MudItem>
+</MudGrid>

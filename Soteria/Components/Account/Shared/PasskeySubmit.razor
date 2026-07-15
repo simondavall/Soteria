@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNetCore.Antiforgery
+@inject IServiceProvider Services
+
+<MudButton ButtonType="ButtonType.Submit"
+           Variant="@Variant"
+           Color="@Color"
+           Size="@Size"
+           FullWidth="@FullWidth"
+           StartIcon="@StartIcon"
+           Class="@Class"
+           Disabled="@Disabled"
+           name="__passkeySubmit">
+    @ChildContent
+</MudButton>
+
+<passkey-submit operation="@Operation"
+                name="@Name"
+                email-name="@EmailName"
+                request-token-name="@_tokens?.HeaderName"
+                request-token-value="@_tokens?.RequestToken">
+</passkey-submit>
+
+@code {
+    private AntiforgeryTokenSet? _tokens;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [Parameter]
+    [EditorRequired]
+    public PasskeyOperation Operation { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string Name { get; set; } = default!;
+
+    [Parameter]
+    public string? EmailName { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public Variant Variant { get; set; } = Variant.Text;
+
+    [Parameter]
+    public Color Color { get; set; } = Color.Default;
+
+    [Parameter]
+    public Size Size { get; set; } = Size.Medium;
+
+    [Parameter]
+    public bool FullWidth { get; set; }
+
+    [Parameter]
+    public string? StartIcon { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _tokens = Services
+            .GetService<IAntiforgery>()?
+            .GetTokens(HttpContext);
+    }
+}

@@ -1,0 +1,29 @@
+﻿@page "/Account/RegisterConfirmation"
+
+<PageTitle>Register confirmation</PageTitle>
+
+<MudText Typo="Typo.h4" GutterBottom="true">
+    Register confirmation
+</MudText>
+
+<StatusMessage Message="@_statusMessage"/>
+
+@if (_emailConfirmationLink is null)
+{
+    <MudStack Spacing="2">
+        <MudText>
+            No email sender is currently active. Use the link below to
+            confirm the account during development.
+        </MudText>
+
+        <MudLink Href="@_emailConfirmationLink">
+            Confirm your account
+        </MudLink>
+    </MudStack>
+}
+else
+{
+    <MudText>
+        Please check your email to confirm your account.
+    </MudText>
+}
