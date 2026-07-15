@@ -7,13 +7,13 @@ namespace Soteria.Components.Account.Pages.Manage;
 public partial class PersonalData
 {
     [Inject]
-    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    private UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
     [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
     [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
+    private HttpContext HttpContext { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

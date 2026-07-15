@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
@@ -12,12 +11,12 @@ public partial class DeletePersonalData
     private ApplicationUser? _user;
     private bool _requirePassword;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    [Inject] private ILogger<DeletePersonalData> Logger { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
+    [Inject] private ILogger<DeletePersonalData> Logger { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()

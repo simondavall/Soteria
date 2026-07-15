@@ -13,11 +13,11 @@ public partial class TwoFactorAuthentication
     private bool _isTwoFactorEnabled;
     private bool _isMachineRemembered;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

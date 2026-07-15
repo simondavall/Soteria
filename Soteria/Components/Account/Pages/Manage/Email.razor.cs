@@ -15,16 +15,17 @@ public partial class Email
     private string? _email;
     private bool _isEmailConfirmed;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = default!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-    [SupplyParameterFromForm(FormName = "change-email")] private InputModel Input { get; set; } = new();
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromForm(FormName = "change-email")] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        Input ??= new InputModel();
         _user = await UserManager.GetUserAsync(HttpContext.User);
         if (_user is null)
         {
@@ -40,7 +41,7 @@ public partial class Email
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input.NewEmail is null || Input.NewEmail == _email)
+        if (Input!.NewEmail is null || Input.NewEmail == _email)
         {
             _message = "Your email is unchanged.";
             return;

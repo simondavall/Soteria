@@ -15,7 +15,7 @@ public partial class SetPassword
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,7 +40,7 @@ public partial class SetPassword
             return;
         }
 
-        var addPasswordResult = await UserManager.AddPasswordAsync(_user, Input.NewPassword!);
+        var addPasswordResult = await UserManager.AddPasswordAsync(_user, Input!.NewPassword!);
         if (!addPasswordResult.Succeeded)
         {
             _message = $"Error: {string.Join(", ", addPasswordResult.Errors.Select(error => error.Description))}";

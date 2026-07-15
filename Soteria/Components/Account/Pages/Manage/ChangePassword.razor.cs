@@ -10,16 +10,17 @@ public partial class ChangePassword
     private string? _message;
     private ApplicationUser? _user;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    [Inject] private ILogger<ChangePassword> Logger { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
+    [Inject] private ILogger<ChangePassword> Logger { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        Input ??= new InputModel();
         _user = await UserManager.GetUserAsync(HttpContext.User);
         if (_user is null)
         {
@@ -42,7 +43,7 @@ public partial class ChangePassword
             return;
         }
 
-        var result = await UserManager.ChangePasswordAsync(_user, Input.OldPassword, Input.NewPassword);
+        var result = await UserManager.ChangePasswordAsync(_user, Input!.OldPassword, Input.NewPassword);
         if (!result.Succeeded)
         {
             _message = $"Error: {string.Join(", ", result.Errors.Select(error => error.Description))}";
