@@ -17,6 +17,7 @@ Phase 2 – OpenID Connect Provider Foundation
 - Added development email sender for Identity.
 - Preserved ASP.NET Core Identity behaviour and static SSR workflows.
 - Established the project Identity implementation patterns.
+- Reviewed and restructured the project roadmap and delivery planning model.
 
 # Current Task
 
