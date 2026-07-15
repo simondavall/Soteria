@@ -10,11 +10,11 @@ public partial class GenerateRecoveryCodes
     private ApplicationUser? _user;
     private IEnumerable<string>? _recoveryCodes;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    [Inject] private ILogger<GenerateRecoveryCodes> Logger { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
+    [Inject] private ILogger<GenerateRecoveryCodes> Logger { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

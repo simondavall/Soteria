@@ -7,19 +7,20 @@ namespace Soteria.Components.Account.Pages.Manage;
 
 public partial class Index
 {
-    private ApplicationUser _user = default!;
+    private ApplicationUser _user = null!;
     private string? _username;
     private string? _phoneNumber;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        Input ??= new InputModel();
         var user = await UserManager.GetUserAsync(HttpContext.User);
         if (user is null)
         {
@@ -39,7 +40,7 @@ public partial class Index
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input.PhoneNumber != _phoneNumber)
+        if (Input!.PhoneNumber != _phoneNumber)
         {
             var setPhoneResult = await UserManager.SetPhoneNumberAsync(_user, Input.PhoneNumber);
             if (!setPhoneResult.Succeeded)
@@ -56,6 +57,7 @@ public partial class Index
 
     private sealed class InputModel
     {
+        // Do not replace with 'field', it doesn't work.
         private string? _phoneNumber;
 
         [Phone]

@@ -6,17 +6,16 @@ namespace Soteria.Components.Account.Pages.Manage;
 
 public partial class ResetAuthenticator
 {
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    [Inject] private ILogger<ResetAuthenticator> Logger { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
+    [Inject] private ILogger<ResetAuthenticator> Logger { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
 
     private async Task OnSubmitAsync()
     {
         var user = await UserManager.GetUserAsync(HttpContext.User);
-
         if (user is null)
         {
             RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);

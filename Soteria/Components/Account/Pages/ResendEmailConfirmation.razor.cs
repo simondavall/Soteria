@@ -10,22 +10,14 @@ namespace Soteria.Components.Account.Pages;
 
 public partial class ResendEmailConfirmation
 {
-    private const string ConfirmationMessage =
-        "Verification email sent. Please check your email.";
-
+    private const string ConfirmationMessage = "Verification email sent. Please check your email.";
     private string? _message;
 
-    [Inject]
-    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    [Inject]
-    private IEmailSender<ApplicationUser> EmailSender { get; set; } = default!;
-
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = default!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override void OnInitialized()
     {
@@ -34,8 +26,7 @@ public partial class ResendEmailConfirmation
 
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input.Email);
-
+        var user = await UserManager.FindByEmailAsync(Input!.Email);
         if (user is null)
         {
             _message = ConfirmationMessage;
@@ -43,11 +34,8 @@ public partial class ResendEmailConfirmation
         }
 
         var userId = await UserManager.GetUserIdAsync(user);
-        var code =
-            await UserManager.GenerateEmailConfirmationTokenAsync(user);
-
-        code = WebEncoders.Base64UrlEncode(
-            Encoding.UTF8.GetBytes(code));
+        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
         var callbackUrl =
             NavigationManager.GetUriWithQueryParameters(
@@ -60,18 +48,14 @@ public partial class ResendEmailConfirmation
                     ["code"] = code
                 });
 
-        await EmailSender.SendConfirmationLinkAsync(
-            user,
-            Input.Email,
-            HtmlEncoder.Default.Encode(callbackUrl));
-
+        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
         _message = ConfirmationMessage;
     }
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
+        [Required] 
+        [EmailAddress] 
         public string Email { get; set; } = string.Empty;
     }
 }

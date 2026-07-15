@@ -11,12 +11,12 @@ public partial class RenamePasskey
     private ApplicationUser? _user;
     private UserPasskeyInfo? _passkey;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [Parameter] public string? Id { get; set; }
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,7 +61,7 @@ public partial class RenamePasskey
             return;
         }
 
-        _passkey.Name = Input.Name;
+        _passkey.Name = Input!.Name;
 
         var result = await UserManager.AddOrUpdatePasskeyAsync(_user, _passkey);
         if (!result.Succeeded)

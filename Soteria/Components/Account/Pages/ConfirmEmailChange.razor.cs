@@ -10,27 +10,14 @@ public partial class ConfirmEmailChange
 {
     private string? _message;
 
-    [Inject]
-    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [Inject]
-    private SignInManager<ApplicationUser> SignInManager { get; set; } =
-        default!;
-
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; } = default!;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? UserId { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Email { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Code { get; set; }
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromQuery] private string? UserId { get; set; }
+    [SupplyParameterFromQuery] private string? Email { get; set; }
+    [SupplyParameterFromQuery] private string? Code { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,21 +32,16 @@ public partial class ConfirmEmailChange
         }
 
         var user = await UserManager.FindByIdAsync(UserId);
-
         if (user is null)
         {
-            _message =
-                $"Unable to find user with ID '{UserId}'.";
-
+            _message = $"Unable to find user with ID '{UserId}'.";
             return;
         }
 
         string code;
-
         try
         {
-            code = Encoding.UTF8.GetString(
-                WebEncoders.Base64UrlDecode(Code));
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
         }
         catch (FormatException)
         {
@@ -67,21 +49,16 @@ public partial class ConfirmEmailChange
             return;
         }
 
-        var result = await UserManager.ChangeEmailAsync(
-            user,
-            Email,
-            code);
-
+        var result = await UserManager.ChangeEmailAsync(user, Email, code);
         if (!result.Succeeded)
         {
             _message = "Error changing email.";
             return;
         }
 
-        // Email and user name are kept in sync by the current Identity UI.
-        var setUserNameResult =
-            await UserManager.SetUserNameAsync(user, Email);
-
+        // In our UI email and username are one and the same, so when we update the email
+        // we need to update the username.
+        var setUserNameResult = await UserManager.SetUserNameAsync(user, Email);
         if (!setUserNameResult.Succeeded)
         {
             _message = "Error changing user name.";
@@ -89,8 +66,6 @@ public partial class ConfirmEmailChange
         }
 
         await SignInManager.RefreshSignInAsync(user);
-
-        _message =
-            "Thank you for confirming your email change.";
+        _message = "Thank you for confirming your email change.";
     }
 }

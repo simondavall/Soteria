@@ -12,39 +12,19 @@ public partial class Register
 {
     private IEnumerable<IdentityError>? _identityErrors;
 
-    [Inject]
-    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private IUserStore<ApplicationUser> UserStore { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = null!;
+    [Inject] private ILogger<Register> Logger { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [Inject]
-    private IUserStore<ApplicationUser> UserStore { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
-    [Inject]
-    private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-
-    [Inject]
-    private IEmailSender<ApplicationUser> EmailSender { get; set; } = default!;
-
-    [Inject]
-    private ILogger<Register> Logger { get; set; } = default!;
-
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    private string? Message =>
-        _identityErrors is null
-            ? null
-            : $"Error: {string.Join(
-                ", ",
-                _identityErrors.Select(error => error.Description))}";
+    private string? Message => _identityErrors is null ? null : $"Error: {string.Join(", ", _identityErrors.Select(error => error.Description))}";
 
     protected override void OnInitialized()
     {
@@ -54,37 +34,22 @@ public partial class Register
     private async Task RegisterUserAsync()
     {
         var user = CreateUser();
-
-        await UserStore.SetUserNameAsync(
-            user,
-            Input.Email,
-            CancellationToken.None);
-
+        await UserStore.SetUserNameAsync(user, Input!.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
-
-        await emailStore.SetEmailAsync(
-            user,
-            Input.Email,
-            CancellationToken.None);
-
-        var result = await UserManager.CreateAsync(
-            user,
-            Input.Password);
-
+        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        
+        var result = await UserManager.CreateAsync(user, Input.Password);
         if (!result.Succeeded)
         {
             _identityErrors = result.Errors;
             return;
         }
 
-        Logger.LogInformation(
-            "User created a new account with password.");
+        Logger.LogInformation("User created a new account with password.");
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-
-        code = WebEncoders.Base64UrlEncode(
-            Encoding.UTF8.GetBytes(code));
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
         var callbackUrl = NavigationManager.GetUriWithQueryParameters(
             NavigationManager
@@ -97,10 +62,7 @@ public partial class Register
                 ["returnUrl"] = ReturnUrl
             });
 
-        await EmailSender.SendConfirmationLinkAsync(
-            user,
-            Input.Email,
-            HtmlEncoder.Default.Encode(callbackUrl));
+        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
         if (UserManager.Options.SignIn.RequireConfirmedAccount)
         {
@@ -114,10 +76,7 @@ public partial class Register
         }
         else
         {
-            await SignInManager.SignInAsync(
-                user,
-                isPersistent: false);
-
+            await SignInManager.SignInAsync(user, isPersistent: false);
             RedirectManager.RedirectTo(ReturnUrl);
         }
     }
@@ -141,10 +100,8 @@ public partial class Register
     {
         if (!UserManager.SupportsUserEmail)
         {
-            throw new NotSupportedException(
-                "The default UI requires a user store with email support.");
+            throw new NotSupportedException("The default UI requires a user store with email support.");
         }
-
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
@@ -156,21 +113,14 @@ public partial class Register
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(
-            100,
-            ErrorMessage =
-                "The {0} must be at least {2} and at max {1} characters long.",
-            MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare(
-            nameof(Password),
-            ErrorMessage =
-                "The password and confirmation password do not match.")]
+        [Compare(nameof(Password), ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

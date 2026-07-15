@@ -12,14 +12,14 @@ public partial class Passkeys
     private ApplicationUser? _user;
     private IList<UserPasskeyInfo>? _currentPasskeys;
 
-    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
-    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = null!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [SupplyParameterFromForm] private string? Action { get; set; }
     [SupplyParameterFromForm] private string? CredentialId { get; set; }
-    [SupplyParameterFromForm(FormName = "add-passkey")] private PasskeyInputModel Input { get; set; } = new();
+    [SupplyParameterFromForm(FormName = "add-passkey")] private PasskeyInputModel? Input { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,7 +42,7 @@ public partial class Passkeys
             return;
         }
 
-        if (!string.IsNullOrEmpty(Input.Error))
+        if (!string.IsNullOrEmpty(Input!.Error))
         {
             RedirectManager.RedirectToCurrentPageWithStatus($"Error: {Input.Error}", HttpContext);
             return;
