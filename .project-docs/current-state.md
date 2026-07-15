@@ -1,6 +1,8 @@
 ﻿This document provides a snapshot of the current implementation state of the project. It records completed work, the feature currently being developed, and the next expected steps. It should be updated regularly and is intended to help developers quickly understand where development should continue.
 
-# Current phase: Phase 1
+# Current phase
+
+Phase 2 – OpenID Connect Provider Foundation
 
 # Completed
 
@@ -11,21 +13,22 @@
 - Established the initial application theme.
 - Configured the MudBlazor providers.
 - Established the shared application layout.
-- Migrated the Login and Register pages to the project UI conventions.
-- Added development email sender for identity.
-- Migrated the password recovery workflow to the project UI conventions.
-- Migrated the email confirmation workflow to the project UI conventions.
-- Preserved registration ReturnUrl through email confirmation and login.
-- Added defensive decoding for Identity tokens received through query strings.
-- Migrated alternate authentication and access pages
-- Migrated the account management shell to the project UI conventions.
-- Migrated the credential management pages to MudBlazor
-- Migrated two-factor authentication management pages
+- Migrated the built-in ASP.NET Core Identity UI to the project UI conventions.
+- Added development email sender for Identity.
+- Preserved ASP.NET Core Identity behaviour and static SSR workflows.
+- Established the project Identity implementation patterns.
 
-# Current Task/Feature
+# Current Task
 
-## Continue migrating the Identity Manage pages.
+Define the OpenID Connect provider architecture.
 
-- Migrate the remaining account management pages.
-- Preserve static SSR and Identity behaviour.
-- Continue applying the established account page pattern.
+- Establish the initial OpenID Connect architecture.
+- Define the authentication flow between Soteria and consuming applications.
+- Define the initial client application model.
+- Define the initial scopes and claims.
+- Define the development signing and encryption strategy.
+- Define the boundary between hard-coded configuration and future configuration.
+
+# Next
+
+Implement the agreed OpenID Connect provider foundation using OpenIddict.
