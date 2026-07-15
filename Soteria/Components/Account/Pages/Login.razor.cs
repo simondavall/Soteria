@@ -12,26 +12,14 @@ public partial class Login
     private string? _errorMessage;
     private EditContext _editContext = default!;
 
-    [Inject]
-    private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
+    [Inject] private SignInManager<ApplicationUser> SignInManager { get; set; } = default!;
+    [Inject] private ILogger<Login> Logger { get; set; } = default!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
 
-    [Inject]
-    private ILogger<Login> Logger { get; set; } = default!;
-
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; } = default!;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     private string RegisterUrl =>
         NavigationManager.GetUriWithQueryParameters(
@@ -44,6 +32,7 @@ public partial class Login
     protected override async Task OnInitializedAsync()
     {
         Input ??= new InputModel();
+        
         _editContext = new EditContext(Input);
 
         if (HttpMethods.IsGet(HttpContext.Request.Method))
@@ -62,12 +51,10 @@ public partial class Login
         }
 
         SignInResult result;
-
         if (!string.IsNullOrEmpty(Input.Passkey?.CredentialJson))
         {
             // Passkey sign-in doesn't use the password form fields.
-            result = await SignInManager.PasskeySignInAsync(
-                Input.Passkey.CredentialJson);
+            result = await SignInManager.PasskeySignInAsync(Input.Passkey.CredentialJson);
         }
         else
         {
@@ -76,11 +63,7 @@ public partial class Login
                 return;
             }
 
-            result = await SignInManager.PasswordSignInAsync(
-                Input.Email,
-                Input.Password,
-                Input.RememberMe,
-                lockoutOnFailure: false);
+            result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         }
 
         if (result.Succeeded)
@@ -111,15 +94,15 @@ public partial class Login
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
+        [Required] 
+        [EmailAddress] 
         public string Email { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Remember me?")] 
         public bool RememberMe { get; set; }
 
         public PasskeyInputModel? Passkey { get; set; }
