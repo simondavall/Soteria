@@ -36,62 +36,63 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 
 ## Milestone 2.3 – OpenIddict Implementation
 
-- Add and configure OpenIddict.
-    - Add the required OpenIddict packages.
-    - Register the OpenIddict server services.
-    - Register the ASP.NET Core host integration.
-    - Verify the application builds successfully.
+- Add the OpenIddict packages.
+  - Add the ASP.NET Core integration package.
+  - Add the Entity Framework Core integration package.
+  - Verify the application builds and existing Identity behaviour remains unchanged.
 
 - Integrate OpenIddict with Entity Framework Core.
-    - Configure the OpenIddict Entity Framework stores.
-    - Extend SoteriaDbContext for OpenIddict.
-    - Create the Entity Framework migration.
-    - Verify the database schema.
+  - Configure the OpenIddict Entity Framework stores.
+  - Extend SoteriaDbContext for OpenIddict.
+  - Create the Entity Framework migration.
+  - Verify the database schema.
 
 - Configure development signing and encryption.
-    - Define the development certificate strategy.
-    - Configure the signing credential.
-    - Configure the encryption credential.
-    - Verify the credentials load successfully.
+  - Register the OpenIddict server services.
+  - Register the ASP.NET Core host integration.
+  - Define the development certificate strategy.
+  - Configure the signing credential.
+  - Configure the encryption credential.
+  - Verify the credentials load successfully.
 
 - Configure the OpenID Connect endpoints.
-    - Configure the discovery endpoint.
-    - Configure the authorization endpoint.
-    - Configure the token endpoint.
-    - Configure the logout endpoint.
-    - Configure the required OpenID Connect endpoints only.
+  - Configure the discovery endpoint.
+  - Configure the authorization endpoint.
+  - Configure the token endpoint.
+  - Configure the logout endpoint.
+  - Configure the required OpenID Connect endpoints only.
 
 - Configure the supported protocol flow.
-    - Configure Authorization Code Flow.
-    - Configure PKCE requirements.
-    - Disable unsupported flows.
-    - Verify the advertised server capabilities.
+  - Configure Authorization Code Flow.
+  - Configure PKCE requirements.
+  - Disable unsupported flows.
+  - Verify the advertised server capabilities.
 
 - Register the initial API scope.
-    - Define the scope name.
-    - Associate the scope with the Reference API resource.
-    - Register the scope.
+  - Define the scope name.
+  - Associate the scope with the Reference API resource.
+  - Register the scope.
 
 - Register the reference web application as an OpenID Connect client.
-    - Define the client identifier.
-    - Define the display name.
-    - Configure the client type.
-    - Configure the client authentication method.
-    - Configure redirect URIs.
-    - Configure post-logout redirect URIs.
-    - Configure endpoint permissions.
-    - Configure grant-type permissions.
-    - Configure response-type permissions.
-    - Configure supported scopes.
-    - Configure the consent type.
-    - Configure PKCE requirements if enforced per client.
+  - Define the client identifier.
+  - Define the display name.
+  - Configure the client type.
+  - Configure the client authentication method.
+  - Configure redirect URIs.
+  - Configure post-logout redirect URIs.
+  - Configure endpoint permissions.
+  - Configure grant-type permissions.
+  - Configure response-type permissions.
+  - Configure supported scopes.
+  - Configure the consent type.
+  - Configure PKCE requirements if enforced per client.
 
 - Verify the OpenIddict provider configuration.
-    - Verify discovery metadata.
-    - Verify endpoint availability.
-    - Verify client registration.
-    - Verify scope registration.
-    - Verify unsupported requests are rejected.
+  - Verify discovery metadata.
+  - Verify endpoint availability.
+  - Verify client registration.
+  - Verify scope registration.
+  - Verify unsupported requests are rejected.
 
 ---
 

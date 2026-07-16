@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages.Manage;
 
@@ -16,11 +17,13 @@ public partial class Index
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
+
         var user = await UserManager.GetUserAsync(HttpContext.User);
         if (user is null)
         {
@@ -40,7 +43,7 @@ public partial class Index
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input!.PhoneNumber != _phoneNumber)
+        if (Input.PhoneNumber != _phoneNumber)
         {
             var setPhoneResult = await UserManager.SetPhoneNumberAsync(_user, Input.PhoneNumber);
             if (!setPhoneResult.Succeeded)

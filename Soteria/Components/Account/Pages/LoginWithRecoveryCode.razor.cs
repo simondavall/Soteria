@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages;
 
@@ -13,16 +14,15 @@ public partial class LoginWithRecoveryCode
     [Inject] private ILogger<LoginWithRecoveryCode> Logger { get; set; } = null!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
 
-        var user =
-            await SignInManager.GetTwoFactorAuthenticationUserAsync();
-
+        var user = await SignInManager.GetTwoFactorAuthenticationUserAsync();
         if (user is null)
         {
             RedirectManager.RedirectTo(
@@ -34,7 +34,7 @@ public partial class LoginWithRecoveryCode
 
     private async Task OnValidSubmitAsync()
     {
-        var recoveryCode = Input!.RecoveryCode.Replace(" ", string.Empty);
+        var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);
         var result = await SignInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
 
         if (result.Succeeded)
