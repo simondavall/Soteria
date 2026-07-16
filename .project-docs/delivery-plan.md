@@ -58,7 +58,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Apply the migration.
   - Verify the OpenIddict database schema.
 
-- Define the development signing and encryption certificate strategy.
+- ✓ Define the development signing and encryption certificate strategy.
   - Determine how development certificates are generated, stored or loaded.
   - Define separate signing and encryption credential requirements.
   - Define certificate persistence and reuse between application restarts.

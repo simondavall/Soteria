@@ -35,6 +35,10 @@ Phase 2 – OpenID Connect Provider Foundation
 - Extended SoteriaDbContext to include the OpenIddict entity model.
 - Created and applied the initial OpenIddict Entity Framework migration.
 - Verified the OpenIddict database schema.
+- Defined the development signing and encryption certificate strategy.
+- Confirmed that local Rider execution runs Soteria under the interactive development account.
+- Defined separate OpenIddict development signing and encryption certificates.
+- Defined Development-only credential registration and deferred the production and IIS credential strategy.
 
 # Current milestone
 
@@ -42,14 +46,14 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Define the development signing and encryption certificate strategy.
+Register the OpenIddict server and development credentials.
 
-- Determine how development certificates are generated, stored or loaded.
-- Define separate signing and encryption credential requirements.
-- Define certificate persistence and reuse between application restarts.
-- Define safeguards against using development credentials outside development.
-- Record the agreed strategy.
+- Register the OpenIddict server services.
+- Register the ASP.NET Core host integration.
+- Configure development signing credential.
+- Configure development encryption credential.
+- Verify the server configuration and credentials load successfully.
 
 # Next
 
-- Register the OpenIddict server and development credentials.
+- Configure the OpenID Connect endpoints.

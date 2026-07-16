@@ -9,6 +9,7 @@
 - Distinguish clearly between observations, recommendations, and project decisions.
 - When suggesting documentation changes, quote the existing text and provide the replacement text.
 - When reviewing the documentation, focus on consistency, ambiguity, correctness, and completeness rather than stylistic improvements.
+- Provide document updates that the user an easily use, in the correct established format.
 
 Use the following format when suggesting document changes:
 - Replace \<existing section\> with \<replacement section\>.
