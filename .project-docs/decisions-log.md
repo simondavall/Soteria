@@ -41,3 +41,26 @@ Using Guid identifiers avoids retaining the ASP.NET Core Identity template's def
 Making the change before OpenIddict persistence is introduced avoids a later migration involving both Identity and OpenIddict tables and ensures that the initial OpenIddict schema uses the intended key type.
 
 The project is still in early development, and the current database contains no production data. Resetting the disposable development schema keeps the migration history clear and avoids introducing a complex SQLite table-reconstruction migration solely to preserve temporary development data.
+
+2026-07-16
+
+Decision:
+
+Soteria will use OpenIddict-generated development X.509 certificates for its local development signing and encryption credentials.
+
+Signing and encryption will use separate certificates. OpenIddict will store and reuse the certificates through the certificate store of the development user account running Soteria.
+
+Development credentials will only be registered when the host environment is Development. Soteria will not use ephemeral credentials as a fallback outside Development and will not reuse the ASP.NET Core HTTPS development certificate for OpenIddict.
+
+Non-development environments will require explicitly configured signing and encryption credentials.
+
+The production credential strategy, including secure storage, provisioning, rotation, renewal and hosting-identity access, will be defined when the production hosting model is known. IIS-specific certificate access will be reviewed when IIS hosting becomes current work.
+
+Reason:
+
+Persistent development certificates allow authorization codes, tokens and other protected protocol artefacts to remain usable across application restarts while avoiding certificate files and private-key passwords in the repository.
+
+Separate signing and encryption certificates preserve the distinction between the two security purposes and align the development model with the expected production responsibilities.
+
+Restricting the development certificates to the Development environment prevents them from becoming an accidental production configuration. Deferring the production implementation avoids designing certificate deployment and rotation before the hosting environment and operational requirements are known.
+

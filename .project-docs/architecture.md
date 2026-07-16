@@ -312,3 +312,48 @@ The initial Phase 2 architecture establishes four distinct trust boundaries.
 3. The resource API trusts Soteria as the issuer of OAuth access tokens.
 4. The consuming web application and resource API do not trust one another directly; trust is established through tokens issued by Soteria.
 
+# Signing and Encryption Credentials
+
+## Development strategy
+
+Soteria uses separate X.509 certificates for OpenIddict signing and encryption credentials.
+
+During local development, OpenIddict generates and manages the development certificates. The certificates are stored in the certificate store of the development user account running Soteria and are reused between application restarts.
+
+This strategy assumes that Soteria is run directly under the developer's interactive account, such as through the Rider .NET Run Configuration.
+
+The development credentials:
+
+- are registered only when the host environment is Development;
+- are not replaced by ephemeral fallback credentials;
+- are distinct from the ASP.NET Core HTTPS development certificate;
+- are not stored as certificate files in the repository;
+- do not require certificate passwords in application configuration;
+- are local development infrastructure and are not required to be shared between development machines.
+
+A non-development environment must provide explicitly configured signing and encryption credentials. Soteria must not silently generate development credentials or fall back to ephemeral credentials outside Development.
+
+## Deferred production strategy
+
+The production credential strategy will be defined when the production hosting model is known.
+
+That decision must cover:
+
+- certificate generation or acquisition;
+- secure private-key storage;
+- certificate loading and application identity access;
+- certificate renewal and rotation;
+- overlap between current and replacement signing credentials;
+- deployment across one or more application instances;
+- monitoring and operational recovery;
+- safeguards preventing development credentials from being used.
+
+Future IIS hosting must explicitly consider the IIS application-pool identity, user-profile availability and certificate private-key permissions.
+
+## Resource API boundary
+
+The signing certificate's public key may be published through OpenID Connect discovery so that resource servers can validate signatures without receiving the private signing credential.
+
+Whether Reference API access tokens are encrypted, and whether the Reference API requires access to a corresponding decryption certificate, will be decided when token issuance and API validation are configured.
+
+The development certificate strategy does not introduce certificate sharing between Soteria and the Reference API.
