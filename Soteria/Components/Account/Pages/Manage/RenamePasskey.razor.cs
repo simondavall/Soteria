@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages.Manage;
 
@@ -16,7 +17,7 @@ public partial class RenamePasskey
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [Parameter] public string? Id { get; set; }
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,13 +56,16 @@ public partial class RenamePasskey
 
     private async Task RenameAsync()
     {
+        // this is needed, even though non-nullable
+        Input ??= new InputModel();
+
         if (_user is null || _passkey is null)
         {
             RedirectManager.RedirectTo("Account/Manage/Passkeys");
             return;
         }
 
-        _passkey.Name = Input!.Name;
+        _passkey.Name = Input.Name;
 
         var result = await UserManager.AddOrUpdatePasskeyAsync(_user, _passkey);
         if (!result.Succeeded)

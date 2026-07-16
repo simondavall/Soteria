@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Net.Codecrete.QrCodeGenerator;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages.Manage;
 
@@ -27,10 +28,11 @@ public partial class EnableAuthenticator
     [Inject] private ILogger<EnableAuthenticator> Logger { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
 
         _user = await UserManager.GetUserAsync(HttpContext.User);
@@ -51,7 +53,7 @@ public partial class EnableAuthenticator
             return;
         }
 
-        var verificationCode = Input!.Code
+        var verificationCode = Input.Code
             .Replace(" ", string.Empty)
             .Replace("-", string.Empty);
 

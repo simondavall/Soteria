@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages;
 
@@ -15,16 +16,17 @@ public partial class ForgotPassword
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
-
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
+    
     protected override void OnInitialized()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
     }
-
+    
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input!.Email);
+        var user = await UserManager.FindByEmailAsync(Input.Email);
         if (user is null || !await UserManager.IsEmailConfirmedAsync(user))
         {
             // Don't reveal that the user doesn't exist or isn't confirmed.

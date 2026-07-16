@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages;
 
@@ -21,20 +22,21 @@ public partial class Register
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     private string? Message => _identityErrors is null ? null : $"Error: {string.Join(", ", _identityErrors.Select(error => error.Description))}";
 
     protected override void OnInitialized()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
     }
 
     private async Task RegisterUserAsync()
     {
         var user = CreateUser();
-        await UserStore.SetUserNameAsync(user, Input!.Email, CancellationToken.None);
+        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         

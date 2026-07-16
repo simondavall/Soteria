@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages;
 
@@ -18,7 +19,7 @@ public partial class Login
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     private string RegisterUrl =>
@@ -31,8 +32,9 @@ public partial class Login
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
-        
+
         _editContext = new EditContext(Input);
 
         if (HttpMethods.IsGet(HttpContext.Request.Method))
@@ -44,7 +46,7 @@ public partial class Login
 
     private async Task LoginUserAsync()
     {
-        if (!string.IsNullOrEmpty(Input!.Passkey?.Error))
+        if (!string.IsNullOrEmpty(Input.Passkey?.Error))
         {
             _errorMessage = $"Error: {Input.Passkey.Error}";
             return;

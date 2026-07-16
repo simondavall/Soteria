@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages.Manage;
 
@@ -19,10 +20,13 @@ public partial class Passkeys
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [SupplyParameterFromForm] private string? Action { get; set; }
     [SupplyParameterFromForm] private string? CredentialId { get; set; }
-    [SupplyParameterFromForm(FormName = "add-passkey")] private PasskeyInputModel? Input { get; set; }
+    [SupplyParameterFromForm(FormName = "add-passkey")] private PasskeyInputModel Input { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
+        Input ??= new PasskeyInputModel();
+
         _user = await UserManager.GetUserAsync(HttpContext.User);
 
         if (_user is null)
@@ -42,7 +46,7 @@ public partial class Passkeys
             return;
         }
 
-        if (!string.IsNullOrEmpty(Input!.Error))
+        if (!string.IsNullOrEmpty(Input.Error))
         {
             RedirectManager.RedirectToCurrentPageWithStatus($"Error: {Input.Error}", HttpContext);
             return;
