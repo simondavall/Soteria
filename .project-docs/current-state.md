@@ -19,17 +19,22 @@ Phase 2 – OpenID Connect Provider Foundation
 - Established the project Identity implementation patterns.
 - Reviewed and restructured the project roadmap and delivery planning model.
 
-# Current Task
+# Current milestone
 
-Define the OpenID Connect provider architecture.
+Milestone 2.2 – Reference Applications
 
-- Establish the initial OpenID Connect architecture.
-- Define the authentication flow between Soteria and consuming applications.
-- Define the initial client application model.
-- Define the initial scopes and claims.
-- Define the development signing and encryption strategy.
-- Define the boundary between hard-coded configuration and future configuration.
+# Current task
+
+Define and create the reference web application with local ASP.NET Core Identity.
+
+- Define the purpose and minimum responsibilities of the reference web application.
+- Select the appropriate .NET 10 application template and hosting model.
+- Define its project name, solution placement and development configuration.
+- Define the minimum local Identity and protected application workflows.
+- Create the application with individual ASP.NET Core Identity authentication.
+- Verify registration, login, protected access and local session behaviour.
+- Verify that the application builds and runs independently.
 
 # Next
 
-Implement the agreed OpenID Connect provider foundation using OpenIddict.
+Define and create the reference resource API.
