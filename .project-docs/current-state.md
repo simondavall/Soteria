@@ -25,6 +25,12 @@ Phase 2 – OpenID Connect Provider Foundation
 - Defined and created the reference web application.
 - Defined and created the reference Resource API.
 - Verified communication between the reference web application and the reference Resource API.
+- Added the required OpenIddict packages.
+- Changed ASP.NET Core Identity users and roles to use Guid keys.
+- Recreated the development database as soteria.db.
+- Renamed the Soteria database connection to SoteriaDb.
+- Recreated and applied the initial Identity migration.
+- Verified the Guid-based Identity schema and existing Identity workflows.
 
 # Current milestone
 
@@ -32,13 +38,15 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Add and configure OpenIddict.
+Integrate OpenIddict with Entity Framework Core.
 
-- Add the required OpenIddict packages.
-- Register the OpenIddict server services.
-- Register the ASP.NET Core host integration.
-- Verify the application builds successfully.
+- Configure the OpenIddict Entity Framework stores.
+- Extend SoteriaDbContext for OpenIddict using Guid OpenIddict entities.
+- Create the Entity Framework migration.
+- Apply the migration.
+- Verify the OpenIddict database schema.
 
 # Next
 
-Integrate OpenIddict with Entity Framework Core.
+- Define the development signing and encryption certificate strategy.
+

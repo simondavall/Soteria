@@ -4,6 +4,7 @@ obj/
 *.db
 *.db-wal
 *.db-shm
+*.user
 
 # Hidden folders
 .idea

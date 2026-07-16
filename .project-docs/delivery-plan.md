@@ -14,7 +14,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 
 # Phase 2 – OpenID Connect Provider Foundation
 
-## Milestone 2.1 – Provider Architecture
+## ✓ Milestone 2.1 – Provider Architecture
 
 - ✓ Review and restructure the project roadmap and delivery planning model.
 - ✓ Define the OpenID Connect provider architecture.
@@ -24,36 +24,53 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 
 ---
 
-## Milestone 2.2 – Reference Applications
+## ✓ Milestone 2.2 – Reference Applications
 
 (Initially set up with local independent authentication, which will be replaced with OpenID Connect in Milestone 2.3.)
 
-- Define and create the reference web application with local ASP.NET Core Identity.
-- Define and create the reference resource API.
-- Configure and verify communication between the reference web application and the reference resource API.
+- ✓ Define and create the reference web application with local ASP.NET Core Identity.
+- ✓ Define and create the reference resource API.
+- ✓ Configure and verify communication between the reference web application and the reference resource API.
 
 ---
 
 ## Milestone 2.3 – OpenIddict Implementation
 
-- Add the OpenIddict packages.
+- ✓ Add the OpenIddict packages.
   - Add the ASP.NET Core integration package.
   - Add the Entity Framework Core integration package.
   - Verify the application builds and existing Identity behaviour remains unchanged.
 
+- ✓ Use Guid keys for ASP.NET Core Identity.
+  - Change ApplicationUser to use a Guid key.
+  - Configure Identity roles to use Guid keys.
+  - Update SoteriaDbContext and Identity registration.
+  - Update code that assumes string Identity identifiers.
+  - Recreate the development database using soteria.db.
+  - Create or replace the Entity Framework migration.
+  - Apply the migration.
+  - Verify existing Identity workflows and the database schema.
+
 - Integrate OpenIddict with Entity Framework Core.
   - Configure the OpenIddict Entity Framework stores.
-  - Extend SoteriaDbContext for OpenIddict.
+  - Extend SoteriaDbContext for OpenIddict using Guid OpenIddict entities.
   - Create the Entity Framework migration.
-  - Verify the database schema.
+  - Apply the migration.
+  - Verify the OpenIddict database schema.
 
-- Configure development signing and encryption.
+- Define the development signing and encryption certificate strategy.
+  - Determine how development certificates are generated, stored or loaded.
+  - Define separate signing and encryption credential requirements.
+  - Define certificate persistence and reuse between application restarts.
+  - Define safeguards against using development credentials outside development.
+  - Record the agreed strategy.
+
+- Register the OpenIddict server and development credentials.
   - Register the OpenIddict server services.
   - Register the ASP.NET Core host integration.
-  - Define the development certificate strategy.
-  - Configure the signing credential.
-  - Configure the encryption credential.
-  - Verify the credentials load successfully.
+  - Configure development signing credential.
+  - Configure development encryption credential.
+  - Verify the server configuration and credentials load successfully.
 
 - Configure the OpenID Connect endpoints.
   - Configure the discovery endpoint.

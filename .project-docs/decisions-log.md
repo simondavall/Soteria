@@ -24,3 +24,20 @@ A distinct API audience ensures that access tokens are issued for and accepted b
 
 Starting with one scope, minimal claims and implicit consent keeps the first implementation explicit and narrow while deferring richer permissions, claims and consent policy until client application and access management are introduced.
 
+2026-07-16
+
+Decision:
+
+Soteria will use Guid primary keys for ASP.NET Core Identity users and roles.
+
+The change will be made before OpenIddict is integrated with Entity Framework Core so that both Identity and OpenIddict use a consistent Guid key model from the beginning.
+
+The existing development database and migration history may be reset rather than supporting an in-place string-to-Guid data conversion, provided no existing database or development data must be preserved.
+
+Reason:
+
+Using Guid identifiers avoids retaining the ASP.NET Core Identity template's default string key type as a long-term persistence decision.
+
+Making the change before OpenIddict persistence is introduced avoids a later migration involving both Identity and OpenIddict tables and ensures that the initial OpenIddict schema uses the intended key type.
+
+The project is still in early development, and the current database contains no production data. Resetting the disposable development schema keeps the migration history clear and avoids introducing a complex SQLite table-reconstruction migration solely to preserve temporary development data.
