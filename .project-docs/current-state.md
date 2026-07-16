@@ -31,6 +31,10 @@ Phase 2 – OpenID Connect Provider Foundation
 - Renamed the Soteria database connection to SoteriaDb.
 - Recreated and applied the initial Identity migration.
 - Verified the Guid-based Identity schema and existing Identity workflows.
+- Configured the OpenIddict Entity Framework Core stores.
+- Extended SoteriaDbContext to include the OpenIddict entity model.
+- Created and applied the initial OpenIddict Entity Framework migration.
+- Verified the OpenIddict database schema.
 
 # Current milestone
 
@@ -38,15 +42,14 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Integrate OpenIddict with Entity Framework Core.
+Define the development signing and encryption certificate strategy.
 
-- Configure the OpenIddict Entity Framework stores.
-- Extend SoteriaDbContext for OpenIddict using Guid OpenIddict entities.
-- Create the Entity Framework migration.
-- Apply the migration.
-- Verify the OpenIddict database schema.
+- Determine how development certificates are generated, stored or loaded.
+- Define separate signing and encryption credential requirements.
+- Define certificate persistence and reuse between application restarts.
+- Define safeguards against using development credentials outside development.
+- Record the agreed strategy.
 
 # Next
 
-- Define the development signing and encryption certificate strategy.
-
+- Register the OpenIddict server and development credentials.
