@@ -39,6 +39,15 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
+var referenceApiBaseUrl = builder.Configuration["ReferenceApi:BaseUrl"]
+                          ?? throw new InvalidOperationException(
+                              "The ReferenceApi:BaseUrl configuration value is required.");
+
+builder.Services.AddHttpClient("ReferenceApi", client =>
+{
+    client.BaseAddress = new Uri(referenceApiBaseUrl);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
