@@ -37,48 +37,149 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 ## Milestone 2.3 – OpenIddict Implementation
 
 - Add and configure OpenIddict.
+    - Add the required OpenIddict packages.
+    - Register the OpenIddict server services.
+    - Register the ASP.NET Core host integration.
+    - Verify the application builds successfully.
+
 - Integrate OpenIddict with Entity Framework Core.
-- Define the development signing and encryption certificate strategy.
-- Configure development signing credentials.
-- Configure development encryption credentials.
+    - Configure the OpenIddict Entity Framework stores.
+    - Extend SoteriaDbContext for OpenIddict.
+    - Create the Entity Framework migration.
+    - Verify the database schema.
+
+- Configure development signing and encryption.
+    - Define the development certificate strategy.
+    - Configure the signing credential.
+    - Configure the encryption credential.
+    - Verify the credentials load successfully.
+
 - Configure the OpenID Connect endpoints.
-- Configure Authorization Code Flow with PKCE.
-- Define the initial API scope.
-- Define the initial identity claims.
+    - Configure the discovery endpoint.
+    - Configure the authorization endpoint.
+    - Configure the token endpoint.
+    - Configure the logout endpoint.
+    - Configure the required OpenID Connect endpoints only.
+
+- Configure the supported protocol flow.
+    - Configure Authorization Code Flow.
+    - Configure PKCE requirements.
+    - Disable unsupported flows.
+    - Verify the advertised server capabilities.
+
+- Register the initial API scope.
+    - Define the scope name.
+    - Associate the scope with the Reference API resource.
+    - Register the scope.
+
 - Register the reference web application as an OpenID Connect client.
-- Configure redirect URIs.
-- Configure client permissions.
-- Configure grant types.
-- Configure supported scopes.
-- Replace the reference web application's local authentication with OpenID Connect.
-- Verify successful OpenID Connect authentication.
+    - Define the client identifier.
+    - Define the display name.
+    - Configure the client type.
+    - Configure the client authentication method.
+    - Configure redirect URIs.
+    - Configure post-logout redirect URIs.
+    - Configure endpoint permissions.
+    - Configure grant-type permissions.
+    - Configure response-type permissions.
+    - Configure supported scopes.
+    - Configure the consent type.
+    - Configure PKCE requirements if enforced per client.
+
+- Verify the OpenIddict provider configuration.
+    - Verify discovery metadata.
+    - Verify endpoint availability.
+    - Verify client registration.
+    - Verify scope registration.
+    - Verify unsupported requests are rejected.
 
 ---
 
 ## Milestone 2.4 – Authentication Workflow
 
 - Connect OpenIddict to ASP.NET Core Identity.
+  - Configure ASP.NET Core Identity as the authentication mechanism.
+  - Configure the Identity application cookie.
+  - Configure OpenIddict to use the authenticated Identity principal.
+  - Verify authenticated users reach the OpenIddict pipeline.
+
 - Implement the authorisation workflow.
-- Define access-token renewal and refresh-token lifecycle.
-- Implement access-token renewal and refresh-token lifecycle.
-- Define consent behaviour for managed client applications.
-- Implement the agreed consent behaviour.
-- Issue identity claims.
-- Issue access tokens.
-- Issue refresh tokens.
+  - Handle the authorization request.
+  - Determine whether the user must authenticate.
+  - Determine whether consent is required.
+  - Create the OpenIddict claims principal.
+  - Return the authorised principal to OpenIddict.
+
+- Define the initial identity claims.
+  - Define the initial ID token claims.
+  - Define the initial access token claims.
+  - Define claim destinations.
+  - Define the Reference API audience.
+
+- Configure token issuance.
+  - Issue identity claims.
+  - Issue access tokens.
+  - Issue refresh tokens.
+  - Verify the issued tokens.
+
+- Configure refresh-token lifecycle.
+  - Define the refresh-token strategy.
+  - Configure refresh-token lifetime.
+  - Configure access-token renewal.
+
+- Configure consent behaviour.
+  - Define consent behaviour for managed client applications.
+  - Configure the agreed consent behaviour.
+
+- Replace the reference web application's local authentication with OpenID Connect.
+  - Configure OpenID Connect authentication.
+  - Remove local ASP.NET Core Identity authentication.
+  - Preserve the application-local authentication session.
+
 - Support logout.
+  - Configure RP-initiated logout.
+  - Sign the user out of Soteria.
+  - Sign the user out of the reference application.
+
+- Verify successful OpenID Connect authentication.
+  - Authenticate the reference web application.
+  - Verify successful sign-in.
+  - Verify successful sign-out.
 
 ---
 
 ## Milestone 2.5 – End-to-End Verification
 
-- Authenticate the reference web application.
 - Verify successful authentication.
+  - Authenticate the reference web application.
+  - Verify successful sign-in.
+  - Verify authenticated application access.
+
 - Verify unsuccessful authentication scenarios.
+  - Verify anonymous access.
+  - Verify invalid credentials.
+  - Verify unauthorised client requests.
+  - Verify invalid redirect URIs.
+
 - Verify protected API access.
+  - Call the Reference API using an access token.
+  - Verify successful API authorisation.
+  - Verify rejected requests without an access token.
+  - Verify rejected requests with an invalid access token.
+
 - Verify access-token renewal.
+  - Verify refresh-token use.
+  - Verify renewed access tokens.
+  - Verify expired access-token handling.
+
 - Verify logout.
+  - Verify reference application logout.
+  - Verify Soteria logout.
+  - Verify access after logout is denied.
+
 - Record permanent regression verification.
+  - Record the agreed verification checklist.
+  - Capture any regression tests discovered during implementation.
 
 ---
 

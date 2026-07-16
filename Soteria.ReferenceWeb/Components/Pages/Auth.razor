@@ -11,3 +11,23 @@
 <AuthorizeView>
     Hello @context.User.Identity?.Name!
 </AuthorizeView>
+
+<button class="btn btn-primary"
+        disabled="@isLoading"
+        @onclick="CallReferenceApiAsync">
+    @(isLoading ? "Calling API..." : "Call Reference API")
+</button>
+
+@if (!string.IsNullOrWhiteSpace(responseMessage))
+{
+    <p class="mt-3" role="status">
+        @responseMessage
+    </p>
+}
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <p class="mt-3 text-danger" role="alert">
+        @errorMessage
+    </p>
+}

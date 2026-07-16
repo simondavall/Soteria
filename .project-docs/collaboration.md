@@ -10,6 +10,11 @@
 - When suggesting documentation changes, quote the existing text and provide the replacement text.
 - When reviewing the documentation, focus on consistency, ambiguity, correctness, and completeness rather than stylistic improvements.
 
+Use the following format when suggesting document changes:
+- Replace \<existing section\> with \<replacement section\>.
+- Add \<new section\> after / before \<existing section\>.
+- Use a complete document replacement only when a document has been substantially restructured.
+
 ## Before implementation
 
 - Review the relevant project documentation before proposing changes.
