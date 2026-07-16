@@ -41,7 +41,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Add the Entity Framework Core integration package.
   - Verify the application builds and existing Identity behaviour remains unchanged.
 
-- Use Guid keys for ASP.NET Core Identity
+- ✓ Use Guid keys for ASP.NET Core Identity.
   - Change ApplicationUser to use a Guid key.
   - Configure Identity roles to use Guid keys.
   - Update SoteriaDbContext and Identity registration.
@@ -49,7 +49,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Recreate the development database using soteria.db.
   - Create or replace the Entity Framework migration.
   - Apply the migration.
-  - Verify existing Identity workflows and the database schema..
+  - Verify existing Identity workflows and the database schema.
 
 - Integrate OpenIddict with Entity Framework Core.
   - Configure the OpenIddict Entity Framework stores.

@@ -31,7 +31,7 @@ public class Program
             })
             .AddIdentityCookies();
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+        var connectionString = builder.Configuration.GetConnectionString("SoteriaDb") ??
                                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<SoteriaDbContext>(options =>
             options.UseSqlite(connectionString));
