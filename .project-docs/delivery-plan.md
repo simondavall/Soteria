@@ -20,37 +20,34 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 - ✓ Define the OpenID Connect provider architecture.
 - ✓ Define the authentication flow between Soteria and consuming applications.
 - ✓ Define the initial client application model.
-- Define the initial scopes and claims.
-- Define development signing and encryption certificate strategy.
 - ✓ Define the boundary between hard-coded configuration and future configuration.
-- Define access-token renewal and refresh-token lifecycle
 
 ---
 
 ## Milestone 2.2 – Reference Applications
-
-- Create the reference web application.
-- Create the reference resource API.
-- Configure the reference web application to authenticate using ASP.NET Core Identity.
-- Configure the reference resource API for local development.
+(Initially set up with local independant auth, which will be replaced with OpenID Connect in Milestone 2.3)
+- Define and create the reference web application with local ASP.NET Core Identity.
+- Define and create the reference resource API.
+- Configure and verify communication between the reference web application and the reference resource API.
 
 ---
 
-## Milestone 2.3 – OpenIddict Infrastructure
+## Milestone 2.3 – OpenIddict Implementation
 
 - Add and configure OpenIddict.
 - Integrate OpenIddict with Entity Framework Core.
 - Configure OpenID Connect endpoints.
 - Configure Authorization Code Flow with PKCE.
+- Define development signing and encryption certificate strategy.
 - Configure development signing and encryption credentials.
 - Replace the reference web application's local authentication with OpenID Connect.
 - Verify OpenID Connect authentication.
-
 
 ---
 
 ## Milestone 2.4 – Development Client Registration
 
+- Define the initial scopes and claims.
 - Register the reference client application.
 - Configure redirect URIs.
 - Configure permissions and grant types.
