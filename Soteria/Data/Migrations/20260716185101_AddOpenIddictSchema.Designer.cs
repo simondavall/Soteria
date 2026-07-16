@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Soteria.Data;
 
@@ -10,9 +11,11 @@ using Soteria.Data;
 namespace Soteria.Data.Migrations
 {
     [DbContext(typeof(SoteriaDbContext))]
-    partial class SoteriaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260716185101_AddOpenIddictSchema")]
+    partial class AddOpenIddictSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");

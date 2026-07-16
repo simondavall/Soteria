@@ -51,7 +51,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Apply the migration.
   - Verify existing Identity workflows and the database schema.
 
-- Integrate OpenIddict with Entity Framework Core.
+- ✓ Integrate OpenIddict with Entity Framework Core.
   - Configure the OpenIddict Entity Framework stores.
   - Extend SoteriaDbContext for OpenIddict using Guid OpenIddict entities.
   - Create the Entity Framework migration.

@@ -46,6 +46,13 @@ public class Program
             .AddSignInManager()
             .AddDefaultTokenProviders();
         
+        builder.Services.AddOpenIddict()
+            .AddCore(options =>
+            {
+                options.UseEntityFrameworkCore()
+                    .UseDbContext<SoteriaDbContext>();
+            });
+        
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
         var app = builder.Build();
