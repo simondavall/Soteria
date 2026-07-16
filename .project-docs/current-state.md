@@ -18,23 +18,27 @@ Phase 2 – OpenID Connect Provider Foundation
 - Preserved ASP.NET Core Identity behaviour and static SSR workflows.
 - Established the project Identity implementation patterns.
 - Reviewed and restructured the project roadmap and delivery planning model.
+- Defined the OpenID Connect provider architecture.
+- Defined the authentication flow between Soteria and consuming applications.
+- Defined the initial client application model.
+- Defined the boundary between hard-coded configuration and future configuration.
+- Defined and created the reference web application.
+- Defined and created the reference Resource API.
+- Verified communication between the reference web application and the reference Resource API.
 
 # Current milestone
 
-Milestone 2.2 – Reference Applications
+Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Define and create the reference web application with local ASP.NET Core Identity.
+Add and configure OpenIddict.
 
-- Define the purpose and minimum responsibilities of the reference web application.
-- Select the appropriate .NET 10 application template and hosting model.
-- Define its project name, solution placement and development configuration.
-- Define the minimum local Identity and protected application workflows.
-- Create the application with individual ASP.NET Core Identity authentication.
-- Verify registration, login, protected access and local session behaviour.
-- Verify that the application builds and runs independently.
+- Add the required OpenIddict packages.
+- Register the OpenIddict server services.
+- Register the ASP.NET Core host integration.
+- Verify the application builds successfully.
 
 # Next
 
-Define and create the reference resource API.
+Integrate OpenIddict with Entity Framework Core.
