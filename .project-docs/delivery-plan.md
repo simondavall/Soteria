@@ -90,19 +90,18 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Associate the scope with the Reference API resource.
   - Register the scope.
 
-- Register the reference web application as an OpenID Connect client.
+- ✓ Register the reference web application as an OpenID Connect client.
   - Define the client identifier.
   - Define the display name.
   - Configure the client type.
-  - Configure the client authentication method.
   - Configure redirect URIs.
   - Configure authorization and token endpoint permissions.
   - Configure grant-type permissions.
   - Configure response-type permissions.
   - Configure supported scopes.
   - Configure the consent type.
-  - Configure PKCE requirements if enforced per client.
-  - Defer logout-specific client configuration until logout support is implemented.
+  - Configure PKCE requirements.
+  - Verify the client registration.
 
 - Verify the OpenIddict provider configuration.
   - Verify discovery metadata.
