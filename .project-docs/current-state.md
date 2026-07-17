@@ -44,6 +44,9 @@ Phase 2 – OpenID Connect Provider Foundation
 - Enabled Authorization Code Flow as the initial supported protocol flow.
 - Generated and verified the OpenIddict development signing and encryption certificates.
 - Verified that the development certificates are reused between application restarts.
+- Verified the authorization and token endpoints hav basic default configuration.
+- Verified the discovery endpoint and signing-key metadata.
+- Verified the published endpoint metadata.
 
 # Current milestone
 
@@ -52,11 +55,10 @@ Milestone 2.3 – OpenIddict Implementation
 # Current task
 
 Configure the OpenID Connect endpoint pipeline.
-- Verify the authorization endpoint has basic default config set up.
-- Verify the token endpoint has basic default config set up.
-- Configure the discovery endpoint.
-- Configure the logout endpoint.
-- Configure the required OpenID Connect endpoints only.
+- Verify the authorization endpoint has basic default configuration.
+- Verify the token endpoint has basic default configuration.
+- Verify the discovery endpoint and signing-key metadata.
+- Configure only endpoints supported by the current runnable provider implementation.
 - Verify the published endpoint metadata.
 
 # Next
