@@ -11,7 +11,7 @@ namespace Soteria;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -70,9 +70,16 @@ public class Program
             });
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
-
+        builder.Services.AddSingleton<OpenIddictInitializer>();
+        
         var app = builder.Build();
 
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var initializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
+            await initializer.InitializeAsync();
+        }
+        
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
