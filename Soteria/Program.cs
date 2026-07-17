@@ -54,17 +54,18 @@ public class Program
             })
             .AddServer(options =>
             {
-                options.SetAuthorizationEndpointUris("/connect/authorize");
-                options.SetTokenEndpointUris("/connect/token");
+                options.SetAuthorizationEndpointUris("/connect/authorize")
+                    .SetTokenEndpointUris("/connect/token");
 
-                options.AllowAuthorizationCodeFlow();
+                options.AllowAuthorizationCodeFlow()
+                    .RequireProofKeyForCodeExchange();
 
                 options.UseAspNetCore();
 
                 if (builder.Environment.IsDevelopment())
                 {
-                    options.AddDevelopmentSigningCertificate();
-                    options.AddDevelopmentEncryptionCertificate();
+                    options.AddDevelopmentSigningCertificate()
+                        .AddDevelopmentEncryptionCertificate();
                 }
             });
         

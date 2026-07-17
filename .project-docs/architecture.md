@@ -286,6 +286,7 @@ The initial reference system consists of:
 - A distinct reference API acting as the OAuth resource server.
 
 The reference web application authenticates users through Authorization Code Flow with PKCE, creates its own local session, and calls the reference API from server-side code.
+Soteria mandates PKCE for all Authorization Code clients.
 
 Soteria issues:
 
