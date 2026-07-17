@@ -50,6 +50,7 @@ Phase 2 – OpenID Connect Provider Foundation
 - Confirmed Authorization Code Flow as the only supported protocol flow.
 - Mandated PKCE for all Authorization Code clients.
 - Verified the advertised grant type, response type and PKCE capabilities.
+- Registered the reference web application client with an OpenIddict initializer.
 
 # Current milestone
 
@@ -57,11 +58,14 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Register the initial API scope.
-- Define the scope name.
-- Associate the scope with the Reference API resource.
-- Register the scope.
+Verify the OpenIddict provider configuration.
+
+- Verify discovery metadata.
+- Verify endpoint availability.
+- Verify client registration.
+- Verify scope registration.
+- Verify unsupported requests are rejected.
 
 # Next
 
-- Register the reference web application as an OpenID Connect client.
+Milestone 2.4
