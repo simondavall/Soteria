@@ -56,6 +56,13 @@ Phase 2 – OpenID Connect Provider Foundation
 - Verified client registration.
 - Verified scope registration.
 - Verified unsupported requests are rejected.
+- Enabled OpenIddict authorization endpoint pass-through.
+- Added the Soteria authorization endpoint.
+- Connected OpenIddict authorization requests to the ASP.NET Core Identity authentication workflow.
+- Redirected unauthenticated authorization requests to the Soteria login page.
+- Preserved the complete OpenID Connect authorization request through login.
+- Verified authenticated users return to the Soteria authorization endpoint through the OpenIddict authorization pipeline.
+- Added a temporary authenticated response that ends the incomplete authorization workflow without creating a redirect loop.
 
 # Current milestone
 
@@ -63,14 +70,16 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Connect OpenIddict to ASP.NET Core Identity.
+Implement the authorisation workflow.
 
-- Configure ASP.NET Core Identity as the authentication mechanism.
-- Configure the Identity application cookie.
-- Configure OpenIddict to use the authenticated Identity principal.
-- Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict authorization pipeline.
+- Handle the validated OpenIddict authorization request.
+- Determine whether the user must authenticate.
+- Determine whether consent is required.
+- Create the OpenIddict claims principal.
+- Return the authorised principal to OpenIddict.
+- Replace the temporary authenticated response introduced by sot-31.
 
 # Next
 
-Implement the authorisation workflow.
+Define the initial identity claims.
 
