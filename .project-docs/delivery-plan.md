@@ -37,97 +37,100 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 ## Milestone 2.3 – OpenIddict Implementation
 
 - ✓ Add the OpenIddict packages.
-  - Add the ASP.NET Core integration package.
-  - Add the Entity Framework Core integration package.
-  - Verify the application builds and existing Identity behaviour remains unchanged.
+  - ✓ Add the ASP.NET Core integration package.
+  - ✓ Add the Entity Framework Core integration package.
+  - ✓ Verify the application builds and existing Identity behaviour remains unchanged.
 
 - ✓ Use Guid keys for ASP.NET Core Identity.
-  - Change ApplicationUser to use a Guid key.
-  - Configure Identity roles to use Guid keys.
-  - Update SoteriaDbContext and Identity registration.
-  - Update code that assumes string Identity identifiers.
-  - Recreate the development database using soteria.db.
-  - Create or replace the Entity Framework migration.
-  - Apply the migration.
-  - Verify existing Identity workflows and the database schema.
+  - ✓ Change ApplicationUser to use a Guid key.
+  - ✓ Configure Identity roles to use Guid keys.
+  - ✓ Update SoteriaDbContext and Identity registration.
+  - ✓ Update code that assumes string Identity identifiers.
+  - ✓ Recreate the development database using soteria.db.
+  - ✓ Create or replace the Entity Framework migration.
+  - ✓ Apply the migration.
+  - ✓ Verify existing Identity workflows and the database schema.
 
 - ✓ Integrate OpenIddict with Entity Framework Core.
-  - Configure the OpenIddict Entity Framework stores.
-  - Extend SoteriaDbContext for OpenIddict using Guid OpenIddict entities.
-  - Create the Entity Framework migration.
-  - Apply the migration.
-  - Verify the OpenIddict database schema.
+  - ✓ Configure the OpenIddict Entity Framework stores.
+  - ✓ Extend SoteriaDbContext for OpenIddict using Guid OpenIddict entities.
+  - ✓ Create the Entity Framework migration.
+  - ✓ Apply the migration.
+  - ✓ Verify the OpenIddict database schema.
 
 - ✓ Define the development signing and encryption certificate strategy.
-  - Determine how development certificates are generated, stored or loaded.
-  - Define separate signing and encryption credential requirements.
-  - Define certificate persistence and reuse between application restarts.
-  - Define safeguards against using development credentials outside development.
-  - Record the agreed strategy.
+  - ✓ Determine how development certificates are generated, stored or loaded.
+  - ✓ Define separate signing and encryption credential requirements.
+  - ✓ Define certificate persistence and reuse between application restarts.
+  - ✓ Define safeguards against using development credentials outside development.
+  - ✓ Record the agreed strategy.
 
 - ✓ Register the OpenIddict server and establish the initial provider configuration.
-  - Register the OpenIddict server services.
-  - Register the ASP.NET Core host integration.
-  - Configure development signing credential.
-  - Configure development encryption credential.
-  - Verify the server configuration and credentials load successfully.
+  - ✓ Register the OpenIddict server services.
+  - ✓ Register the ASP.NET Core host integration.
+  - ✓ Configure development signing credential.
+  - ✓ Configure development encryption credential.
+  - ✓ Verify the server configuration and credentials load successfully.
 
 - ✓ Configure the OpenID Connect endpoint pipeline.
-  - Verify the authorization endpoint has basic default configuration.
-  - Verify the token endpoint has basic default configuration.
-  - Verify the discovery endpoint and signing-key metadata.
-  - Configure only endpoints supported by the current runnable provider implementation.
-  - Verify the published endpoint metadata.
+  - ✓ Verify the authorization endpoint has basic default configuration.
+  - ✓ Verify the token endpoint has basic default configuration.
+  - ✓ Verify the discovery endpoint and signing-key metadata.
+  - ✓ Configure only endpoints supported by the current runnable provider implementation.
+  - ✓ Verify the published endpoint metadata.
 
 - ✓ Complete the supported protocol configuration.
-  - Configure Authorization Code Flow.
-  - Configure PKCE requirements.
-  - Disable unsupported flows.
-  - Verify the advertised server capabilities.
+  - ✓ Configure Authorization Code Flow.
+  - ✓ Configure PKCE requirements.
+  - ✓ Disable unsupported flows.
+  - ✓ Verify the advertised server capabilities.
 
 - ✓ Register the initial API scope.
-  - Define the scope name.
-  - Associate the scope with the Reference API resource.
-  - Register the scope.
+  - ✓ Define the scope name.
+  - ✓ Associate the scope with the Reference API resource.
+  - ✓ Register the scope.
 
 - ✓ Register the reference web application as an OpenID Connect client.
-  - Define the client identifier.
-  - Define the display name.
-  - Configure the client type.
-  - Configure redirect URIs.
-  - Configure authorization and token endpoint permissions.
-  - Configure grant-type permissions.
-  - Configure response-type permissions.
-  - Configure supported scopes.
-  - Configure the consent type.
-  - Configure PKCE requirements.
-  - Verify the client registration.
+  - ✓ Define the client identifier.
+  - ✓ Define the display name.
+  - ✓ Configure the client type.
+  - ✓ Configure redirect URIs.
+  - ✓ Configure authorization and token endpoint permissions.
+  - ✓ Configure grant-type permissions.
+  - ✓ Configure response-type permissions.
+  - ✓ Configure supported scopes.
+  - ✓ Configure the consent type.
+  - ✓ Configure PKCE requirements.
+  - ✓ Verify the client registration.
 
 - ✓ Verify the OpenIddict provider configuration.
-  - Verify discovery metadata.
-  - Verify endpoint availability.
-  - Verify client registration.
-  - Verify scope registration.
-  - Verify unsupported requests are rejected.
+  - ✓ Verify discovery metadata.
+  - ✓ Verify endpoint availability.
+  - ✓ Verify client registration.
+  - ✓ Verify scope registration.
+  - ✓ Verify unsupported requests are rejected.
 
 ---
 
 ## Milestone 2.4 – Authentication Workflow
 
 - ✓ Connect OpenIddict to ASP.NET Core Identity.
-  - Configure ASP.NET Core Identity as the authentication mechanism.
-  - Configure the Identity application cookie.
-  - Enable OpenIddict authorization endpoint pass-through to Soteria.
-  - Challenge unauthenticated users through the Soteria login workflow.
-  - Preserve the complete authorization request during authentication.
-  - Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict authorization pipeline.
+  - ✓ Configure ASP.NET Core Identity as the authentication mechanism.
+  - ✓ Configure the Identity application cookie.
+  - ✓ Enable OpenIddict authorization endpoint pass-through to Soteria.
+  - ✓ Challenge unauthenticated users through the Soteria login workflow.
+  - ✓ Preserve the complete authorization request during authentication.
+  - ✓ Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict authorization pipeline.
 
-- Implement the authorisation workflow.
-  - Handle the authorization request.
-  - Determine whether the user must authenticate.
-  - Determine whether consent is required.
-  - Create the OpenIddict claims principal.
-  - Return the authorised principal to OpenIddict.
+- ✓ Implement the authorisation workflow.
+  - ✓ Handle the authorization request.
+  - ✓ Determine whether the user must authenticate.
+  - ✓ Determine whether consent is required.
+  - ✓ Create the OpenIddict claims principal.
+  - ✓ Grant the validated requested scopes.
+  - ✓ Resolve resources from granted scopes.
+  - ✓ Return the authorised principal to OpenIddict.
+  - ✓ Verify successful Authorization Code issuance.
 
 - Define the initial identity claims.
   - Define the initial ID token claims.

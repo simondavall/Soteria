@@ -63,6 +63,14 @@ Phase 2 – OpenID Connect Provider Foundation
 - Preserved the complete OpenID Connect authorization request through login.
 - Verified authenticated users return to the Soteria authorization endpoint through the OpenIddict authorization pipeline.
 - Added a temporary authenticated response that ends the incomplete authorization workflow without creating a redirect loop.
+- Implemented the OpenIddict authorisation workflow.
+- Created the initial OpenIddict claims principal.
+- Granted validated scopes and resolved associated resources.
+- Returned authorised principals to OpenIddict for protocol response generation.
+- Verified successful Authorization Code issuance.
+- Verified implicit consent behaviour.
+- Verified clients requiring consent are rejected with `consent_required`.
+- Verified stale Identity sessions are handled safely.
 
 # Current milestone
 
@@ -70,16 +78,15 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Implement the authorisation workflow.
+Define the initial identity claims.
 
-- Handle the validated OpenIddict authorization request.
-- Determine whether the user must authenticate.
-- Determine whether consent is required.
-- Create the OpenIddict claims principal.
-- Return the authorised principal to OpenIddict.
-- Replace the temporary authenticated response introduced by sot-31.
+- Define the initial ID token claims.
+- Define the initial access token claims.
+- Define claim destinations.
+- Define the Reference API audience.
 
 # Next
 
-Define the initial identity claims.
+Configure token issuance.
+
 
