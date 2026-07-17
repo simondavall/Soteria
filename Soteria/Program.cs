@@ -51,6 +51,21 @@ public class Program
             {
                 options.UseEntityFrameworkCore()
                     .UseDbContext<SoteriaDbContext>();
+            })
+            .AddServer(options =>
+            {
+                options.SetAuthorizationEndpointUris("/connect/authorize");
+                options.SetTokenEndpointUris("/connect/token");
+
+                options.AllowAuthorizationCodeFlow();
+
+                options.UseAspNetCore();
+
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.AddDevelopmentSigningCertificate();
+                    options.AddDevelopmentEncryptionCertificate();
+                }
             });
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
@@ -71,6 +86,9 @@ public class Program
 
         app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
         app.UseHttpsRedirection();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseAntiforgery();
 

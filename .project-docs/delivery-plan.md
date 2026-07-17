@@ -65,21 +65,21 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Define safeguards against using development credentials outside development.
   - Record the agreed strategy.
 
-- Register the OpenIddict server and development credentials.
+- ✓ Register the OpenIddict server and establish the initial provider configuration
   - Register the OpenIddict server services.
   - Register the ASP.NET Core host integration.
   - Configure development signing credential.
   - Configure development encryption credential.
   - Verify the server configuration and credentials load successfully.
 
-- Configure the OpenID Connect endpoints.
+- Implement the OpenID Connect endpoint pipeline.
   - Configure the discovery endpoint.
   - Configure the authorization endpoint.
   - Configure the token endpoint.
   - Configure the logout endpoint.
   - Configure the required OpenID Connect endpoints only.
 
-- Configure the supported protocol flow.
+- Complete the supported protocol configuration.
   - Configure Authorization Code Flow.
   - Configure PKCE requirements.
   - Disable unsupported flows.
