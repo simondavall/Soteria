@@ -96,3 +96,22 @@ Authorization endpoint pass-through preserves this responsibility boundary. Inva
 
 Preserving the complete authorization request allows authentication to occur without losing the validated client request or requiring the consuming application to restart the flow.
 
+2026-07-17
+
+Decision:
+
+The initial OpenIddict authorisation workflow will issue a deliberately minimal claims principal.
+
+Following successful ASP.NET Core Identity authentication, Soteria will create a new OpenIddict claims principal containing only the mandatory subject (`sub`) claim derived from the authenticated Identity user. The principal will be assigned the validated requested scopes together with the resources associated with those scopes before being returned to OpenIddict for protocol response generation.
+
+Clients configured for implicit consent will be authorised automatically. Clients requiring any other consent model will be rejected with the standard `consent_required` OpenID Connect error until interactive consent is implemented.
+
+Reason:
+
+Separating the authorisation workflow from claim design establishes the complete protocol pipeline while keeping the implementation narrowly focused.
+
+Issuing only the mandatory subject claim avoids prematurely defining token contents before the project's identity claim model has been agreed.
+
+Using registered scopes and their associated resources keeps the workflow data-driven and avoids duplicating client or resource configuration within the authorisation endpoint.
+
+Rejecting non-implicit consent requests preserves correct OpenID Connect behaviour while explicitly deferring the consent user interface to a later milestone.
