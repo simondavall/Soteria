@@ -51,13 +51,12 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Implement the OpenID Connect endpoint pipeline.
-
-- Configure the Authorization endpoint pipeline.
-- Configure the Token endpoint pipeline.
-- Configure endpoint pass-through where required.
-- Configure the Discovery endpoint.
-- Configure the Logout endpoint.
+Configure the OpenID Connect endpoint pipeline.
+- Verify the authorization endpoint has basic default config set up.
+- Verify the token endpoint has basic default config set up.
+- Configure the discovery endpoint.
+- Configure the logout endpoint.
+- Configure the required OpenID Connect endpoints only.
 - Verify the published endpoint metadata.
 
 # Next
