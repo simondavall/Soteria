@@ -71,6 +71,12 @@ Phase 2 – OpenID Connect Provider Foundation
 - Verified implicit consent behaviour.
 - Verified clients requiring consent are rejected with `consent_required`.
 - Verified stale Identity sessions are handled safely.
+- Defined the initial ID token claims.
+- Defined the initial access token claims.
+- Implemented scope-based claim destinations.
+- Defined the initial Reference API audience.
+- Registered the standard OpenID Connect profile and email scopes.
+- Verified scope-sensitive claim issuance.
 
 # Current milestone
 
@@ -78,15 +84,13 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Define the initial identity claims.
+Configure token issuance.
 
-- Define the initial ID token claims.
-- Define the initial access token claims.
-- Define claim destinations.
-- Define the Reference API audience.
+- Issue identity claims.
+- Issue access tokens.
+- Issue refresh tokens.
+- Verify the issued tokens.
 
 # Next
 
-Configure token issuance.
-
-
+Configure refresh-token lifecycle.
