@@ -65,19 +65,19 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Define safeguards against using development credentials outside development.
   - Record the agreed strategy.
 
-- ✓ Register the OpenIddict server and establish the initial provider configuration
+- ✓ Register the OpenIddict server and establish the initial provider configuration.
   - Register the OpenIddict server services.
   - Register the ASP.NET Core host integration.
   - Configure development signing credential.
   - Configure development encryption credential.
   - Verify the server configuration and credentials load successfully.
 
-- Implement the OpenID Connect endpoint pipeline.
-  - Configure the discovery endpoint.
-  - Configure the authorization endpoint.
-  - Configure the token endpoint.
-  - Configure the logout endpoint.
-  - Configure the required OpenID Connect endpoints only.
+- ✓ Configure the OpenID Connect endpoint pipeline.
+  - Verify the authorization endpoint has basic default configuration.
+  - Verify the token endpoint has basic default configuration.
+  - Verify the discovery endpoint and signing-key metadata.
+  - Configure only endpoints supported by the current runnable provider implementation.
+  - Verify the published endpoint metadata.
 
 - Complete the supported protocol configuration.
   - Configure Authorization Code Flow.
@@ -96,13 +96,13 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Configure the client type.
   - Configure the client authentication method.
   - Configure redirect URIs.
-  - Configure post-logout redirect URIs.
-  - Configure endpoint permissions.
+  - Configure authorization and token endpoint permissions.
   - Configure grant-type permissions.
   - Configure response-type permissions.
   - Configure supported scopes.
   - Configure the consent type.
   - Configure PKCE requirements if enforced per client.
+  - Defer logout-specific client configuration until logout support is implemented.
 
 - Verify the OpenIddict provider configuration.
   - Verify discovery metadata.
@@ -155,9 +155,14 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Preserve the application-local authentication session.
 
 - Support logout.
+  - Configure the OpenIddict end-session endpoint.
+  - Configure end-session endpoint pass-through or an equivalent OpenIddict request handler.
+  - Configure the reference client's post-logout redirect URI.
+  - Configure any required end-session endpoint permission.
   - Configure RP-initiated logout.
   - Sign the user out of Soteria.
   - Sign the user out of the reference application.
+  - Verify post-logout redirect behaviour.
 
 - Verify successful OpenID Connect authentication.
   - Authenticate the reference web application.

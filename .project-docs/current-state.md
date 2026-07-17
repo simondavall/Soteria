@@ -39,11 +39,14 @@ Phase 2 – OpenID Connect Provider Foundation
 - Confirmed that local Rider execution runs Soteria under the interactive development account.
 - Defined separate OpenIddict development signing and encryption certificates.
 - Defined Development-only credential registration and deferred the production and IIS credential strategy.
-- Registered the OpenIddict server services and ASP.NET Core host integration..
+- Registered the OpenIddict server services and ASP.NET Core host integration.
 - Configured the initial OpenIddict Authorization and Token endpoint URIs.
 - Enabled Authorization Code Flow as the initial supported protocol flow.
 - Generated and verified the OpenIddict development signing and encryption certificates.
 - Verified that the development certificates are reused between application restarts.
+- Verified the authorization and token endpoints hav basic default configuration.
+- Verified the discovery endpoint and signing-key metadata.
+- Verified the published endpoint metadata.
 
 # Current milestone
 
@@ -51,13 +54,11 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Implement the OpenID Connect endpoint pipeline.
-
-- Configure the Authorization endpoint pipeline.
-- Configure the Token endpoint pipeline.
-- Configure endpoint pass-through where required.
-- Configure the Discovery endpoint.
-- Configure the Logout endpoint.
+Configure the OpenID Connect endpoint pipeline.
+- Verify the authorization endpoint has basic default configuration.
+- Verify the token endpoint has basic default configuration.
+- Verify the discovery endpoint and signing-key metadata.
+- Configure only endpoints supported by the current runnable provider implementation.
 - Verify the published endpoint metadata.
 
 # Next
