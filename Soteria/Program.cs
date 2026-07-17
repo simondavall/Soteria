@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using OpenIddict.Abstractions;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
@@ -64,6 +65,10 @@ public class Program
                 options.SetAuthorizationEndpointUris("/connect/authorize")
                     .SetTokenEndpointUris("/connect/token");
 
+                options.RegisterScopes(
+                    OpenIddictConstants.Scopes.Email,
+                    OpenIddictConstants.Scopes.Profile);
+                    
                 options.AllowAuthorizationCodeFlow()
                     .RequireProofKeyForCodeExchange();
 
