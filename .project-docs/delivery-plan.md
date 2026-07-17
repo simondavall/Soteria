@@ -118,7 +118,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Configure ASP.NET Core Identity as the authentication mechanism.
   - Configure the Identity application cookie.
   - Configure OpenIddict to use the authenticated Identity principal.
-  - Verify authenticated users reach the OpenIddict pipeline.
+  - Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict authorization pipeline.
 
 - Implement the authorisation workflow.
   - Handle the authorization request.
