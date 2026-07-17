@@ -61,7 +61,6 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         }
 
         var consentType = await applicationManager.GetConsentTypeAsync(application, context.RequestAborted);
-
         if (!string.Equals(consentType, OpenIddictConstants.ConsentTypes.Implicit, StringComparison.Ordinal))
         {
             var properties = new AuthenticationProperties(
@@ -77,12 +76,20 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
             return Results.Forbid(properties, [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
         }
 
+        var userName = await userManager.GetUserNameAsync(user)
+            ?? throw new InvalidOperationException("The authenticated user does not have a user name.");
+
+        var email = await userManager.GetEmailAsync(user)
+            ?? throw new InvalidOperationException("The authenticated user does not have an email address.");
+
         var identity = new ClaimsIdentity(
             authenticationType: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
             nameType: OpenIddictConstants.Claims.Name,
             roleType: OpenIddictConstants.Claims.Role);
 
         identity.AddClaim(OpenIddictConstants.Claims.Subject, user.Id.ToString());
+        identity.AddClaim(OpenIddictConstants.Claims.Name, userName);
+        identity.AddClaim(OpenIddictConstants.Claims.Email, email);
 
         var principal = new ClaimsPrincipal(identity);
         principal.SetScopes(request.GetScopes());
@@ -94,6 +101,31 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         }
 
         principal.SetResources(resources);
+
+        principal.SetDestinations(static claim => claim.Type switch
+        {
+            OpenIddictConstants.Claims.Subject =>
+            [
+                OpenIddictConstants.Destinations.IdentityToken,
+                OpenIddictConstants.Destinations.AccessToken
+            ],
+
+            OpenIddictConstants.Claims.Name
+                when claim.Subject?.HasScope(OpenIddictConstants.Scopes.Profile) is true =>
+                [
+                    OpenIddictConstants.Destinations.IdentityToken,
+                    OpenIddictConstants.Destinations.AccessToken
+                ],
+
+            OpenIddictConstants.Claims.Email
+                when claim.Subject?.HasScope(OpenIddictConstants.Scopes.Email) is true =>
+                [
+                    OpenIddictConstants.Destinations.IdentityToken,
+                    OpenIddictConstants.Destinations.AccessToken
+                ],
+
+            _ => []
+        });
 
         return Results.SignIn(principal, authenticationScheme: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }

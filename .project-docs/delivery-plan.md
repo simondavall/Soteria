@@ -132,11 +132,11 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - ✓ Return the authorised principal to OpenIddict.
   - ✓ Verify successful Authorization Code issuance.
 
-- Define the initial identity claims.
-  - Define the initial ID token claims.
-  - Define the initial access token claims.
-  - Define claim destinations.
-  - Define the Reference API audience.
+- ✓ Define the initial identity claims.
+  - ✓ Define the initial ID token claims.
+  - ✓ Define the initial access token claims.
+  - ✓ Define claim destinations.
+  - ✓ Define the Reference API audience.
 
 - Configure token issuance.
   - Issue identity claims.

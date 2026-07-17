@@ -115,3 +115,28 @@ Issuing only the mandatory subject claim avoids prematurely defining token conte
 Using registered scopes and their associated resources keeps the workflow data-driven and avoids duplicating client or resource configuration within the authorisation endpoint.
 
 Rejecting non-implicit consent requests preserves correct OpenID Connect behaviour while explicitly deferring the consent user interface to a later milestone.
+
+2026-07-17
+
+Decision:
+
+The initial token model will expose only a minimal set of identity claims.
+
+Both ID tokens and access tokens will initially contain:
+
+- `sub`
+- `name`
+- `email`
+
+The `sub` claim will always be issued. The `name` claim will only be issued when the `profile` scope is granted, and the `email` claim will only be issued when the `email` scope is granted. The access token audience will be derived from the resources associated with the granted scopes rather than being hard-coded.
+
+Roles, application-specific claims and additional profile claims are deferred until the corresponding identity and authorisation features are implemented.
+
+Reason:
+
+A minimal claim model is sufficient for the reference implementation while avoiding premature design decisions around application authorisation.
+
+Using scope-based claim destinations aligns claim disclosure with the OpenID Connect scope model and ensures only authorised identity information is included in issued tokens.
+
+Deriving audiences from registered scope resources keeps the authorisation workflow data-driven and avoids duplicating configuration within the endpoint implementation.
+
