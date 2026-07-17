@@ -73,9 +73,9 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Verify the server configuration and credentials load successfully.
 
 - Implement the OpenID Connect endpoint pipeline.
+  - Implement the authorization endpoint.
+  - Implement the token endpoint.
   - Configure the discovery endpoint.
-  - Configure the authorization endpoint.
-  - Configure the token endpoint.
   - Configure the logout endpoint.
   - Configure the required OpenID Connect endpoints only.
 

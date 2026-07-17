@@ -39,7 +39,7 @@ Phase 2 – OpenID Connect Provider Foundation
 - Confirmed that local Rider execution runs Soteria under the interactive development account.
 - Defined separate OpenIddict development signing and encryption certificates.
 - Defined Development-only credential registration and deferred the production and IIS credential strategy.
-- Registered the OpenIddict server services and ASP.NET Core host integration..
+- Registered the OpenIddict server services and ASP.NET Core host integration.
 - Configured the initial OpenIddict Authorization and Token endpoint URIs.
 - Enabled Authorization Code Flow as the initial supported protocol flow.
 - Generated and verified the OpenIddict development signing and encryption certificates.
