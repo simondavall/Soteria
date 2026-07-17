@@ -64,3 +64,17 @@ Separate signing and encryption certificates preserve the distinction between th
 
 Restricting the development certificates to the Development environment prevents them from becoming an accidental production configuration. Deferring the production implementation avoids designing certificate deployment and rotation before the hosting environment and operational requirements are known.
 
+2026-07-17
+
+Decision:
+
+OpenIddict bootstrap data will be managed through a dedicated application initialisation service.
+
+The initialisation service will use the OpenIddict manager APIs to create and maintain required development bootstrap data, such as scopes and client registrations, in an idempotent manner during application startup.
+
+Reason:
+
+OpenIddict entities are intended to be managed through the framework's manager APIs rather than Entity Framework data seeding.
+
+Using a dedicated initialisation service keeps application startup configuration focused, establishes a single pattern for bootstrapping OpenIddict data, and provides a repeatable mechanism that can be extended as additional scopes, clients and other bootstrap data are introduced.
+
