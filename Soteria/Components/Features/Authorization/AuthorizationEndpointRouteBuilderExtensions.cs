@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
-using OpenIddict.Server.AspNetCore;
+using Microsoft.AspNetCore.WebUtilities;
 // ReSharper disable CheckNamespace
 
 namespace Microsoft.AspNetCore.Routing;
 
 internal static class AuthorizationEndpointRouteBuilderExtensions
 {
-    public static IEndpointConventionBuilder MapSoteriaAuthorizationEndpoint(
-        this IEndpointRouteBuilder endpoints)
+    public static IEndpointConventionBuilder MapSoteriaAuthorizationEndpoint(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
@@ -19,22 +18,15 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
             HandleAuthorizationAsync);
     }
 
-    private static async Task<IResult> HandleAuthorizationAsync(
-        HttpContext context)
+    private static async Task HandleAuthorizationAsync(HttpContext context)
     {
-        var authenticationResult =
-            await context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
-
+        var authenticationResult = await context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
         if (!authenticationResult.Succeeded)
         {
-            var properties = new AuthenticationProperties
-            {
-                RedirectUri = context.Request.GetEncodedPathAndQuery()
-            };
-
-            return TypedResults.Challenge(
-                properties,
-                [IdentityConstants.ApplicationScheme]);
+            var returnUrl = context.Request.GetEncodedPathAndQuery();
+            var loginUrl = QueryHelpers.AddQueryString("/Account/Login", "ReturnUrl", returnUrl);
+            context.Response.Redirect(loginUrl);
+            return;
         }
 
         var request = context.GetOpenIddictServerRequest()
@@ -42,7 +34,6 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
                           "The OpenIddict authorization request is unavailable.");
 
         await context.SignOutAsync(IdentityConstants.ApplicationScheme);
-
-        return TypedResults.LocalRedirect("/Account/Login");
+        context.Response.Redirect("/Account/Login");
     }
 }
