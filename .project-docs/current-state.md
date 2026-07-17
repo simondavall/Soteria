@@ -47,6 +47,9 @@ Phase 2 – OpenID Connect Provider Foundation
 - Verified the authorization and token endpoints hav basic default configuration.
 - Verified the discovery endpoint and signing-key metadata.
 - Verified the published endpoint metadata.
+- Confirmed Authorization Code Flow as the only supported protocol flow.
+- Mandated PKCE for all Authorization Code clients.
+- Verified the advertised grant type, response type and PKCE capabilities.
 
 # Current milestone
 
@@ -54,13 +57,11 @@ Milestone 2.3 – OpenIddict Implementation
 
 # Current task
 
-Configure the OpenID Connect endpoint pipeline.
-- Verify the authorization endpoint has basic default configuration.
-- Verify the token endpoint has basic default configuration.
-- Verify the discovery endpoint and signing-key metadata.
-- Configure only endpoints supported by the current runnable provider implementation.
-- Verify the published endpoint metadata.
+Register the initial API scope.
+- Define the scope name.
+- Associate the scope with the Reference API resource.
+- Register the scope.
 
 # Next
 
-- Complete the supported protocol configuration.
+- Register the reference web application as an OpenID Connect client.

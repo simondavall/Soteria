@@ -79,7 +79,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Configure only endpoints supported by the current runnable provider implementation.
   - Verify the published endpoint metadata.
 
-- Complete the supported protocol configuration.
+- ✓ Complete the supported protocol configuration.
   - Configure Authorization Code Flow.
   - Configure PKCE requirements.
   - Disable unsupported flows.
