@@ -31,6 +31,12 @@ public class Program
             })
             .AddIdentityCookies();
 
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.ReturnUrlParameter = "ReturnUrl";
+        });
+
         var connectionString = builder.Configuration.GetConnectionString("SoteriaDb") ??
                                throw new InvalidOperationException("Connection string 'SoteriaDb' not found.");
         builder.Services.AddDbContext<SoteriaDbContext>(options =>
@@ -61,7 +67,8 @@ public class Program
                 options.AllowAuthorizationCodeFlow()
                     .RequireProofKeyForCodeExchange();
 
-                options.UseAspNetCore();
+                options.UseAspNetCore()
+                    .EnableAuthorizationEndpointPassthrough();
 
                 if (builder.Environment.IsDevelopment())
                 {
@@ -108,6 +115,8 @@ public class Program
         // Add additional endpoints required by the Identity /Account Razor components.
         app.MapAdditionalIdentityEndpoints();
 
+        app.MapSoteriaAuthorizationEndpoint();
+        
         app.Run();
     }
 }

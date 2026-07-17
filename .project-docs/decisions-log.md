@@ -78,3 +78,21 @@ OpenIddict entities are intended to be managed through the framework's manager A
 
 Using a dedicated initialisation service keeps application startup configuration focused, establishes a single pattern for bootstrapping OpenIddict data, and provides a repeatable mechanism that can be extended as additional scopes, clients and other bootstrap data are introduced.
 
+2026-07-17
+
+Decision:
+
+OpenIddict will validate authorization requests before passing valid requests through to a Soteria-owned authorization endpoint.
+
+The Soteria authorization endpoint will coordinate interactive authentication using the ASP.NET Core Identity application cookie. Unauthenticated users will be redirected to the Soteria login workflow with the complete authorization request preserved as the return URL.
+
+After authentication, Soteria will own the application-level authorization workflow and will supply the resulting principal and authorization decisions back to OpenIddict for protocol response generation.
+
+Reason:
+
+OpenIddict owns OpenID Connect and OAuth protocol validation, while ASP.NET Core Identity owns local user authentication and the Soteria session.
+
+Authorization endpoint pass-through preserves this responsibility boundary. Invalid protocol requests are rejected by OpenIddict before application logic runs, while valid requests can participate in Soteria's authentication, consent, scope, claims and access-policy workflows.
+
+Preserving the complete authorization request allows authentication to occur without losing the validated client request or requiring the consuming application to restart the flow.
+

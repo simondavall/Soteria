@@ -114,11 +114,13 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 
 ## Milestone 2.4 – Authentication Workflow
 
-- Connect OpenIddict to ASP.NET Core Identity.
+- ✓ Connect OpenIddict to ASP.NET Core Identity.
   - Configure ASP.NET Core Identity as the authentication mechanism.
   - Configure the Identity application cookie.
-  - Configure OpenIddict to use the authenticated Identity principal.
-  - Verify authenticated users reach the OpenIddict pipeline.
+  - Enable OpenIddict authorization endpoint pass-through to Soteria.
+  - Challenge unauthenticated users through the Soteria login workflow.
+  - Preserve the complete authorization request during authentication.
+  - Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict authorization pipeline.
 
 - Implement the authorisation workflow.
   - Handle the authorization request.

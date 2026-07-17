@@ -35,14 +35,35 @@ Use the following format when suggesting document changes:
 The assistant should complete each task using the following workflow:
 
 1. Discuss the implementation where architectural or design decisions remain. Do not revisit established project decisions unless a genuine inconsistency or ambiguity is identified.
-2. Define the Jira ticket (title, description, goal and scope). The developer will assign the RefId.
-3. Provide the complete implementation together with the verification checklist in a single response.
-4. Once verification has passed, recommend updates only for the affected project documents. Use explicit copy-ready recommendations in the established format:
-    - Replace <existing section> with <replacement section>.
-    - Add <new section> after / before <existing section>.
-    - Where adjacent sections are changing, prefer a single replacement covering all affected sections.
+2. Update affected project documentation immediately when the discussion settles a project decision, scope clarification, responsibility boundary or delivery-plan change. The documentation should describe the implementation that is about to be performed before implementation begins.
+3. Define the Jira ticket after the discussion phase so that its title, description, goal and scope reflect the agreed implementation. The developer will assign the RefId.
+4. Provide the complete implementation together with the verification checklist in a single response, pausing only where new information or a genuine decision is required.
+5. Once verification has passed, recommend updates that record the completed implementation and advance the documented project state.
 
-The task is not considered complete until the verification has passed and the required project documentation updates have been recommended.
+Discussion-phase documentation updates may include:
+
+- architectural decisions;
+- Jira scope and task-boundary clarifications;
+- delivery-plan changes;
+- roadmap changes;
+- responsibility clarifications;
+- implementation requirements established during discussion.
+
+Completion-phase documentation updates may include:
+
+- completed work in current-state.md;
+- the next current task;
+- implementation decisions discovered during development;
+- proven implementation patterns;
+- permanent regression verification.
+
+Use explicit copy-ready recommendations in the established format:
+
+- Replace <existing section> with <replacement section>.
+- Add <new section> after / before <existing section>.
+- Where adjacent sections are changing, prefer a single replacement covering all affected sections.
+
+The task is not considered complete until verification has passed and the required project documentation updates have been applied or recommended.
 
 Verification should include confirming that:
 - the application builds successfully (where applicable);
