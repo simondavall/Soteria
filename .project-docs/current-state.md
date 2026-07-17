@@ -51,21 +51,26 @@ Phase 2 – OpenID Connect Provider Foundation
 - Mandated PKCE for all Authorization Code clients.
 - Verified the advertised grant type, response type and PKCE capabilities.
 - Registered the reference web application client with an OpenIddict initializer.
+- Verified discovery metadata.
+- Verified endpoint availability.
+- Verified client registration.
+- Verified scope registration.
+- Verified unsupported requests are rejected.
 
 # Current milestone
 
-Milestone 2.3 – OpenIddict Implementation
+Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Verify the OpenIddict provider configuration.
+Connect OpenIddict to ASP.NET Core Identity.
 
-- Verify discovery metadata.
-- Verify endpoint availability.
-- Verify client registration.
-- Verify scope registration.
-- Verify unsupported requests are rejected.
+- Configure ASP.NET Core Identity as the authentication mechanism.
+- Configure the Identity application cookie.
+- Configure OpenIddict to use the authenticated Identity principal.
+- Verify authenticated users reach the OpenIddict pipeline.
 
 # Next
 
-Milestone 2.4
+Implement the authorisation workflow.
+

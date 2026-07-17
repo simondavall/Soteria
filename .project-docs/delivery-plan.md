@@ -103,7 +103,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Configure PKCE requirements.
   - Verify the client registration.
 
-- Verify the OpenIddict provider configuration.
+- ✓ Verify the OpenIddict provider configuration.
   - Verify discovery metadata.
   - Verify endpoint availability.
   - Verify client registration.
