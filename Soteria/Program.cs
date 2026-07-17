@@ -50,7 +50,8 @@ public class Program
             .AddCore(options =>
             {
                 options.UseEntityFrameworkCore()
-                    .UseDbContext<SoteriaDbContext>();
+                    .UseDbContext<SoteriaDbContext>()
+                    .ReplaceDefaultEntities<Guid>();
             })
             .AddServer(options =>
             {
@@ -70,7 +71,7 @@ public class Program
             });
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
-        builder.Services.AddSingleton<OpenIddictInitializer>();
+        builder.Services.AddScoped<OpenIddictInitializer>();
         
         var app = builder.Build();
 

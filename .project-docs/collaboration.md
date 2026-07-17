@@ -9,7 +9,9 @@
 - Distinguish clearly between observations, recommendations, and project decisions.
 - When suggesting documentation changes, quote the existing text and provide the replacement text.
 - When reviewing the documentation, focus on consistency, ambiguity, correctness, and completeness rather than stylistic improvements.
-- Provide document updates that the user an easily use, in the correct established format.
+- Provide document updates that are easy for the user to apply in the established format.
+- Recommend updates only for documents affected by the completed task.
+- Prefer a single replacement covering adjacent sections rather than multiple small replacements where it improves readability.
 
 Use the following format when suggesting document changes:
 - Replace \<existing section\> with \<replacement section\>.
@@ -30,24 +32,23 @@ Use the following format when suggesting document changes:
 
 ## Task Workflow
 
-Development is tracked using a lightweight Jira-style ticket system.
+The assistant should complete each task using the following workflow:
 
-When beginning a new task, the assistant should provide:
+1. Discuss the implementation where architectural or design decisions remain. Do not revisit established project decisions unless a genuine inconsistency or ambiguity is identified.
+2. Define the Jira ticket (title, description, goal and scope). The developer will assign the RefId.
+3. Provide the complete implementation together with the verification checklist in a single response.
+4. Once verification has passed, recommend updates only for the affected project documents. Use explicit copy-ready recommendations in the established format:
+    - Replace <existing section> with <replacement section>.
+    - Add <new section> after / before <existing section>.
+    - Where adjacent sections are changing, prefer a single replacement covering all affected sections.
 
-- A concise ticket title.
-- A short task description suitable for the tracking system.
-- A concise task goal
-- A scope for the task
+The task is not considered complete until the verification has passed and the required project documentation updates have been recommended.
 
-The developer will assign a reference ID (RefId) to the task.
-
-The RefId is used consistently throughout development:
-
-- Git branch names.
-- Git commit messages. (Always past tense, in the form '<lowercase refId>: <commit message>)
-- Task tracking.
-
-The assistant should use the ticket title and description to help define the scope of the work before implementation begins.
+Verification should include confirming that:
+- the application builds successfully (where applicable);
+- the application starts successfully and remains runnable after the changes;
+- previously completed behaviour required by the current task continues to work;
+- the new behaviour introduced by the task behaves as expected.
 
 ## Implementation
 

@@ -85,7 +85,7 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - Disable unsupported flows.
   - Verify the advertised server capabilities.
 
-- Register the initial API scope.
+- ✓ Register the initial API scope.
   - Define the scope name.
   - Associate the scope with the Reference API resource.
   - Register the scope.
