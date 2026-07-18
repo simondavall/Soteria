@@ -51,13 +51,18 @@ public sealed class OpenIddictInitializer(IOpenIddictScopeManager scopeManager, 
             return;
         }
 
+        var referenceWebClientSecret =
+            configuration["Authentication:OpenIdConnect:ClientSecret"]
+            ?? throw new InvalidOperationException(
+                "The Authentication:OpenIdConnect:ClientSecret configuration value is required.");
+        
         var descriptor = new OpenIddictApplicationDescriptor
         {
             ClientId = ReferenceWebClientId,
             DisplayName = ReferenceWebDisplayName,
             ConsentType = OpenIddictConstants.ConsentTypes.Implicit,
             ClientType = OpenIddictConstants.ClientTypes.Confidential,
-            ClientSecret = configuration["ReferenceWeb:ClientSecret"]
+            ClientSecret = referenceWebClientSecret
         };
 
         descriptor.RedirectUris.Add(new Uri(ReferenceWebRedirectUri));

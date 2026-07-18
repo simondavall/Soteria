@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        Env.TraversePath().Load();
+        
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
