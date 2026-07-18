@@ -84,6 +84,11 @@ Phase 2 – OpenID Connect Provider Foundation
 - Registered the standard `offline_access` scope.
 - Configured refresh tokens to be issued only when the `offline_access` scope is requested.
 - Verified that refresh tokens are issued when `offline_access` is requested and omitted otherwise.
+- Defined the refresh-token strategy.
+- Configured refresh-token lifetime.
+- Configured access-token renewal.
+- Verified rolling refresh-token rotation.
+- Verified consent-required behaviour remains unchanged.
 
 # Current milestone
 
@@ -91,11 +96,10 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Configure refresh-token lifecycle.
-- Define the refresh-token strategy.
-- Configure refresh-token lifetime.
-- Configure access-token renewal.
+Configure consent behaviour.
+- Define consent behaviour for managed client applications.
+- Configure the agreed consent behaviour.
 
 # Next
 
-- Configure consent behaviour.
+- Replace the reference web application's local authentication with OpenID Connect.

@@ -213,8 +213,9 @@ Consuming web application
   ▼
 OpenIddict
   │
-  ├── Issues an ID token for the consuming application
-  └── Issues an access token for the resource API
+  ├── Issues an ID token
+  ├── Issues an access token
+  └── Issues a refresh token when offline_access is granted
           │
           ▼
 Consuming web application
@@ -292,7 +293,7 @@ Soteria issues:
 
 - An ID token for the reference web application.
 - A signed JWT access token whose audience identifies the reference API.
-- A refresh token that allows the reference application to renew API access without repeating interactive authentication.
+- A refresh token, issued only when the offline_access scope is granted, that allows the reference application to renew API access without repeating interactive authentication.
 
 The reference client initially uses implicit consent. This means Soteria does not display a consent page for the trusted client. It does not refer to the deprecated OpenID Connect Implicit Flow.
 
