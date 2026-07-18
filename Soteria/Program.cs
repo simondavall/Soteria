@@ -2,6 +2,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using OpenIddict.Abstractions;
 using Soteria.Components;
@@ -71,7 +72,11 @@ public class Program
         {
             throw new InvalidOperationException("OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
         }
-
+        
+        var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
+                            ?? throw new InvalidOperationException(
+                                "The OpenIddict:EncryptionKey configuration value is required.");
+        
         builder.Services.AddOpenIddict()
             .AddCore(options =>
             {
@@ -103,8 +108,9 @@ public class Program
 
                 if (builder.Environment.IsDevelopment())
                 {
-                    options.AddDevelopmentSigningCertificate()
-                        .AddDevelopmentEncryptionCertificate();
+                    options.AddDevelopmentSigningCertificate();
+                    //options.AddDevelopmentEncryptionCertificate();
+                    options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
                 }
             });
         
