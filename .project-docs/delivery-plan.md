@@ -144,10 +144,12 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - ✓ Issue refresh tokens.
   - ✓ Verify the issued tokens.
 
-- Configure refresh-token lifecycle.
-  - Define the refresh-token strategy.
-  - Configure refresh-token lifetime.
-  - Configure access-token renewal.
+- ✓ Configure refresh-token lifecycle.
+  - ✓ Define the refresh-token strategy.
+  - ✓ Configure refresh-token lifetime.
+  - ✓ Configure access-token renewal.
+  - ✓ Verify rolling refresh-token rotation.
+  - ✓ Verify consent-required behaviour remains unchanged.
 
 - Configure consent behaviour.
   - Define consent behaviour for managed client applications.

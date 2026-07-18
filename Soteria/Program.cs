@@ -20,7 +20,7 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         builder.Services.AddMudServices();
-        
+
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
@@ -38,8 +38,10 @@ public class Program
             options.ReturnUrlParameter = "ReturnUrl";
         });
 
-        var connectionString = builder.Configuration.GetConnectionString("SoteriaDb") ??
-                               throw new InvalidOperationException("Connection string 'SoteriaDb' not found.");
+        var connectionString = builder.Configuration.GetConnectionString("SoteriaDb")
+            ?? throw new InvalidOperationException(
+                "Connection string 'SoteriaDb' not found.");
+
         builder.Services.AddDbContext<SoteriaDbContext>(options =>
             options.UseSqlite(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -52,7 +54,21 @@ public class Program
             .AddEntityFrameworkStores<SoteriaDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
-        
+
+        var tokenConfiguration = builder.Configuration.GetRequiredSection("OpenIddict:Tokens");
+
+        var accessTokenLifetimeMinutes = tokenConfiguration.GetValue<int>("AccessTokenLifetimeMinutes");
+        if (accessTokenLifetimeMinutes <= 0)
+        {
+            throw new InvalidOperationException("OpenIddict:Tokens:AccessTokenLifetimeMinutes must be greater than zero.");
+        }
+
+        var refreshTokenLifetimeDays = tokenConfiguration.GetValue<int>("RefreshTokenLifetimeDays");
+        if (refreshTokenLifetimeDays <= 0)
+        {
+            throw new InvalidOperationException("OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
+        }
+
         builder.Services.AddOpenIddict()
             .AddCore(options =>
             {
@@ -65,11 +81,16 @@ public class Program
                 options.SetAuthorizationEndpointUris("/connect/authorize")
                     .SetTokenEndpointUris("/connect/token");
 
+                options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
+                    .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
+
+                //options.DisableAccessTokenEncryption();
+                
                 options.RegisterScopes(
                     OpenIddictConstants.Scopes.Email,
                     OpenIddictConstants.Scopes.Profile,
                     OpenIddictConstants.Scopes.OfflineAccess);
-                    
+
                 options.AllowAuthorizationCodeFlow()
                     .AllowRefreshTokenFlow()
                     .RequireProofKeyForCodeExchange();
@@ -86,7 +107,7 @@ public class Program
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
         builder.Services.AddScoped<OpenIddictInitializer>();
-        
+
         var app = builder.Build();
 
         await using (var scope = app.Services.CreateAsyncScope())
@@ -94,7 +115,7 @@ public class Program
             var initializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
             await initializer.InitializeAsync();
         }
-        
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -123,7 +144,7 @@ public class Program
         app.MapAdditionalIdentityEndpoints();
 
         app.MapSoteriaAuthorizationEndpoint();
-        
+
         app.Run();
     }
 }

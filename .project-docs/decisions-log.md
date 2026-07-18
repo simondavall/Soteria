@@ -140,12 +140,40 @@ Using scope-based claim destinations aligns claim disclosure with the OpenID Con
 
 Deriving audiences from registered scope resources keeps the authorisation workflow data-driven and avoids duplicating configuration within the endpoint implementation.
 
-## Refresh token issuance
+2026-07-17
 
-### Decision
+Decision:
 
 Refresh tokens are issued only when the client requests the standard OpenID Connect `offline_access` scope.
 
-### Reason
+Reason:
 
-This aligns Soteria with the OpenID Connect specification, makes long-lived access an explicit client request, and avoids issuing refresh tokens unnecessarily.
+Requiring offline_access makes long-lived access an explicit client request and avoids issuing refresh tokens unnecessarily.
+
+2026-07-18
+
+Decision:
+
+Soteria uses rolling refresh tokens. A successful refresh-token exchange issues a renewed access token and a replacement refresh token. Refresh-token reuse is not enabled.
+
+Access-token and refresh-token lifetimes are configured provider-wide through application configuration.
+
+The initial lifetimes are:
+
+access token: 15 minutes;
+refresh token: 14 days.
+
+Access-token lifetime is represented in configuration as minutes. Refresh-token lifetime is represented as days.
+
+The current provider task configures the server-side refresh-token exchange. Token storage, expiry detection and automatic renewal within the reference web application remain part of that application's OpenID Connect integration.
+
+Reason:
+
+Rolling refresh tokens reduce continued reliance on the same long-lived credential. Requiring the client to store the replacement token also establishes the behaviour needed by the later reference-client implementation.
+
+Short-lived access tokens reduce the useful lifetime of a compromised bearer credential. A longer refresh-token lifetime allows the server-side reference application to renew API access without repeatedly requiring interactive authentication.
+
+Provider-wide configuration keeps the initial implementation explicit and consistent. Per-client token lifetimes are deferred until a concrete client-management requirement justifies them.
+
+Keeping client renewal orchestration outside this task preserves the delivery-plan boundary and avoids pulling forward the reference application's OpenID Connect integration.
+
