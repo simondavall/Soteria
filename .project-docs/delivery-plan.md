@@ -138,11 +138,11 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - ✓ Define claim destinations.
   - ✓ Define the Reference API audience.
 
-- Configure token issuance.
-  - Issue identity claims.
-  - Issue access tokens.
-  - Issue refresh tokens.
-  - Verify the issued tokens.
+- ✓ Configure token issuance.
+  - ✓ Issue identity claims.
+  - ✓ Issue access tokens.
+  - ✓ Issue refresh tokens.
+  - ✓ Verify the issued tokens.
 
 - Configure refresh-token lifecycle.
   - Define the refresh-token strategy.

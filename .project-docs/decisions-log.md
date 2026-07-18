@@ -140,3 +140,12 @@ Using scope-based claim destinations aligns claim disclosure with the OpenID Con
 
 Deriving audiences from registered scope resources keeps the authorisation workflow data-driven and avoids duplicating configuration within the endpoint implementation.
 
+## Refresh token issuance
+
+### Decision
+
+Refresh tokens are issued only when the client requests the standard OpenID Connect `offline_access` scope.
+
+### Reason
+
+This aligns Soteria with the OpenID Connect specification, makes long-lived access an explicit client request, and avoids issuing refresh tokens unnecessarily.

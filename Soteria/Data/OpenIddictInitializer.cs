@@ -68,12 +68,14 @@ public sealed class OpenIddictInitializer(IOpenIddictScopeManager scopeManager, 
             Permissions.Endpoints.Token,
 
             Permissions.GrantTypes.AuthorizationCode,
+            Permissions.GrantTypes.RefreshToken,
 
             Permissions.ResponseTypes.Code,
 
             Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OpenId,
             Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.Profile,
             Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.Email,
+            Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OfflineAccess,
             Permissions.Prefixes.Scope + ReferenceApiScope
         ]);
 
