@@ -96,6 +96,14 @@ Phase 2 – OpenID Connect Provider Foundation
 - Added local `.env` configuration for development secrets.
 - Configured the Reference API to validate access tokens issued by Soteria.
 - Verified end-to-end authentication and protected API access.
+- Implemented automatic access-token renewal in the Reference Web application.
+- Added proactive access-token expiry detection.
+- Added refresh-token exchange through Soteria's token endpoint.
+- Persisted replacement access tokens and rolling refresh tokens in the local authentication session.
+- Added a single protected API retry following forced token renewal.
+- Verified renewal failure invalidates the local consuming-application session.
+- Verified tokens remain unavailable to browser application code.
+- Verified automatic renewal end to end.
 
 # Current milestone
 
@@ -103,12 +111,16 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Implement automatic access-token renewal using refresh tokens.
-- Detect expired access tokens.
-- Renew access tokens using the refresh token.
-- Persist replacement refresh tokens.
-- Retry failed API requests after successful renewal.
+Support logout.
+- Configure the OpenIddict end-session endpoint.
+- Configure end-session endpoint pass-through or an equivalent OpenIddict request handler.
+- Configure the reference client's post-logout redirect URI.
+- Configure any required end-session endpoint permission.
+- Configure RP-initiated logout.
+- Sign the user out of Soteria.
+- Sign the user out of the reference application.
+- Verify post-logout redirect behaviour.
 
 # Next
 
-- Support Logout
+Verify successful OpenID Connect authentication.
