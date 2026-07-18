@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Soteria.ReferenceWeb.Components;
-using Soteria.ReferenceWeb.Components.Account;
-using Soteria.ReferenceWeb.Components.Account.Email;
-using Soteria.ReferenceWeb.Data;
+using System.Net.Http.Headers;
+using DotNetEnv;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,31 +15,51 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+var openIdConnectAuthority = builder.Configuration["Authentication:OpenIdConnect:Authority"]
+                             ?? throw new InvalidOperationException(
+                                 "The Authentication:OpenIdConnect:Authority configuration value is required.");
+
+var openIdConnectClientId = builder.Configuration["Authentication:OpenIdConnect:ClientId"]
+                            ?? throw new InvalidOperationException(
+                                "The Authentication:OpenIdConnect:ClientId configuration value is required.");
+
+var openIdConnectClientSecret = builder.Configuration["Authentication:OpenIdConnect:ClientSecret"]
+                                ?? throw new InvalidOperationException(
+                                    "The Authentication:OpenIdConnect:ClientSecret configuration value is required.");
 
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     })
-    .AddIdentityCookies();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    .AddCookie(options =>
     {
-        options.SignIn.RequireConfirmedAccount = true;
-        options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
     })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
+    .AddOpenIdConnect(options =>
+    {
+        options.Authority = openIdConnectAuthority;
+        options.ClientId = openIdConnectClientId;
+        options.ClientSecret = openIdConnectClientSecret;
+        options.ResponseType = OpenIdConnectResponseType.Code;
+        options.UsePkce = true;
+        options.SaveTokens = true;
+        options.MapInboundClaims = false;
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
+        options.Scope.Clear();
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+        options.Scope.Add("offline_access");
+        options.Scope.Add("reference_api");
+
+        options.TokenValidationParameters.NameClaimType = "name";
+        options.TokenValidationParameters.RoleClaimType = "role";
+    });
+
+builder.Services.AddHttpContextAccessor();
 
 var referenceApiBaseUrl = builder.Configuration["ReferenceApi:BaseUrl"]
                           ?? throw new InvalidOperationException(
@@ -51,11 +73,7 @@ builder.Services.AddHttpClient("ReferenceApi", client =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-}
-else
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -64,13 +82,36 @@ else
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
+
+app.MapGet("/Account/Login", (
+    string? returnUrl) =>
+{
+    var redirectUri = IsLocalReturnUrl(returnUrl)
+        ? returnUrl!
+        : "/";
+
+    return Results.Challenge(
+        new AuthenticationProperties
+        {
+            RedirectUri = redirectUri
+        },
+        [OpenIdConnectDefaults.AuthenticationScheme]);
+});
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// Add additional endpoints required by the Identity /Account Razor components.
-app.MapAdditionalIdentityEndpoints();
-
 app.Run();
+return;
+
+static bool IsLocalReturnUrl(string? returnUrl)
+{
+    return !string.IsNullOrWhiteSpace(returnUrl)
+           && returnUrl.StartsWith('/')
+           && !returnUrl.StartsWith("//")
+           && !returnUrl.StartsWith("/\\");
+}

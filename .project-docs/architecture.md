@@ -354,8 +354,12 @@ Future IIS hosting must explicitly consider the IIS application-pool identity, u
 
 ## Resource API boundary
 
-The signing certificate's public key may be published through OpenID Connect discovery so that resource servers can validate signatures without receiving the private signing credential.
+Resource APIs validate access tokens using the OpenIddict validation stack.
 
-Whether Reference API access tokens are encrypted, and whether the Reference API requires access to a corresponding decryption certificate, will be decided when token issuance and API validation are configured.
+Validation configuration is obtained from Soteria through OpenID Connect discovery. The signing credential remains private to Soteria; Resource APIs validate signatures using the published signing keys.
 
-The development certificate strategy does not introduce certificate sharing between Soteria and the Reference API.
+Access tokens remain encrypted. During development, Soteria and trusted Resource APIs share a symmetric encryption key supplied through local configuration so that Resource APIs can decrypt issued access tokens before validation.
+
+Development secrets, including confidential client secrets and the shared access-token encryption key, are supplied through an uncommitted `.env` file.
+
+The production key-distribution strategy will be defined when the production hosting model is established.

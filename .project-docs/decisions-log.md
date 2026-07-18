@@ -177,3 +177,16 @@ Provider-wide configuration keeps the initial implementation explicit and consis
 
 Keeping client renewal orchestration outside this task preserves the delivery-plan boundary and avoids pulling forward the reference application's OpenID Connect integration.
 
+2026-07-18
+
+Decision:
+
+Resource APIs validate Soteria-issued access tokens using the OpenIddict validation stack.
+
+During development, Soteria and trusted Resource APIs share a symmetric access-token encryption key loaded from an uncommitted .env file. Signing keys continue to be obtained through OpenID Connect discovery.
+
+Reason:
+
+OpenIddict encrypts access tokens by default. Using the validation stack preserves OpenIddict's intended validation model while avoiding custom token-processing code. The shared development encryption key allows independently hosted Resource APIs to decrypt and validate issued access tokens while keeping signing credentials private to Soteria.
+
+

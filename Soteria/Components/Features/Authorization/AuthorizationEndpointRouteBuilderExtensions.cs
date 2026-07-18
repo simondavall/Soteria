@@ -61,6 +61,8 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         }
 
         var consentType = await applicationManager.GetConsentTypeAsync(application, context.RequestAborted);
+        // Soteria supports only administrator-managed clients, which use implicit consent.
+        // Other consent types require workflows that are not currently supported.
         if (!string.Equals(consentType, OpenIddictConstants.ConsentTypes.Implicit, StringComparison.Ordinal))
         {
             var properties = new AuthenticationProperties(
