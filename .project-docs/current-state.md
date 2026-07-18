@@ -77,6 +77,13 @@ Phase 2 – OpenID Connect Provider Foundation
 - Defined the initial Reference API audience.
 - Registered the standard OpenID Connect profile and email scopes.
 - Verified scope-sensitive claim issuance.
+- Configured the OpenIddict token endpoint.
+- Enabled ID token issuance.
+- Enabled access token issuance.
+- Enabled refresh token issuance using the Refresh Token grant.
+- Registered the standard `offline_access` scope.
+- Configured refresh tokens to be issued only when the `offline_access` scope is requested.
+- Verified that refresh tokens are issued when `offline_access` is requested and omitted otherwise.
 
 # Current milestone
 
@@ -84,13 +91,11 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Configure token issuance.
-
-- Issue identity claims.
-- Issue access tokens.
-- Issue refresh tokens.
-- Verify the issued tokens.
+Configure refresh-token lifecycle.
+- Define the refresh-token strategy.
+- Configure refresh-token lifetime.
+- Configure access-token renewal.
 
 # Next
 
-Configure refresh-token lifecycle.
+- Configure consent behaviour.

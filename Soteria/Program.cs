@@ -67,9 +67,11 @@ public class Program
 
                 options.RegisterScopes(
                     OpenIddictConstants.Scopes.Email,
-                    OpenIddictConstants.Scopes.Profile);
+                    OpenIddictConstants.Scopes.Profile,
+                    OpenIddictConstants.Scopes.OfflineAccess);
                     
                 options.AllowAuthorizationCodeFlow()
+                    .AllowRefreshTokenFlow()
                     .RequireProofKeyForCodeExchange();
 
                 options.UseAspNetCore()
