@@ -91,6 +91,11 @@ Phase 2 – OpenID Connect Provider Foundation
 - Verified consent-required behaviour remains unchanged.
 - Defined implicit consent as the only supported behaviour for managed client applications.
 - Configured and verified implicit consent behaviour.
+- Replaced the Reference Web application's local ASP.NET Core Identity authentication with OpenID Connect.
+- Configured the Reference Web application as a confidential OpenID Connect client.
+- Added local `.env` configuration for development secrets.
+- Configured the Reference API to validate access tokens issued by Soteria.
+- Verified end-to-end authentication and protected API access.
 
 # Current milestone
 
@@ -98,11 +103,12 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Replace the reference web application's local authentication with OpenID Connect.
-- Configure OpenID Connect authentication.
-- Remove local ASP.NET Core Identity authentication.
-- Preserve the application-local authentication session.
+Implement automatic access-token renewal using refresh tokens.
+- Detect expired access tokens.
+- Renew access tokens using the refresh token.
+- Persist replacement refresh tokens.
+- Retry failed API requests after successful renewal.
 
 # Next
 
-- Support logout.
+- Support Logout
