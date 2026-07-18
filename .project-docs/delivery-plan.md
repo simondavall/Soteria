@@ -160,11 +160,11 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - ✓ Remove local ASP.NET Core Identity authentication.
   - ✓ Preserve the application-local authentication session.
 
-- Implement automatic access-token renewal using refresh tokens.
-  - Detect expired access tokens.
-  - Renew access tokens using the refresh token.
-  - Persist replacement refresh tokens.
-  - Retry failed API requests after successful renewal.
+- ✓ Implement automatic access-token renewal using refresh tokens.
+  - ✓ Detect expired access tokens.
+  - ✓ Renew access tokens using the refresh token.
+  - ✓ Persist replacement refresh tokens.
+  - ✓ Retry failed API requests after successful renewal.
 
 - Support logout.
   - Configure the OpenIddict end-session endpoint.

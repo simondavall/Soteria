@@ -34,7 +34,7 @@ Enable Soteria to act as an OpenID Connect Provider capable of authenticating a 
 - Support Authorization Code Flow with PKCE.
 - Register an initial development client.
 - Establish the initial scopes and claims.
-- Authenticate a consuming web application.
+- A consuming application can authenticate users through Soteria and securely access protected APIs using OAuth-issued access tokens.
 
 **Deliverable**
 
