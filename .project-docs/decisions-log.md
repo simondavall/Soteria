@@ -189,4 +189,14 @@ Reason:
 
 OpenIddict encrypts access tokens by default. Using the validation stack preserves OpenIddict's intended validation model while avoiding custom token-processing code. The shared development encryption key allows independently hosted Resource APIs to decrypt and validate issued access tokens while keeping signing credentials private to Soteria.
 
+2026-07-18
 
+Decision:
+
+Automatic access-token renewal is performed by the consuming application's authentication infrastructure rather than individual pages or feature components.
+
+API consumers obtain a valid access token from a dedicated token-management service. The service is responsible for expiry detection, refresh-token exchange, authentication-ticket updates and refresh failure handling.
+
+Reason:
+
+Token lifecycle management is part of the application's authentication infrastructure rather than feature behaviour. Centralising it avoids duplicated authentication logic and allows future API clients to share the same implementation while keeping feature code focused on business behaviour.

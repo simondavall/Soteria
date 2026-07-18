@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Soteria.ReferenceWeb.Components.Authentication;
 
 Env.TraversePath().Load();
 
@@ -37,6 +38,34 @@ builder.Services.AddAuthentication(options =>
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+
+        options.Events.OnRedirectToLogin = context =>
+        {
+            if (context.Request.Path.StartsWithSegments("/internal"))
+            {
+                context.Response.StatusCode =
+                    StatusCodes.Status401Unauthorized;
+
+                return Task.CompletedTask;
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
+
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            if (context.Request.Path.StartsWithSegments("/internal"))
+            {
+                context.Response.StatusCode =
+                    StatusCodes.Status403Forbidden;
+
+                return Task.CompletedTask;
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
     })
     .AddOpenIdConnect(options =>
     {
@@ -65,10 +94,9 @@ var referenceApiBaseUrl = builder.Configuration["ReferenceApi:BaseUrl"]
                           ?? throw new InvalidOperationException(
                               "The ReferenceApi:BaseUrl configuration value is required.");
 
-builder.Services.AddHttpClient("ReferenceApi", client =>
-{
-    client.BaseAddress = new Uri(referenceApiBaseUrl);
-});
+builder.Services.AddHttpClient("ReferenceApi", client => { client.BaseAddress = new Uri(referenceApiBaseUrl); });
+
+builder.Services.AddScoped<AccessTokenManager>();
 
 var app = builder.Build();
 
@@ -79,6 +107,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
@@ -102,6 +131,9 @@ app.MapGet("/Account/Login", (
 });
 
 app.MapStaticAssets();
+
+app.MapReferenceApiEndpoint();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

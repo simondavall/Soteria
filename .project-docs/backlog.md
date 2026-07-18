@@ -21,6 +21,7 @@
 - Review registration password validation so password requirements are derived from the configured ASP.NET Core Identity password options rather than duplicated in the Register page model. Consider validation behaviour, user-facing password guidance, and how to keep client/server validation consistent.
 
 # Enhancements
+- Review concurrent access-token renewal within the consuming application. If multiple requests detect an expiring access token simultaneously, consider coordinating refresh operations so only a single refresh-token exchange occurs while other requests await the result.
 
 # Technical Debt
 

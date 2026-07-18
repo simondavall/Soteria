@@ -1,11 +1,11 @@
-﻿using System.Net.Http.Headers;
-using Soteria.ReferenceWeb.Components.Reference;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Soteria.ReferenceWeb.Components.Pages;
 
-public partial class Auth(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+public partial class Auth(IJSRuntime jsRuntime, NavigationManager navigationManager) : IAsyncDisposable
 {
+    private IJSObjectReference? module;
     private bool isLoading;
     private string? responseMessage;
     private string? errorMessage;
@@ -18,42 +18,66 @@ public partial class Auth(IHttpClientFactory httpClientFactory, IHttpContextAcce
 
         try
         {
-            var httpContext = httpContextAccessor.HttpContext
-                              ?? throw new InvalidOperationException(
-                                  "The current HTTP context is unavailable.");
+            module ??= await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "import",
+                "./js/reference-api.js");
 
-            var accessToken = await httpContext.GetTokenAsync("access_token");
+            var result =
+                await module.InvokeAsync<ReferenceApiResult>(
+                    "callReferenceApi");
 
-            if (string.IsNullOrWhiteSpace(accessToken))
+            if (result.Status == StatusCodes.Status401Unauthorized)
             {
-                errorMessage = "The local authentication session does not contain an access token.";
+                navigationManager.NavigateTo(
+                    "/Account/Login?returnUrl=/auth",
+                    forceLoad: true);
+
                 return;
             }
-            var httpClient = httpClientFactory.CreateClient("ReferenceApi");
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            
-            var response = await httpClient.GetFromJsonAsync<ReferenceResponse>("/api/reference");
-            responseMessage = response?.Message ?? "The Reference API returned an empty response.";
+
+            if (!result.Ok)
+            {
+                errorMessage =
+                    result.Message ??
+                    $"The Reference API request failed with status " +
+                    $"{result.Status}.";
+
+                return;
+            }
+
+            responseMessage =
+                result.Message ??
+                "The Reference API returned an empty response.";
         }
-        catch (InvalidOperationException exception)
+        catch (JSException exception)
         {
-            errorMessage = $"The authenticated session could not be accessed: {exception.Message}";
-        }
-        catch (HttpRequestException exception)
-        {
-            errorMessage = $"The Reference API request failed: {exception.Message}";
-        }
-        catch (NotSupportedException exception)
-        {
-            errorMessage = $"The Reference API returned an unsupported response: {exception.Message}";
-        }
-        catch (System.Text.Json.JsonException exception)
-        {
-            errorMessage = $"The Reference API returned invalid JSON: {exception.Message}";
+            errorMessage =
+                $"The Reference API request could not be completed: " +
+                exception.Message;
         }
         finally
         {
             isLoading = false;
         }
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null)
+        {
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // The browser circuit has already disconnected.
+            }
+        }
+    }
+
+    private sealed record ReferenceApiResult(
+        bool Ok,
+        int Status,
+        string? Message);
 }
