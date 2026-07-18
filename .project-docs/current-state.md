@@ -89,6 +89,8 @@ Phase 2 – OpenID Connect Provider Foundation
 - Configured access-token renewal.
 - Verified rolling refresh-token rotation.
 - Verified consent-required behaviour remains unchanged.
+- Defined implicit consent as the only supported behaviour for managed client applications.
+- Configured and verified implicit consent behaviour.
 
 # Current milestone
 
@@ -96,10 +98,11 @@ Milestone 2.4 – Authentication Workflow
 
 # Current task
 
-Configure consent behaviour.
-- Define consent behaviour for managed client applications.
-- Configure the agreed consent behaviour.
+Replace the reference web application's local authentication with OpenID Connect.
+- Configure OpenID Connect authentication.
+- Remove local ASP.NET Core Identity authentication.
+- Preserve the application-local authentication session.
 
 # Next
 
-- Replace the reference web application's local authentication with OpenID Connect.
+- Support logout.

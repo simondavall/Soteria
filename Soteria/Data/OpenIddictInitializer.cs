@@ -3,7 +3,7 @@ using Permissions = OpenIddict.Abstractions.OpenIddictConstants.Permissions;
 
 namespace Soteria.Data;
 
-public sealed class OpenIddictInitializer(IOpenIddictScopeManager scopeManager, IOpenIddictApplicationManager applicationManager)
+public sealed class OpenIddictInitializer(IOpenIddictScopeManager scopeManager, IOpenIddictApplicationManager applicationManager, IConfiguration configuration)
 {
     private const string ReferenceApiScope = "reference_api";
     private const string ReferenceApiResource = "reference_api";
@@ -12,8 +12,7 @@ public sealed class OpenIddictInitializer(IOpenIddictScopeManager scopeManager, 
     private const string ReferenceWebDisplayName = "Reference Web";
     private const string ReferenceWebRedirectUri = "https://localhost:7276/signin-oidc";
 
-    public async Task InitializeAsync(
-        CancellationToken cancellationToken = default)
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         await EnsureReferenceApiScopeAsync(cancellationToken);
         await EnsureReferenceWebApplicationAsync(cancellationToken);
@@ -57,7 +56,8 @@ public sealed class OpenIddictInitializer(IOpenIddictScopeManager scopeManager, 
             ClientId = ReferenceWebClientId,
             DisplayName = ReferenceWebDisplayName,
             ConsentType = OpenIddictConstants.ConsentTypes.Implicit,
-            ClientType = OpenIddictConstants.ClientTypes.Public
+            ClientType = OpenIddictConstants.ClientTypes.Confidential,
+            ClientSecret = configuration["ReferenceWeb:ClientSecret"]
         };
 
         descriptor.RedirectUris.Add(new Uri(ReferenceWebRedirectUri));
