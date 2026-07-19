@@ -1,8 +1,11 @@
-﻿This document provides a snapshot of the current implementation state of the project. It records completed work, the feature currently being developed, and the next expected steps. It should be updated regularly and is intended to help developers quickly understand where development should continue.
+﻿This document provides a snapshot of the current implementation state of the project. 
+It records completed work, the feature currently being developed, and the next expected 
+steps. It should be updated regularly and is intended to help developers quickly understand 
+where development should continue.
 
 # Current phase
 
-Phase 2 – OpenID Connect Provider Foundation
+# Phase 3 – Client Application Management
 
 # Completed
 
@@ -113,15 +116,17 @@ Phase 2 – OpenID Connect Provider Foundation
 
 # Current milestone
 
-Milestone 2.5 – End-to-End Verification
+Milestone 3.1 – Client Administration
 
 # Current task
 
-Verify successful authentication.
-- Authenticate the reference web application.
-- Verify successful sign-in.
-- Verify authenticated application access.
+Create the client application management feature.
+- Define the administration navigation.
+- Define the client application list page.
+- Define the client details page.
+- Define the client management workflow.
 
-# Next
+# Remaining milestone tasks
 
-Verify unsuccessful authentication scenarios.
+- List registered client applications.
+- View client details.
