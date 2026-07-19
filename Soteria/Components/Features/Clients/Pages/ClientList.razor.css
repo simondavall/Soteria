@@ -14,6 +14,10 @@
     border-radius: 0.75rem;
 }
 
+.clients-page__content .mud-table {
+    margin-top: 0.5rem;
+}
+
 .clients-page__empty-state {
     min-height: 24rem;
     justify-content: center;
