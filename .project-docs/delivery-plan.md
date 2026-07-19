@@ -2,13 +2,16 @@
 
 This document expands the roadmap into implementation milestones and tasks.
 
-Unlike the roadmap, which describes the long-term delivery of the project, this document records the expected sequence of implementation work.
+Unlike the roadmap, which describes the long-term delivery of the project, this document 
+records the expected sequence of implementation work.
 
 The roadmap should remain relatively stable.
 
-The delivery plan is expected to evolve as implementation progresses and architectural understanding improves.
+The delivery plan is expected to evolve as implementation progresses and architectural 
+understanding improves.
 
-Tasks listed here are intentionally concise. Detailed scope, goals and implementation notes belong in the Jira task for the relevant RefId.
+Tasks listed here are intentionally concise. Detailed scope, goals and implementation 
+notes belong in the Jira task for the relevant RefId.
 
 ---
 
@@ -26,11 +29,13 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
 
 ## ✓ Milestone 2.2 – Reference Applications
 
-(Initially set up with local independent authentication, which will be replaced with OpenID Connect in Milestone 2.3.)
+(Initially set up with local independent authentication, which will be replaced with OpenID 
+Connect in Milestone 2.3.)
 
 - ✓ Define and create the reference web application with local ASP.NET Core Identity.
 - ✓ Define and create the reference resource API.
-- ✓ Configure and verify communication between the reference web application and the reference resource API.
+- ✓ Configure and verify communication between the reference web application and the 
+reference resource API.
 
 ---
 
@@ -120,7 +125,8 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - ✓ Enable OpenIddict authorization endpoint pass-through to Soteria.
   - ✓ Challenge unauthenticated users through the Soteria login workflow.
   - ✓ Preserve the complete authorization request during authentication.
-  - ✓ Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict authorization pipeline.
+  - ✓ Verify authenticated users reach the Soteria authorization endpoint via the OpenIddict 
+  authorization pipeline.
 
 - ✓ Implement the authorisation workflow.
   - ✓ Handle the authorization request.
@@ -166,20 +172,15 @@ Tasks listed here are intentionally concise. Detailed scope, goals and implement
   - ✓ Persist replacement refresh tokens.
   - ✓ Retry failed API requests after successful renewal.
 
-- Support logout.
-  - Configure the OpenIddict end-session endpoint.
-  - Configure end-session endpoint pass-through or an equivalent OpenIddict request handler.
-  - Configure the reference client's post-logout redirect URI.
-  - Configure any required end-session endpoint permission.
-  - Configure RP-initiated logout.
-  - Sign the user out of Soteria.
-  - Sign the user out of the reference application.
-  - Verify post-logout redirect behaviour.
-
-- Verify successful OpenID Connect authentication.
-  - Authenticate the reference web application.
-  - Verify successful sign-in.
-  - Verify successful sign-out.
+- ✓ Support logout.
+  - ✓ Configure the OpenIddict end-session endpoint.
+  - ✓ Configure end-session endpoint pass-through or an equivalent OpenIddict request handler.
+  - ✓ Configure the reference client's post-logout redirect URI.
+  - ✓ Configure any required end-session endpoint permission.
+  - ✓ Configure RP-initiated logout.
+  - ✓ Sign the user out of Soteria.
+  - ✓ Sign the user out of the reference application.
+  - ✓ Verify post-logout redirect behaviour.
 
 ---
 

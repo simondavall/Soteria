@@ -87,8 +87,9 @@ public class Program
             .AddServer(options =>
             {
                 options.SetAuthorizationEndpointUris("/connect/authorize")
+                    .SetEndSessionEndpointUris("/connect/logout")
                     .SetTokenEndpointUris("/connect/token");
-
+                
                 options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
                     .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
 
@@ -104,7 +105,8 @@ public class Program
                     .RequireProofKeyForCodeExchange();
 
                 options.UseAspNetCore()
-                    .EnableAuthorizationEndpointPassthrough();
+                    .EnableAuthorizationEndpointPassthrough()
+                    .EnableEndSessionEndpointPassthrough();
 
                 if (builder.Environment.IsDevelopment())
                 {
@@ -153,6 +155,7 @@ public class Program
         app.MapAdditionalIdentityEndpoints();
 
         app.MapSoteriaAuthorizationEndpoint();
+        app.MapSoteriaLogoutEndpoint();
 
         app.Run();
     }
