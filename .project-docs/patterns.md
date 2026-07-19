@@ -21,15 +21,11 @@ Identity pages that participate directly in ASP.NET Core Identity workflows (log
 ## Reason
 Static SSR is required for the Identity request/response flow, while MudBlazor's stateful form controls require an interactive render mode. This approach preserves the Identity architecture while maintaining a consistent MudBlazor user experience.
 
-# Status-message redirects
+# OpenIddict endpoints
+When implementing OpenIddict endpoints that require application logic:
 
-## Context
-Identity workflows that redirect after POST.
-
-## Implementation
-- Use IdentityRedirectManager redirect helpers.
-- Display workflow outcomes through StatusMessage.
-- Redirect to an appropriate page with a user-facing status message rather than exposing exceptions for foreseeable user actions.
-
-## Reason
-Keeps users within the normal application flow while preserving static SSR request semantics.
+• Enable the appropriate ASP.NET Core pass-through.
+• Map the endpoint explicitly using endpoint routing.
+• Perform application-specific work.
+• Complete the protocol using the OpenIddict authentication scheme.
+• Keep protocol validation inside OpenIddict and business logic inside Soteria.

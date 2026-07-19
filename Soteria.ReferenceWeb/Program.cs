@@ -76,6 +76,9 @@ builder.Services.AddAuthentication(options =>
         options.UsePkce = true;
         options.SaveTokens = true;
         options.MapInboundClaims = false;
+        
+        options.SignedOutCallbackPath = "/signout-callback-oidc";
+        options.SignedOutRedirectUri = "/";
 
         options.Scope.Clear();
         options.Scope.Add("openid");
@@ -115,13 +118,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
-app.MapGet("/Account/Login", (
-    string? returnUrl) =>
+app.MapGet("/Account/Login", (string? returnUrl) =>
 {
-    var redirectUri = IsLocalReturnUrl(returnUrl)
-        ? returnUrl!
-        : "/";
-
+    var redirectUri = IsLocalReturnUrl(returnUrl) ? returnUrl! : "/";
     return Results.Challenge(
         new AuthenticationProperties
         {
@@ -129,6 +128,16 @@ app.MapGet("/Account/Login", (
         },
         [OpenIdConnectDefaults.AuthenticationScheme]);
 });
+
+app.MapPost("/Account/Logout", () => Results.SignOut(
+    new AuthenticationProperties
+    {
+        RedirectUri = "/"
+    },
+    [
+        CookieAuthenticationDefaults.AuthenticationScheme,
+        OpenIdConnectDefaults.AuthenticationScheme
+    ]));
 
 app.MapStaticAssets();
 
