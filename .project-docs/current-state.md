@@ -113,6 +113,9 @@ where development should continue.
 - Configured Reference Web application logout.
 - Registered post-logout redirect URIs.
 - Verified complete logout workflow and authentication regression.
+- Added authenticated administration navigation.
+- Created the initial client application list and details pages.
+- Enabled the MudBlazor dark theme.
 
 # Current milestone
 
@@ -120,13 +123,12 @@ Milestone 3.1 – Client Administration
 
 # Current task
 
-Create the client application management feature.
-- Define authenticated administration navigation.
-- Create the authenticated client application list page layout.
-- Create the authenticated client details page layout.
-- Define the client management navigation workflow.
+Implement client application listing.
+- Retrieve registered OpenIddict applications.
+- Display application summary information.
+- Display application status.
+- Verify application listing.
 
 # Remaining milestone tasks
 
-- List registered client applications.
-- View client details.
+- Implement client application details.

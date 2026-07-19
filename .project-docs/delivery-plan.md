@@ -219,11 +219,11 @@ reference resource API.
 
 ## Milestone 3.1 – Client Administration
 
-- Create the client application management feature.
-  - Define authenticated administration navigation.
-  - Create the authenticated client application list page layout.
-  - Create the authenticated client details page layout.
-  - Define the client management navigation workflow.
+- ✓ Create the client application management feature.
+  - ✓ Define authenticated administration navigation.
+  - ✓ Create the authenticated client application list page layout.
+  - ✓ Create the authenticated client details page layout.
+  - ✓ Define the client management navigation workflow.
 
 - Implement client application listing.
   - Retrieve registered OpenIddict applications.
