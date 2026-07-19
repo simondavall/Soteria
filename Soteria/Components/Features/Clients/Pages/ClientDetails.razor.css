@@ -1,0 +1,30 @@
+﻿.client-details-page {
+    width: 100%;
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.client-details-page__header {
+    padding-block: 0.5rem;
+}
+
+.client-details-page__header-content {
+    flex-wrap: wrap;
+}
+
+.client-details-page__content {
+    padding: 2rem;
+    border-radius: 0.75rem;
+}
+
+.client-details-page__placeholder-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (max-width: 59.99rem) {
+    .client-details-page__placeholder-grid {
+        grid-template-columns: 1fr;
+    }
+}

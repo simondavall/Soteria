@@ -1,0 +1,27 @@
+﻿<MudPaper Outlined="true"
+          Class="client-detail-placeholder">
+    <MudStack Row="true"
+              AlignItems="AlignItems.Center"
+              Spacing="2">
+        <MudIcon Icon="@Icon"
+                 Color="Color.Secondary"/>
+
+        <MudText Typo="Typo.subtitle1">
+            @Title
+        </MudText>
+    </MudStack>
+
+    <MudText Typo="Typo.body2"
+             Color="Color.Secondary"
+             Class="mt-3">
+        Configuration details will be displayed here in the client details implementation.
+    </MudText>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public string Icon { get; set; } = string.Empty;
+}

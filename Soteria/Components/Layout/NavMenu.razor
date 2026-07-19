@@ -23,10 +23,24 @@
         Auth Required
     </MudNavLink>
 
-    <MudDivider Class="my-2"/>
-
     <AuthorizeView>
         <Authorized Context="authContext">
+            <MudDivider Class="my-2"/>
+
+            <MudText Typo="Typo.overline"
+                     Color="Color.Secondary"
+                     Class="px-4 pt-2 pb-1">
+                Administration
+            </MudText>
+
+            <MudNavLink Href="/clients"
+                        Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.Apps">
+                Client Applications
+            </MudNavLink>
+
+            <MudDivider Class="my-2"/>
+
             <MudNavLink Href="/Account/Manage"
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Person">
@@ -51,6 +65,8 @@
         </Authorized>
 
         <NotAuthorized>
+            <MudDivider Class="my-2"/>
+
             <MudNavLink Href="/Account/Register"
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.PersonAdd">

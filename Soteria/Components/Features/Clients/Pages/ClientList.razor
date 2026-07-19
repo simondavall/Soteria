@@ -1,0 +1,80 @@
+﻿@page "/clients"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<PageTitle>Client Applications</PageTitle>
+
+<div class="clients-page">
+    <MudStack Spacing="4">
+        <header class="clients-page__header">
+            <MudStack Row="true"
+                      AlignItems="AlignItems.Center"
+                      Spacing="2">
+                <MudAvatar Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Size="Size.Large">
+                    <MudIcon Icon="@Icons.Material.Filled.Apps"/>
+                </MudAvatar>
+
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h4"
+                             HtmlTag="h1">
+                        Client Applications
+                    </MudText>
+
+                    <MudText Typo="Typo.body1"
+                             Color="Color.Secondary">
+                        Manage applications that authenticate users through Soteria.
+                    </MudText>
+                </MudStack>
+            </MudStack>
+        </header>
+
+        <MudPaper Class="clients-page__content"
+                  Elevation="1">
+            <MudStack AlignItems="AlignItems.Center"
+                      Spacing="3"
+                      Class="clients-page__empty-state">
+                <MudIcon Icon="@Icons.Material.Outlined.ViewList"
+                         Color="Color.Secondary"
+                         Size="Size.Large"/>
+
+                <MudStack AlignItems="AlignItems.Center"
+                          Spacing="1">
+                    <MudText Typo="Typo.h6"
+                             Align="Align.Center">
+                        Client application listing
+                    </MudText>
+
+                    <MudText Typo="Typo.body2"
+                             Color="Color.Secondary"
+                             Align="Align.Center"
+                             Class="clients-page__empty-description">
+                        Registered client applications will be displayed here when application
+                        listing is implemented.
+                    </MudText>
+                </MudStack>
+
+                <MudDivider Class="clients-page__divider"/>
+
+                <MudStack AlignItems="AlignItems.Center"
+                          Spacing="1">
+                    <MudText Typo="Typo.caption"
+                             Color="Color.Secondary"
+                             Align="Align.Center">
+                        Temporary workflow preview
+                    </MudText>
+
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.OpenInNew"
+                               OnClick="OpenExampleClient">
+                        Open example client details
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudStack>
+</div>

@@ -1,0 +1,97 @@
+﻿@page "/clients/{ClientId}"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<PageTitle>Client Application Details</PageTitle>
+
+<div class="client-details-page">
+    <MudStack Spacing="4">
+        <header class="client-details-page__header">
+            <MudStack Row="true"
+                      AlignItems="AlignItems.Center"
+                      Justify="Justify.SpaceBetween"
+                      Spacing="3"
+                      Class="client-details-page__header-content">
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="2">
+                    <MudAvatar Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Size="Size.Large">
+                        <MudIcon Icon="@Icons.Material.Filled.Apps"/>
+                    </MudAvatar>
+
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h4"
+                                 HtmlTag="h1">
+                            Client Application
+                        </MudText>
+
+                        <MudText Typo="Typo.body1"
+                                 Color="Color.Secondary">
+                            Review the selected client application's configuration.
+                        </MudText>
+                    </MudStack>
+                </MudStack>
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           OnClick="ReturnToClientList">
+                    Back to clients
+                </MudButton>
+            </MudStack>
+        </header>
+
+        <MudPaper Class="client-details-page__content"
+                  Elevation="1">
+            <MudStack Spacing="4">
+                <MudStack Spacing="1">
+                    <MudText Typo="Typo.overline"
+                             Color="Color.Secondary">
+                        Selected route
+                    </MudText>
+
+                    <MudText Typo="Typo.h5">
+                        @ClientId
+                    </MudText>
+                </MudStack>
+
+                <MudAlert Severity="Severity.Info"
+                          Variant="Variant.Outlined"
+                          Dense="true">
+                    This page currently demonstrates the client management navigation workflow.
+                    Client application data will be loaded from OpenIddict in a subsequent ticket.
+                </MudAlert>
+
+                <MudDivider/>
+
+                <section aria-labelledby="client-details-placeholder-heading">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.h6"
+                                 HtmlTag="h2"
+                                 id="client-details-placeholder-heading">
+                            Application configuration
+                        </MudText>
+
+                        <div class="client-details-page__placeholder-grid">
+                            <ClientDetailPlaceholder Title="Application metadata"
+                                                     Icon="@Icons.Material.Outlined.Badge"/>
+
+                            <ClientDetailPlaceholder Title="Client configuration"
+                                                     Icon="@Icons.Material.Outlined.Settings"/>
+
+                            <ClientDetailPlaceholder Title="Permissions"
+                                                     Icon="@Icons.Material.Outlined.Security"/>
+
+                            <ClientDetailPlaceholder Title="Redirect URIs"
+                                                     Icon="@Icons.Material.Outlined.Link"/>
+                        </div>
+                    </MudStack>
+                </section>
+            </MudStack>
+        </MudPaper>
+    </MudStack>
+</div>
