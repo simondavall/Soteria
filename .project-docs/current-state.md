@@ -104,23 +104,24 @@ Phase 2 – OpenID Connect Provider Foundation
 - Verified renewal failure invalidates the local consuming-application session.
 - Verified tokens remain unavailable to browser application code.
 - Verified automatic renewal end to end.
+- Implemented RP-initiated OpenID Connect logout.
+- Added the OpenIddict end-session endpoint.
+- Implemented Soteria end-session handling.
+- Configured Reference Web application logout.
+- Registered post-logout redirect URIs.
+- Verified complete logout workflow and authentication regression.
 
 # Current milestone
 
-Milestone 2.4 – Authentication Workflow
+Milestone 2.5 – End-to-End Verification
 
 # Current task
 
-Support logout.
-- Configure the OpenIddict end-session endpoint.
-- Configure end-session endpoint pass-through or an equivalent OpenIddict request handler.
-- Configure the reference client's post-logout redirect URI.
-- Configure any required end-session endpoint permission.
-- Configure RP-initiated logout.
-- Sign the user out of Soteria.
-- Sign the user out of the reference application.
-- Verify post-logout redirect behaviour.
+Verify successful authentication.
+- Authenticate the reference web application.
+- Verify successful sign-in.
+- Verify authenticated application access.
 
 # Next
 
-Verify successful OpenID Connect authentication.
+Verify unsuccessful authentication scenarios.
