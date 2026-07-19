@@ -8,27 +8,21 @@ namespace Microsoft.AspNetCore.Routing;
 
 internal static class LogoutEndpointRouteBuilderExtensions
 {
-    public static IEndpointConventionBuilder MapSoteriaLogoutEndpoint(
-        this IEndpointRouteBuilder endpoints)
+    public static IEndpointConventionBuilder MapSoteriaLogoutEndpoint(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
-
-        return endpoints.MapMethods(
-            "/connect/logout",
-            [HttpMethods.Get, HttpMethods.Post],
-            HandleLogoutAsync);
+        return endpoints.MapMethods("/connect/logout", [HttpMethods.Get, HttpMethods.Post], HandleLogoutAsync);
     }
-
-    private static async Task<IResult> HandleLogoutAsync(
-        HttpContext context)
+    
+    private static async Task HandleLogoutAsync(HttpContext context)
     {
-        await context.SignOutAsync(
-            IdentityConstants.ApplicationScheme);
+        await context.SignOutAsync(IdentityConstants.ApplicationScheme);
 
-        return Results.SignOut(
-            authenticationSchemes:
-            [
-                OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
-            ]);
+        await context.SignOutAsync(
+            OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+            new AuthenticationProperties
+            {
+                RedirectUri = "/"
+            });
     }
 }
