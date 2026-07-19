@@ -116,6 +116,9 @@ where development should continue.
 - Added authenticated administration navigation.
 - Created the initial client application list and details pages.
 - Enabled the MudBlazor dark theme.
+- Implemented the authenticated client application listing page.
+- Displayed application summary information.
+- Displayed the initial application status column.
 
 # Current milestone
 
@@ -123,12 +126,13 @@ Milestone 3.1 – Client Administration
 
 # Current task
 
-Implement client application listing.
-- Retrieve registered OpenIddict applications.
-- Display application summary information.
-- Display application status.
-- Verify application listing.
+Implement client application details.
+- Display application metadata.
+- Display client type and consent configuration.
+- Display configured permissions.
+- Display configured redirect URIs.
+- Verify application details.
 
 # Remaining milestone tasks
 
-- Implement client application details.
+None
