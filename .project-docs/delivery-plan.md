@@ -225,11 +225,12 @@ reference resource API.
   - ✓ Create the authenticated client details page layout.
   - ✓ Define the client management navigation workflow.
 
-- Implement client application listing.
-  - Retrieve registered OpenIddict applications.
-  - Display application summary information.
-  - Display application status.
-  - Verify application listing.
+- ✓ Implement client application listing.
+  - ✓ Retrieve registered OpenIddict applications.
+  - ✓ Display application summary information.
+  - ✓ Display client type and consent type.
+  - ✓ Display application status (currently Active for all applications; enabled/disabled state will be introduced in Milestone 3.2).
+  - ✓ Verify application listing.
 
 - Implement client application details.
   - Display application metadata.

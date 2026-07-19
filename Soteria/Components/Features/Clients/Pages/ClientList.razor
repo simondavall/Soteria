@@ -32,49 +32,82 @@
             </MudStack>
         </header>
 
-        <MudPaper Class="clients-page__content"
-                  Elevation="1">
-            <MudStack AlignItems="AlignItems.Center"
-                      Spacing="3"
-                      Class="clients-page__empty-state">
-                <MudIcon Icon="@Icons.Material.Outlined.ViewList"
-                         Color="Color.Secondary"
-                         Size="Size.Large"/>
+        <MudPaper Class="clients-page__content">
 
-                <MudStack AlignItems="AlignItems.Center"
-                          Spacing="1">
-                    <MudText Typo="Typo.h6"
+            @if (Clients.Count == 0)
+            {
+                <MudStack Class="clients-page__empty-state"
+                          AlignItems="AlignItems.Center"
+                          Justify="Justify.Center"
+                          Spacing="3">
+
+                    <MudIcon Icon="@Icons.Material.Filled.Apps"
+                             Size="Size.Large" />
+
+                    <MudText Typo="Typo.h5">
+                        No client applications
+                    </MudText>
+
+                    <MudText Class="clients-page__empty-description"
                              Align="Align.Center">
-                        Client application listing
+                        No OpenIddict client applications are currently registered.
                     </MudText>
 
-                    <MudText Typo="Typo.body2"
-                             Color="Color.Secondary"
-                             Align="Align.Center"
-                             Class="clients-page__empty-description">
-                        Registered client applications will be displayed here when application
-                        listing is implemented.
-                    </MudText>
                 </MudStack>
+            }
+            else
+            {
+                <MudTable Items="Clients"
+                          Hover="true"
+                          Dense="true">
 
-                <MudDivider Class="clients-page__divider"/>
+                    <HeaderContent>
 
-                <MudStack AlignItems="AlignItems.Center"
-                          Spacing="1">
-                    <MudText Typo="Typo.caption"
-                             Color="Color.Secondary"
-                             Align="Align.Center">
-                        Temporary workflow preview
-                    </MudText>
+                        <MudTh>Display Name</MudTh>
+                        <MudTh>Client Id</MudTh>
+                        <MudTh>Type</MudTh>
+                        <MudTh>Consent</MudTh>
+                        <MudTh>Status</MudTh>
 
-                    <MudButton Variant="Variant.Outlined"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.OpenInNew"
-                               OnClick="OpenExampleClient">
-                        Open example client details
-                    </MudButton>
-                </MudStack>
-            </MudStack>
+                    </HeaderContent>
+
+                    <RowTemplate>
+
+                        <MudTd DataLabel="Display Name">
+
+                            <MudLink Href="@($"/clients/{context.ClientId}")">
+                                @context.DisplayName
+                            </MudLink>
+
+                        </MudTd>
+
+                        <MudTd DataLabel="Client Id">
+                            @context.ClientId
+                        </MudTd>
+
+                        <MudTd DataLabel="Type">
+                            @FormatClientType(context.ClientType)
+                        </MudTd>
+
+                        <MudTd DataLabel="Consent">
+                            @FormatConsentType(context.ConsentType)
+                        </MudTd>
+
+                        <MudTd DataLabel="Status">
+
+                            <MudChip T="string"
+                                     Color="Color.Success"
+                                     Variant="Variant.Filled">
+                                Active
+                            </MudChip>
+
+                        </MudTd>
+
+                    </RowTemplate>
+
+                </MudTable>
+            }
+
         </MudPaper>
     </MudStack>
 </div>

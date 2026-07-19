@@ -8,6 +8,7 @@ using OpenIddict.Abstractions;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
+using Soteria.Components.Features.Clients;
 using Soteria.Data;
 
 namespace Soteria;
@@ -118,6 +119,7 @@ public class Program
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
         builder.Services.AddScoped<OpenIddictInitializer>();
+        builder.Services.AddScoped<ClientService>();
 
         var app = builder.Build();
 
