@@ -186,36 +186,32 @@ reference resource API.
 
 ## Milestone 2.5 – End-to-End Verification
 
-- Verify successful authentication.
-  - Authenticate the reference web application.
-  - Verify successful sign-in.
-  - Verify authenticated application access.
+- ✓ Verify successful authentication.
+  - ✓ Authenticate the reference web application.
+  - ✓ Verify successful sign-in.
+  - ✓ Verify authenticated application access.
 
-- Verify unsuccessful authentication scenarios.
-  - Verify anonymous access.
-  - Verify invalid credentials.
-  - Verify unauthorised client requests.
-  - Verify invalid redirect URIs.
+- ✓ Verify unsuccessful authentication scenarios.
+  - ✓ Verify anonymous access.
+  - ✓ Verify invalid credentials.
+  - ✓ Verify unauthorised client requests.
+  - ✓ Verify invalid redirect URIs.
 
-- Verify protected API access.
-  - Call the Reference API using an access token.
-  - Verify successful API authorisation.
-  - Verify rejected requests without an access token.
-  - Verify rejected requests with an invalid access token.
+- ✓ Verify protected API access.
+  - ✓ Call the Reference API using an access token.
+  - ✓ Verify successful API authorisation.
+  - ✓ Verify rejected requests without an access token.
+  - ✓ Verify rejected requests with an invalid access token.
 
-- Verify access-token renewal.
-  - Verify refresh-token use.
-  - Verify renewed access tokens.
-  - Verify expired access-token handling.
+- ✓ Verify access-token renewal.
+  - ✓ Verify refresh-token use.
+  - ✓ Verify renewed access tokens.
+  - ✓ Verify expired access-token handling.
 
-- Verify logout.
-  - Verify reference application logout.
-  - Verify Soteria logout.
-  - Verify access after logout is denied.
-
-- Record permanent regression verification.
-  - Record the agreed verification checklist.
-  - Capture any regression tests discovered during implementation.
+- ✓ Verify logout.
+  - ✓ Verify reference application logout.
+  - ✓ Verify Soteria logout.
+  - ✓ Verify access after logout is denied.
 
 ---
 
@@ -224,27 +220,89 @@ reference resource API.
 ## Milestone 3.1 – Client Administration
 
 - Create the client application management feature.
+  - Define the administration navigation.
+  - Define the client application list page.
+  - Define the client details page.
+  - Define the client management workflow.
+
 - List registered client applications.
+  - Retrieve registered OpenIddict applications.
+  - Display application summary information.
+  - Display application status.
+  - Verify application listing.
+
 - View client details.
+  - Display application metadata.
+  - Display client type and consent configuration.
+  - Display configured permissions.
+  - Display configured redirect URIs.
+  - Verify application details.
 
 ---
 
-## Milestone 3.2 – Client Registration
+## Milestone 3.2 – Client Management
 
 - Create client applications.
+  - Define the client creation workflow.
+  - Create OpenIddict applications.
+  - Validate required client information.
+  - Verify application creation.
+
 - Edit client applications.
+  - Update application metadata.
+  - Update client configuration.
+  - Preserve immutable identifiers.
+  - Verify application updates.
+
 - Enable and disable client applications.
+  - Define the enabled state.
+  - Prevent disabled applications from authenticating.
+  - Display application status.
+  - Verify enabled and disabled behaviour.
+
 - Manage application metadata.
+  - Manage display name.
+  - Manage description.
+  - Manage client-specific metadata.
+  - Verify metadata persistence.
 
 ---
 
 ## Milestone 3.3 – OpenID Connect Configuration
 
 - Manage redirect URIs.
+  - Add redirect URIs.
+  - Edit redirect URIs.
+  - Remove redirect URIs.
+  - Validate redirect URI format.
+  - Verify redirect URI configuration.
+
 - Manage post-logout redirect URIs.
+  - Add post-logout redirect URIs.
+  - Edit post-logout redirect URIs.
+  - Remove post-logout redirect URIs.
+  - Verify logout configuration.
+
 - Manage client authentication.
-- Manage permissions.
+  - Configure client type.
+  - Configure client secret.
+  - Support secret regeneration.
+  - Verify client authentication.
+
+- Manage OpenID Connect permissions.
+  - Configure endpoint permissions.
+  - Configure grant type permissions.
+  - Configure response type permissions.
+  - Configure scope permissions.
+  - Configure PKCE requirements.
+  - Configure consent behaviour.
+  - Verify permission changes.
+
 - Replace hard-coded client registration.
+  - Remove development-only client registration.
+  - Load clients from the OpenIddict stores.
+  - Verify dynamic client registration.
+  - Verify existing Reference Web application behaviour.
 
 ---
 
