@@ -1,0 +1,29 @@
+﻿.clients-page {
+    width: 100%;
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.clients-page__header {
+    padding-block: 0.5rem;
+}
+
+.clients-page__content {
+    min-height: 28rem;
+    padding: 2rem;
+    border-radius: 0.75rem;
+}
+
+.clients-page__empty-state {
+    min-height: 24rem;
+    justify-content: center;
+}
+
+.clients-page__empty-description {
+    max-width: 32rem;
+}
+
+.clients-page__divider {
+    width: 100%;
+    max-width: 24rem;
+}

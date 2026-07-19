@@ -121,10 +121,10 @@ Milestone 3.1 – Client Administration
 # Current task
 
 Create the client application management feature.
-- Define the administration navigation.
-- Define the client application list page.
-- Define the client details page.
-- Define the client management workflow.
+- Define authenticated administration navigation.
+- Create the authenticated client application list page layout.
+- Create the authenticated client details page layout.
+- Define the client management navigation workflow.
 
 # Remaining milestone tasks
 
