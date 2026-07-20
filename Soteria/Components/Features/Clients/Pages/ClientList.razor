@@ -11,24 +11,40 @@
         <header class="clients-page__header">
             <MudStack Row="true"
                       AlignItems="AlignItems.Center"
-                      Spacing="2">
-                <MudAvatar Color="Color.Primary"
-                           Variant="Variant.Filled"
-                           Size="Size.Large">
-                    <MudIcon Icon="@Icons.Material.Filled.Apps"/>
-                </MudAvatar>
+                      Justify="Justify.SpaceBetween"
+                      Spacing="3"
+                      Class="clients-page__header-content">
 
-                <MudStack Spacing="0">
-                    <MudText Typo="Typo.h4"
-                             HtmlTag="h1">
-                        Client Applications
-                    </MudText>
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="2">
 
-                    <MudText Typo="Typo.body1"
-                             Color="Color.Secondary">
-                        Manage applications that authenticate users through Soteria.
-                    </MudText>
+                    <MudAvatar Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Size="Size.Large">
+                        <MudIcon Icon="@Icons.Material.Filled.Apps" />
+                    </MudAvatar>
+
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h4"
+                                 HtmlTag="h1">
+                            Client Applications
+                        </MudText>
+
+                        <MudText Typo="Typo.body1"
+                                 Color="Color.Secondary">
+                            Manage applications that authenticate
+                            users through Soteria.
+                        </MudText>
+                    </MudStack>
                 </MudStack>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="CreateClientAsync">
+                    Create client
+                </MudButton>
             </MudStack>
         </header>
 

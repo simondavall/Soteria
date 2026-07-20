@@ -1,0 +1,76 @@
+﻿@using Soteria.Components.Features.Clients
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="Form" ValidationDelay="1">
+            <MudStack Spacing="3">
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
+                        @ErrorMessage
+                    </MudAlert>
+                }
+
+                <MudTextField @bind-Value="Model.ClientId"
+                              Label="Client ID"
+                              Required="true"
+                              RequiredError="Client ID is required."
+                              Error="@HasError(nameof(CreateClientRequest.ClientId))"
+                              ErrorText="@GetError(nameof(CreateClientRequest.ClientId))"
+                              Immediate="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Model.DisplayName"
+                              Label="Display name"
+                              Required="true"
+                              RequiredError="Display name is required."
+                              Error="@HasError(nameof(CreateClientRequest.DisplayName))"
+                              ErrorText="@GetError(nameof(CreateClientRequest.DisplayName))"
+                              Immediate="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Model.ClientSecret"
+                              Label="Client secret"
+                              InputType="InputType.Password"
+                              Required="true"
+                              RequiredError="Client secret is required."
+                              Error="@HasError(nameof(CreateClientRequest.ClientSecret))"
+                              ErrorText="@GetError(nameof(CreateClientRequest.ClientSecret))"
+                              Immediate="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Model.ClientHost"
+                              Label="Client host"
+                              Placeholder="https://localhost:7276"
+                              Required="true"
+                              RequiredError="Client host is required."
+                              Error="@HasError(nameof(CreateClientRequest.ClientHost))"
+                              ErrorText="@GetError(nameof(CreateClientRequest.ClientHost))"
+                              Immediate="true"
+                              Disabled="IsSaving" />
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel"
+                   Disabled="IsSaving">
+            Cancel
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="SaveAsync"
+                   Disabled="IsSaving">
+            @if (IsSaving)
+            {
+                <MudProgressCircular Size="Size.Small"
+                                     Indeterminate="true"
+                                     Class="me-2" />
+            }
+
+            Save
+        </MudButton>
+    </DialogActions>
+</MudDialog>

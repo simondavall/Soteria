@@ -9,14 +9,50 @@ namespace Soteria.Components.Features.Clients;
 public sealed class ClientService
 {
     private readonly SoteriaDbContext _dbContext;
+    private readonly IOpenIddictApplicationManager _applicationManager;
 
-    public ClientService(SoteriaDbContext dbContext)
+    public ClientService(SoteriaDbContext dbContext, IOpenIddictApplicationManager applicationManager)
     {
         _dbContext = dbContext;
+        _applicationManager = applicationManager;
+    }
+    
+    public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
+    {
+        var clientId = ValidateRequiredValue(request.ClientId, nameof(CreateClientRequest.ClientId),
+            "Client ID is required.");
+        var displayName = ValidateRequiredValue(request.DisplayName, nameof(CreateClientRequest.DisplayName),
+            "Display name is required.");
+
+        ValidateClientSecret(request.ClientSecret);
+
+        var clientHost = NormaliseClientHost(request.ClientHost);
+        var existingApplication = await _applicationManager.FindByClientIdAsync(clientId, cancellationToken);
+
+        if (existingApplication is not null)
+        {
+            throw new ClientValidationException(
+                nameof(CreateClientRequest.ClientId), 
+                "A client application with this client ID already exists.");
+        }
+
+        var descriptor =
+            new OpenIddictApplicationDescriptor
+            {
+                ClientId = clientId,
+                DisplayName = displayName,
+                ClientSecret = request.ClientSecret
+            };
+
+        descriptor.RedirectUris.Add(new Uri($"{clientHost}/signin-oidc", UriKind.Absolute));
+        descriptor.PostLogoutRedirectUris.Add(new Uri($"{clientHost}/signout-callback-oidc", UriKind.Absolute));
+
+        OpenIddictApplicationDefaults.Apply(descriptor);
+
+        await _applicationManager.CreateAsync(descriptor, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext
             .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
@@ -32,9 +68,7 @@ public sealed class ClientService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<ClientApplicationDetails?> GetClientAsync(
-        string clientId,
-        CancellationToken cancellationToken = default)
+    public async Task<ClientApplicationDetails?> GetClientAsync(string clientId, CancellationToken cancellationToken = default)
     {
         var application = await _dbContext
             .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
@@ -64,18 +98,10 @@ public sealed class ClientService
             application.DisplayName ?? application.ClientId ?? clientId,
             application.ClientType ?? string.Empty,
             application.ConsentType ?? string.Empty,
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.Endpoint),
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.GrantType),
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.ResponseType),
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.Scope),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.Endpoint),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.GrantType),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.ResponseType),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.Scope),
             DeserializeStringArray(application.RedirectUris)
                 .OrderBy(uri => uri, StringComparer.OrdinalIgnoreCase)
                 .ToList(),
@@ -103,37 +129,23 @@ public sealed class ClientService
         }
     }
 
-    private static IReadOnlyList<string> GetPermissions(
-        IEnumerable<string> permissions,
-        string prefix)
+    private static IReadOnlyList<string> GetPermissions(IEnumerable<string> permissions, string prefix)
     {
         return permissions
-            .Where(permission =>
-                permission.StartsWith(prefix, StringComparison.Ordinal))
-            .Select(permission =>
-                FormatPermission(prefix, permission[prefix.Length..]))
+            .Where(permission => permission.StartsWith(prefix, StringComparison.Ordinal))
+            .Select(permission => FormatPermission(prefix, permission[prefix.Length..]))
             .OrderBy(permission => permission, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
-    private static string FormatPermission(
-        string prefix,
-        string permission)
+    private static string FormatPermission(string prefix, string permission)
     {
         return prefix switch
         {
-            OpenIddictConstants.Permissions.Prefixes.Endpoint =>
-                FormatEndpointPermission(permission),
-
-            OpenIddictConstants.Permissions.Prefixes.GrantType =>
-                FormatGrantTypePermission(permission),
-
-            OpenIddictConstants.Permissions.Prefixes.ResponseType =>
-                FormatResponseTypePermission(permission),
-
-            OpenIddictConstants.Permissions.Prefixes.Scope =>
-                FormatScopePermission(permission),
-
+            OpenIddictConstants.Permissions.Prefixes.Endpoint => FormatEndpointPermission(permission),
+            OpenIddictConstants.Permissions.Prefixes.GrantType => FormatGrantTypePermission(permission),
+            OpenIddictConstants.Permissions.Prefixes.ResponseType => FormatResponseTypePermission(permission),
+            OpenIddictConstants.Permissions.Prefixes.Scope => FormatScopePermission(permission),
             _ => FormatUnknownValue(permission)
         };
     }
@@ -205,14 +217,64 @@ public sealed class ClientService
         var words = value
             .Replace('_', ' ')
             .Replace('-', ' ')
-            .Split(
-                ' ',
-                StringSplitOptions.RemoveEmptyEntries);
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        return string.Join(
-            " ",
-            words.Select(word =>
-                char.ToUpperInvariant(word[0]) + word[1..]));
+        return string.Join(" ", words.Select(word => char.ToUpperInvariant(word[0]) + word[1..]));
+    }
+
+    private static string ValidateRequiredValue(string value, string propertyName, string errorMessage)
+    {
+        var normalisedValue = value.Trim();
+
+        if (string.IsNullOrWhiteSpace(normalisedValue))
+        {
+            throw new ClientValidationException(propertyName, errorMessage);
+        }
+
+        return normalisedValue;
+    }
+
+    private static void ValidateClientSecret(string clientSecret)
+    {
+        if (string.IsNullOrWhiteSpace(clientSecret))
+        {
+            throw new ClientValidationException(
+                nameof(CreateClientRequest.ClientSecret),
+                "Client secret is required.");
+        }
+    }
+
+    private static string NormaliseClientHost(string value)
+    {
+        var clientHost = ValidateRequiredValue(
+            value,
+            nameof(CreateClientRequest.ClientHost),
+            "Client host is required.");
+
+        if (!Uri.TryCreate(clientHost, UriKind.Absolute, out var uri) ||
+            string.IsNullOrWhiteSpace(uri.Scheme) ||
+            string.IsNullOrWhiteSpace(uri.Host))
+        {
+            throw new ClientValidationException(
+                nameof(CreateClientRequest.ClientHost),
+                "Enter a valid absolute client host URI. E.g. https://example.com:7276");
+        }
+
+        if (!string.IsNullOrEmpty(uri.Query))
+        {
+            throw new ClientValidationException(
+                nameof(CreateClientRequest.ClientHost),
+                "The client host must not contain a query string.");
+        }
+        
+        if (!string.IsNullOrEmpty(uri.Fragment))
+        {
+            throw new ClientValidationException(
+                nameof(CreateClientRequest.ClientHost),
+                "The client host must not contain a fragment.");
+        }
+
+        return clientHost.TrimEnd('/');
     }
 }
 
@@ -233,3 +295,14 @@ public sealed record ClientApplicationDetails(
     IReadOnlyList<string> ScopePermissions,
     IReadOnlyList<string> RedirectUris,
     IReadOnlyList<string> PostLogoutRedirectUris);
+
+public sealed record CreateClientRequest(
+    string ClientId,
+    string DisplayName,
+    string ClientSecret,
+    string ClientHost);
+
+public sealed class ClientValidationException(string propertyName, string message) : Exception(message)
+{
+    public string PropertyName { get; } = propertyName;
+}
