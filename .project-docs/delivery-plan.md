@@ -233,10 +233,15 @@ reference resource API.
   - ✓ Verify application listing.
 
 - Implement client application details.
+  - Retrieve the selected OpenIddict application.
   - Display application metadata.
   - Display client type and consent configuration.
-  - Display configured permissions.
+  - Display configured endpoint permissions.
+  - Display configured grant type permissions.
+  - Display configured response type permissions.
+  - Display configured scopes.
   - Display configured redirect URIs.
+  - Display configured post-logout redirect URIs.
   - Verify application details.
 
 ---
