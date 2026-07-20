@@ -232,17 +232,17 @@ reference resource API.
   - ✓ Display application status (currently Active for all applications; enabled/disabled state will be introduced in Milestone 3.2).
   - ✓ Verify application listing.
 
-- Implement client application details.
-  - Retrieve the selected OpenIddict application.
-  - Display application metadata.
-  - Display client type and consent configuration.
-  - Display configured endpoint permissions.
-  - Display configured grant type permissions.
-  - Display configured response type permissions.
-  - Display configured scopes.
-  - Display configured redirect URIs.
-  - Display configured post-logout redirect URIs.
-  - Verify application details.
+- ✓ Implement client application details.
+  - ✓ Retrieve the selected OpenIddict application.
+  - ✓ Display application metadata.
+  - ✓ Display client type and consent configuration.
+  - ✓ Display configured endpoint permissions.
+  - ✓ Display configured grant type permissions.
+  - ✓ Display configured response type permissions.
+  - ✓ Display configured scopes.
+  - ✓ Display configured redirect URIs.
+  - ✓ Display configured post-logout redirect URIs.
+  - ✓ Verify application details.
 
 ---
 

@@ -119,25 +119,21 @@ where development should continue.
 - Implemented the authenticated client application listing page.
 - Displayed application summary information.
 - Displayed the initial application status column.
+- Implemented the client application details page.
+- Retrieved OpenIddict application configuration directly from the database.
+
 
 # Current milestone
-
-Milestone 3.1 – Client Administration
+Milestone 3.2 – Client Management
 
 # Current task
-
-Implement client application details.
-- Retrieve the selected OpenIddict application.
-- Display application metadata.
-- Display client type and consent configuration.
-- Display configured endpoint permissions.
-- Display configured grant type permissions.
-- Display configured response type permissions.
-- Display configured scopes.
-- Display configured redirect URIs.
-- Display configured post-logout redirect URIs.
-- Verify application details.
+Create client applications.
+- Define the client creation workflow.
+- Create OpenIddict applications.
+- Validate required client information.
+- Verify application creation.
 
 # Remaining milestone tasks
-
-None
+- Edit client applications.
+- Enable and disable client applications.
+- Manage application metadata.
