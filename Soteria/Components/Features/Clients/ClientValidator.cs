@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using Soteria.Components.Features.Clients.Models;
 
@@ -6,12 +7,13 @@ namespace Soteria.Components.Features.Clients;
 
 public class ClientValidator : AbstractValidator<CreateClientModel>
 {
-    private readonly IOpenIddictApplicationManager _applicationManager;
+    private readonly ClientService _clientService;
+    private IReadOnlyList<ClientSummary> _clients = [];
+    private readonly string[] _clientIds = [];
 
-    public ClientValidator(IOpenIddictApplicationManager applicationManager)
+    public ClientValidator(ClientService clientService)
     {
-        _applicationManager = applicationManager;
-
+        _clientService = clientService;
         RuleFor(x => x.ClientId)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
@@ -37,8 +39,12 @@ public class ClientValidator : AbstractValidator<CreateClientModel>
 
     private async Task<bool> IsUniqueAsync(string clientId)
     {
-        var existingApplication = await _applicationManager.FindByClientIdAsync(clientId);
-        return existingApplication is null;
+        if (_clients.Count == 0)
+        {
+            _clients = await _clientService.GetClientsAsync();
+        }
+        var existingApplication = _clients.Where(x => x.ClientId == clientId);
+        return !existingApplication.Any();
     }
     
     private static bool BeAbsoluteUri(string clientHost)

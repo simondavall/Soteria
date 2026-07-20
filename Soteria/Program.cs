@@ -123,7 +123,7 @@ public class Program
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
         builder.Services.AddScoped<OpenIddictInitializer>();
         builder.Services.AddScoped<ClientService>();
-        builder.Services.AddScoped<ClientValidator>();
+        builder.Services.AddTransient<ClientValidator>();
 
         var app = builder.Build();
 
