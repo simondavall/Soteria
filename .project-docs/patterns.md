@@ -29,3 +29,23 @@ When implementing OpenIddict endpoints that require application logic:
 • Perform application-specific work.
 • Complete the protocol using the OpenIddict authentication scheme.
 • Keep protocol validation inside OpenIddict and business logic inside Soteria.
+
+## Shared Provider Configuration
+
+### Problem
+
+Multiple workflows need to configure an OpenIddict application using the same provider defaults. Duplicating the configuration increases the risk of the provider behaviour diverging over time.
+
+### Pattern
+
+Place the shared provider configuration into a small internal helper that applies the common configuration to an `OpenIddictApplicationDescriptor`.
+
+Individual workflows remain responsible for supplying their own application-specific values (for example client identifier, display name, client secret and redirect URIs) before creating or updating the application.
+
+### Benefits
+
+- Maintains a single source of truth for provider defaults.
+- Keeps bootstrap registration and administrative workflows aligned.
+- Reduces maintenance effort when provider defaults evolve.
+- Avoids introducing unnecessary service abstractions while still removing duplicated implementation.
+
