@@ -28,7 +28,7 @@ public sealed class ClientService
 
         var clientHost = NormaliseClientHost(request.ClientHost);
         var existingApplication = await _applicationManager.FindByClientIdAsync(clientId, cancellationToken);
-
+        
         if (existingApplication is not null)
         {
             throw new ClientValidationException(
