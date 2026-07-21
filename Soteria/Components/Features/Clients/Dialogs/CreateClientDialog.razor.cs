@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Soteria.Components.Features.Shared;
 
@@ -19,12 +18,12 @@ public partial class CreateClientDialog
     
     private MudForm Form { get; set; } = default!;
     private CreateClientRequest Request { get; } = new();
-    private string? ErrorMessage { get; set; }
+    private List<string> ErrorMessages { get; set; } = [];
     private bool IsSaving { get; set; }
 
     private async Task SaveAsync()
     {
-        ErrorMessage = null;
+        ErrorMessages.Clear();
         
         await Form.ValidateAsync();
 
@@ -40,13 +39,13 @@ public partial class CreateClientDialog
             await ClientService.CreateClientAsync(Request);
             MudDialog.Close(DialogResult.Ok(Request.ClientId.Trim()));
         }
-        catch (ClientValidationException exception)
+        catch (CreateClientValidationException exception)
         {
-            ErrorMessage = $"{exception.PropertyName} - {exception.Message}";
+            ErrorMessages = exception.Failures.Select(e => e.ErrorMessage).ToList();
         }
         catch (Exception)
         {
-            ErrorMessage = "The client application could not be created. Review the entered values and try again.";
+            ErrorMessages.Add("The client application could not be created. Review the entered values and try again.");
         }
         finally
         {

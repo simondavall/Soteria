@@ -1,19 +1,16 @@
 ﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using OpenIddict.EntityFrameworkCore.Models;
+using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
-using Soteria.Data;
 
 namespace Soteria.Components.Features.Clients;
 
-public class CreateClientValidator : AbstractValidator<CreateClientRequest>, IMudValidator<CreateClientRequest>
+public sealed class CreateClientValidator : AbstractValidator<CreateClientRequest>, IMudValidator<CreateClientRequest>
 {
-    private readonly DbContext _dbContext;
-    private HashSet<string>? _clientIds;
+    private readonly IClientApplicationLookup _clientApplicationLookup;
 
-    public CreateClientValidator(SoteriaDbContext dbContext)
+    public CreateClientValidator(IClientApplicationLookup clientApplicationLookup)
     {
-        _dbContext = dbContext;
+        _clientApplicationLookup = clientApplicationLookup;
         RuleFor(x => x.ClientId)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
@@ -36,23 +33,10 @@ public class CreateClientValidator : AbstractValidator<CreateClientRequest>, IMu
             .Must(NotHaveAFragment)
             .WithMessage("The client host must not contain a fragment.");
     }
-
-    // private async Task<bool> IsUniqueAsync(string clientId)
-    // {
-    //     if (_clients.Count == 0)
-    //     {
-    //         _clients = await _clientService.GetClientsAsync();
-    //     }
-    //     var existingApplication = _clients.Where(x => x.ClientId == clientId);
-    //     return !existingApplication.Any();
-    // }
     
     private async Task<bool> IsUniqueAsync(string clientId, CancellationToken cancellationToken)
     {
-        _clientIds ??= (await GetClientIdsAsync(cancellationToken))
-            .ToHashSet(StringComparer.Ordinal);
-
-        return !_clientIds.Contains(clientId);
+        return !await _clientApplicationLookup.ClientIdExistsAsync(clientId.Trim(), cancellationToken);
     }
     
     private static bool BeAbsoluteUri(string clientHost)
@@ -73,19 +57,16 @@ public class CreateClientValidator : AbstractValidator<CreateClientRequest>, IMu
         Uri.TryCreate(clientHost, UriKind.Absolute, out var uri);
         return string.IsNullOrEmpty(uri?.Fragment ?? null);
     }
-    
-    private async Task<IReadOnlyList<string>> GetClientIdsAsync(CancellationToken cancellationToken = default)
+
+    public Func<object, string, Task<IEnumerable<string>>> ValidateValueAsync => ValidatePropertyAsync;
+
+    private async Task<IEnumerable<string>> ValidatePropertyAsync(object model, string propertyName)
     {
-        return await _dbContext
-            .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
-            .AsNoTracking()
-            .Select(x => x.ClientId!)
-            .ToListAsync(cancellationToken);
+        var context = ValidationContext<CreateClientRequest>
+            .CreateWithOptions((CreateClientRequest)model, options => options.IncludeProperties(propertyName));
+
+        var result = await ValidateAsync(context);
+
+        return result.Errors.Select(error => error.ErrorMessage);
     }
-    
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result = await ValidateAsync(ValidationContext<CreateClientRequest>.CreateWithOptions((CreateClientRequest)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? [] : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

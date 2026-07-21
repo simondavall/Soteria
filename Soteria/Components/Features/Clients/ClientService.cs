@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using OpenIddict.EntityFrameworkCore.Models;
-using Soteria.Components.Features.Shared;
 using Soteria.Data;
 
 namespace Soteria.Components.Features.Clients;
@@ -12,53 +12,40 @@ public sealed class ClientService
 {
     private readonly SoteriaDbContext _dbContext;
     private readonly IOpenIddictApplicationManager _applicationManager;
-    private readonly IMudValidator<CreateClientRequest> _createClientValidator;
+    private readonly IValidator<CreateClientRequest> _createClientValidator;
 
     public ClientService(
-        SoteriaDbContext dbContext, 
-        IOpenIddictApplicationManager applicationManager, 
-        IMudValidator<CreateClientRequest> createClientValidator)
+        SoteriaDbContext dbContext,
+        IOpenIddictApplicationManager applicationManager,
+        IValidator<CreateClientRequest> createClientValidator)
     {
         _dbContext = dbContext;
         _applicationManager = applicationManager;
         _createClientValidator = createClientValidator;
     }
-    
+
     public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
     {
+        request.ClientId = request.ClientId.Trim();
+        request.DisplayName = request.DisplayName.Trim();
+        request.ClientHost = request.ClientHost.Trim().TrimEnd('/');
+
         var validationResult = await _createClientValidator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new ClientValidationFailureException(validationResult.Errors);
-        }
-        
-        var clientId = ValidateRequiredValue(request.ClientId, nameof(CreateClientRequest.ClientId),
-            "Client ID is required.");
-        var displayName = ValidateRequiredValue(request.DisplayName, nameof(CreateClientRequest.DisplayName),
-            "Display name is required.");
-
-        ValidateClientSecret(request.ClientSecret);
-
-        var clientHost = NormaliseClientHost(request.ClientHost);
-        var existingApplication = await _applicationManager.FindByClientIdAsync(clientId, cancellationToken);
-        
-        if (existingApplication is not null)
-        {
-            throw new ClientValidationException(
-                nameof(CreateClientRequest.ClientId), 
-                "A client application with this client ID already exists.");
+            throw new CreateClientValidationException(validationResult.Errors);
         }
 
         var descriptor =
             new OpenIddictApplicationDescriptor
             {
-                ClientId = clientId,
-                DisplayName = displayName,
+                ClientId = request.ClientId,
+                DisplayName = request.DisplayName,
                 ClientSecret = request.ClientSecret
             };
 
-        descriptor.RedirectUris.Add(new Uri($"{clientHost}/signin-oidc", UriKind.Absolute));
-        descriptor.PostLogoutRedirectUris.Add(new Uri($"{clientHost}/signout-callback-oidc", UriKind.Absolute));
+        descriptor.RedirectUris.Add(new Uri($"{request.ClientHost}/signin-oidc", UriKind.Absolute));
+        descriptor.PostLogoutRedirectUris.Add(new Uri($"{request.ClientHost}/signout-callback-oidc", UriKind.Absolute));
 
         OpenIddictApplicationDefaults.Apply(descriptor);
 
@@ -81,7 +68,8 @@ public sealed class ClientService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<ClientApplicationDetails?> GetClientAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<ClientApplicationDetails?> GetClientAsync(string clientId,
+        CancellationToken cancellationToken = default)
     {
         var application = await _dbContext
             .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
@@ -234,61 +222,6 @@ public sealed class ClientService
 
         return string.Join(" ", words.Select(word => char.ToUpperInvariant(word[0]) + word[1..]));
     }
-
-    private static string ValidateRequiredValue(string value, string propertyName, string errorMessage)
-    {
-        var normalisedValue = value.Trim();
-
-        if (string.IsNullOrWhiteSpace(normalisedValue))
-        {
-            throw new ClientValidationException(propertyName, errorMessage);
-        }
-
-        return normalisedValue;
-    }
-
-    private static void ValidateClientSecret(string clientSecret)
-    {
-        if (string.IsNullOrWhiteSpace(clientSecret))
-        {
-            throw new ClientValidationException(
-                nameof(CreateClientRequest.ClientSecret),
-                "Client secret is required.");
-        }
-    }
-
-    private static string NormaliseClientHost(string value)
-    {
-        var clientHost = ValidateRequiredValue(
-            value,
-            nameof(CreateClientRequest.ClientHost),
-            "Client host is required.");
-
-        if (!Uri.TryCreate(clientHost, UriKind.Absolute, out var uri) ||
-            string.IsNullOrWhiteSpace(uri.Scheme) ||
-            string.IsNullOrWhiteSpace(uri.Host))
-        {
-            throw new ClientValidationException(
-                nameof(CreateClientRequest.ClientHost),
-                "Enter a valid absolute client host URI. E.g. https://example.com:7276");
-        }
-
-        if (!string.IsNullOrEmpty(uri.Query))
-        {
-            throw new ClientValidationException(
-                nameof(CreateClientRequest.ClientHost),
-                "The client host must not contain a query string.");
-        }
-        
-        if (!string.IsNullOrEmpty(uri.Fragment))
-        {
-            throw new ClientValidationException(
-                nameof(CreateClientRequest.ClientHost),
-                "The client host must not contain a fragment.");
-        }
-
-        return clientHost.TrimEnd('/');
-    }
 }
 
 public sealed record ClientSummary(
@@ -309,12 +242,8 @@ public sealed record ClientApplicationDetails(
     IReadOnlyList<string> RedirectUris,
     IReadOnlyList<string> PostLogoutRedirectUris);
 
-public sealed class ClientValidationException(string propertyName, string message) : Exception(message)
+public sealed class CreateClientValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client application validation failed.")
 {
-    public string PropertyName { get; } = propertyName;
-}
-
-public sealed class ClientValidationFailureException(List<ValidationFailure> errors) : Exception()
-{
-    public List<ValidationFailure> Errors { get; } = errors;
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }

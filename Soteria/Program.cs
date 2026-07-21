@@ -1,4 +1,5 @@
 using DotNetEnv;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
 using Soteria.Components.Features.Clients;
+using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
 using Soteria.Data;
 
@@ -119,10 +121,17 @@ public class Program
             });
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
+        
         builder.Services.AddScoped<OpenIddictInitializer>();
         
+        builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
         builder.Services.AddScoped<ClientService>();
-        builder.Services.AddTransient<IMudValidator<CreateClientRequest>, CreateClientValidator>();
+        
+        builder.Services.AddTransient<CreateClientValidator>();
+        builder.Services.AddTransient<IValidator<CreateClientRequest>>(
+            provider => provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(
+            provider => provider.GetRequiredService<CreateClientValidator>());
 
         var app = builder.Build();
 
