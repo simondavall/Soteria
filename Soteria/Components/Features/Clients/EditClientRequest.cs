@@ -4,6 +4,7 @@ public sealed class EditClientRequest
 {
     public string ClientId { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
+    public bool IsEnabled { get; set; }
     public string ClientSecret { get; set; } = string.Empty;
     public string ClientHost { get; set; } = string.Empty;
 

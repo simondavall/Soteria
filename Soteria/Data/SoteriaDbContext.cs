@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Soteria.Data.OpenIddict;
 
 namespace Soteria.Data;
 
@@ -11,6 +12,15 @@ public class SoteriaDbContext(DbContextOptions<SoteriaDbContext> options)
     {
         base.OnModelCreating(builder);
 
-        builder.UseOpenIddict<Guid>();
+        builder.UseOpenIddict<
+            SoteriaApplication,
+            SoteriaAuthorization,
+            SoteriaScope,
+            SoteriaToken,
+            Guid>();
+
+        builder.Entity<SoteriaApplication>()
+            .Property(application => application.IsEnabled)
+            .HasDefaultValue(true);
     }
 }

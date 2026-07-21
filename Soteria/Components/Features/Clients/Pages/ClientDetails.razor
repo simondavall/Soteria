@@ -152,9 +152,9 @@
                                 </MudText>
 
                                 <MudChip T="string"
-                                         Color="Color.Success"
+                                         Color="@(Client.IsEnabled ? Color.Success : Color.Error)"
                                          Variant="Variant.Filled">
-                                    Active
+                                    @(Client.IsEnabled ? "Enabled" : "Disabled")
                                 </MudChip>
                             </div>
                         </div>
