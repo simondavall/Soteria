@@ -38,12 +38,26 @@
                     </MudStack>
                 </MudStack>
 
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.ArrowBack"
-                           OnClick="ReturnToClientList">
-                    Back to clients
-                </MudButton>
+                <MudStack Row="true"
+                          Spacing="2">
+
+                    @if (Client is not null)
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Edit"
+                                   OnClick="EditClientAsync">
+                            Edit
+                        </MudButton>
+                    }
+
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.ArrowBack"
+                               OnClick="ReturnToClientList">
+                        Back to clients
+                    </MudButton>
+                </MudStack>
             </MudStack>
         </header>
 

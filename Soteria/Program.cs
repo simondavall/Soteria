@@ -133,6 +133,12 @@ public class Program
         builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(
             provider => provider.GetRequiredService<CreateClientValidator>());
 
+        builder.Services.AddTransient<EditClientValidator>();
+        builder.Services.AddTransient<IValidator<EditClientRequest>>(
+            provider => provider.GetRequiredService<EditClientValidator>());
+        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(
+            provider => provider.GetRequiredService<EditClientValidator>());
+        
         var app = builder.Build();
 
         await using (var scope = app.Services.CreateAsyncScope())
