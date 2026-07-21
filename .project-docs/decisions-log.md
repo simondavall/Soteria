@@ -302,3 +302,54 @@ This approach was adopted after verification demonstrated reliable RP-initiated 
 Returning a SignOutHttpResult produced inconsistent behaviour during endpoint execution, whereas 
 direct sign-out completed reliably.
 
+2026-07-21
+
+Decision:
+
+The initial Soteria client model exposes a single client host rather than directly managing OpenIddict's redirect URI collections.
+
+Administrators enter a single client host when creating or editing a client application.
+
+Soteria derives the client's OpenID Connect endpoints from that host using the standard ASP.NET Core OpenID Connect conventions:
+
+- Redirect URI:
+  `/signin-oidc`
+- Post-logout redirect URI:
+  `/signout-callback-oidc`
+
+The calculated URIs are stored in the OpenIddict client registration and displayed within the administration UI for reference, but are not edited directly.
+
+OpenIddict continues to support multiple redirect URIs and post-logout redirect URIs internally; Soteria deliberately exposes a simpler administration model until a future requirement justifies collection management.
+
+Reason:
+
+The initial project targets privately hosted applications following a consistent hosting convention.
+
+Using a single client host keeps client registration simple while still producing fully functional OpenID Connect registrations.
+
+Deriving the redirect URIs avoids duplicated information, prevents inconsistent endpoint configuration, and reduces administrator error.
+
+The simplified model can be expanded later without preventing Soteria from taking advantage of OpenIddict's underlying support for multiple redirect URIs.
+
+2026-07-21
+
+Decision:
+
+Client applications have an explicit enabled state stored as part of the Soteria application model rather than as OpenIddict application metadata.
+
+When a client application is disabled:
+
+- New authorization requests are rejected.
+- Authorization-code exchange is rejected.
+- Refresh-token exchange is rejected.
+- Existing access tokens remain valid until their normal expiry.
+- Existing access tokens are not revoked.
+- Existing refresh tokens are not revoked.
+
+Resource APIs continue to validate access tokens locally without consulting Soteria on each request.
+
+Reason:
+
+The enabled state is a first-class Soteria domain concept and is expected to be queried frequently. Representing it as a dedicated persisted property makes the model explicit, simplifies querying and avoids overloading OpenIddict metadata intended for extensibility.
+
+Allowing existing access tokens to expire naturally preserves the current high-performance resource-server validation model while preventing disabled applications from obtaining any new tokens. This avoids introducing a database lookup on every protected API request while ensuring that disabled applications lose access once their short-lived access tokens expire.

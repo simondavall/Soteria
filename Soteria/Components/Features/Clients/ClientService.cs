@@ -13,15 +13,18 @@ public sealed class ClientService
     private readonly SoteriaDbContext _dbContext;
     private readonly IOpenIddictApplicationManager _applicationManager;
     private readonly IValidator<CreateClientRequest> _createClientValidator;
+    private readonly IValidator<EditClientRequest> _editClientValidator;
 
     public ClientService(
         SoteriaDbContext dbContext,
         IOpenIddictApplicationManager applicationManager,
-        IValidator<CreateClientRequest> createClientValidator)
+        IValidator<CreateClientRequest> createClientValidator,
+        IValidator<EditClientRequest> editClientValidator)
     {
         _dbContext = dbContext;
         _applicationManager = applicationManager;
         _createClientValidator = createClientValidator;
+        _editClientValidator = editClientValidator;
     }
 
     public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
@@ -52,6 +55,22 @@ public sealed class ClientService
         await _applicationManager.CreateAsync(descriptor, cancellationToken);
     }
 
+    public async Task<EditClientRequest?> GetClientForEditAsync(string clientId, CancellationToken cancellationToken = default)
+    {
+        var application = await GetClientAsync(clientId, cancellationToken);
+        if (application is null)
+        {
+            return null;
+        }
+
+        return new EditClientRequest
+        {
+            ClientId = application.ClientId,
+            DisplayName = application.DisplayName,
+            ClientHost = GetClientHost(application.RedirectUris)
+        };
+    }
+    
     public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext
@@ -111,6 +130,62 @@ public sealed class ClientService
                 .ToList());
     }
 
+    public async Task UpdateClientAsync(EditClientRequest request, CancellationToken cancellationToken = default)
+    {
+        request.DisplayName = request.DisplayName.Trim();
+        request.ClientHost = request.ClientHost.Trim().TrimEnd('/');
+
+        var validationResult = await _editClientValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            throw new EditClientValidationException(validationResult.Errors);
+        }
+
+        var application = await _applicationManager.FindByClientIdAsync(request.ClientId, cancellationToken);
+        if (application is null)
+        {
+            throw new InvalidOperationException(
+                $"The client application '{request.ClientId}' could not be found.");
+        }
+
+        var descriptor = new OpenIddictApplicationDescriptor();
+
+        await _applicationManager.PopulateAsync(descriptor, application, cancellationToken);
+
+        descriptor.DisplayName = request.DisplayName;
+
+        descriptor.RedirectUris.Clear();
+        descriptor.RedirectUris.Add(new Uri(request.RedirectUri, UriKind.Absolute));
+
+        descriptor.PostLogoutRedirectUris.Clear();
+        descriptor.PostLogoutRedirectUris.Add(new Uri(request.PostLogoutRedirectUri, UriKind.Absolute));
+        
+        await _applicationManager.UpdateAsync(application, descriptor, cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(request.ClientSecret))
+        {
+            await _applicationManager.UpdateAsync(application, request.ClientSecret, cancellationToken);
+        }
+    }
+    
+    private static string GetClientHost(IReadOnlyList<string> redirectUris)
+    {
+        const string redirectPath = "/signin-oidc";
+
+        var redirectUri = redirectUris.SingleOrDefault();
+
+        if (redirectUri is null ||
+            !redirectUri.EndsWith(
+                redirectPath,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return string.Empty;
+        }
+
+        return redirectUri[..^redirectPath.Length].TrimEnd('/');
+    }
+    
     private static IReadOnlyList<string> DeserializeStringArray(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -243,6 +318,12 @@ public sealed record ClientApplicationDetails(
     IReadOnlyList<string> PostLogoutRedirectUris);
 
 public sealed class CreateClientValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client application validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class EditClientValidationException(IReadOnlyList<ValidationFailure> failures)
     : Exception("Client application validation failed.")
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
