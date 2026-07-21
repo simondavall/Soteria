@@ -133,21 +133,28 @@ where development should continue.
 - Implemented client host updates.
 - Derived redirect URI and post-logout redirect URI from the client host.
 - Verified successful client application updates.
+- Implemented explicit client application enabled state.
+- Added custom SoteriaApplication OpenIddict entity.
+- Persisted client enabled state.
+- Updated client administration UI to manage enabled state.
+- Prevented disabled client applications from starting new OpenID Connect authentication.
+- Prevented disabled client applications from redeeming authorization codes.
+- Prevented disabled client applications from redeeming refresh tokens.
+- Verified existing access tokens remain valid until expiry.
+- Verified re-enabling a client immediately restores authentication.
 
 # Current milestone
-Milestone 3.2 – Client Management
+
+Milestone 3.3 – OpenID Connect Configuration
 
 # Current task
 
-- Enable and disable client applications.
-    - Define the enabled state.
-    - Persist the enabled state on the client application.
-    - Prevent disabled applications from starting new authentication.
-    - Prevent disabled applications from obtaining new tokens.
-    - Allow existing access tokens to remain valid until expiry.
-    - Display application status.
-    - Verify enabled and disabled behaviour.
+Manage client type.
+- Configure the client as public or confidential.
+- Apply the authentication requirements appropriate to the selected client type.
+- Verify public and confidential client authentication.
 
 # Remaining milestone tasks
 
-- None
+- Manage OpenID Connect permissions.
+- Implement user-friendly OpenID Connect authentication error handling

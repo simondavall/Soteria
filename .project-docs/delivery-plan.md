@@ -262,14 +262,14 @@ reference resource API.
   - ✓ Preserve the immutable client identifier.
   - ✓ Verify application updates.
 
-- Enable and disable client applications.
-  - Define the enabled state.
-  - Persist the enabled state on the client application.
-  - Prevent disabled applications from starting new authentication.
-  - Prevent disabled applications from obtaining new tokens.
-  - Allow existing access tokens to remain valid until expiry.
-  - Display application status.
-  - Verify enabled and disabled behaviour.
+- ✓ Enable and disable client applications.
+  - ✓ Define the enabled state.
+  - ✓ Persist the enabled state on the client application.
+  - ✓ Prevent disabled applications from starting new authentication.
+  - ✓ Prevent disabled applications from obtaining new tokens.
+  - ✓ Allow existing access tokens to remain valid until expiry.
+  - ✓ Display application status.
+  - ✓ Verify enabled and disabled behaviour.
 
 ---
 
@@ -288,6 +288,8 @@ reference resource API.
   - Configure PKCE requirements.
   - Configure consent behaviour.
   - Verify permission changes.
+
+- Implement user-friendly OpenID Connect authentication error handling
 
 ---
 
