@@ -3,8 +3,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
-using OpenIddict.EntityFrameworkCore.Models;
 using Soteria.Data;
+using Soteria.Data.OpenIddict;
 
 namespace Soteria.Components.Features.Clients;
 
@@ -67,6 +67,7 @@ public sealed class ClientService
         {
             ClientId = application.ClientId,
             DisplayName = application.DisplayName,
+            IsEnabled = application.IsEnabled,
             ClientHost = GetClientHost(application.RedirectUris)
         };
     }
@@ -74,7 +75,7 @@ public sealed class ClientService
     public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext
-            .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
+            .Set<SoteriaApplication>()
             .AsNoTracking()
             .Where(application => application.ClientId != null)
             .OrderBy(application =>
@@ -83,7 +84,8 @@ public sealed class ClientService
                 application.ClientId!,
                 application.DisplayName ?? application.ClientId!,
                 application.ClientType ?? string.Empty,
-                application.ConsentType ?? string.Empty))
+                application.ConsentType ?? string.Empty,
+                application.IsEnabled))
             .ToListAsync(cancellationToken);
     }
 
@@ -91,7 +93,7 @@ public sealed class ClientService
         CancellationToken cancellationToken = default)
     {
         var application = await _dbContext
-            .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
+            .Set<SoteriaApplication>()
             .AsNoTracking()
             .Where(application => application.ClientId == clientId)
             .Select(application => new
@@ -100,6 +102,7 @@ public sealed class ClientService
                 application.DisplayName,
                 application.ClientType,
                 application.ConsentType,
+                application.IsEnabled,
                 application.Permissions,
                 application.RedirectUris,
                 application.PostLogoutRedirectUris
@@ -118,6 +121,7 @@ public sealed class ClientService
             application.DisplayName ?? application.ClientId ?? clientId,
             application.ClientType ?? string.Empty,
             application.ConsentType ?? string.Empty,
+            application.IsEnabled,
             GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.Endpoint),
             GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.GrantType),
             GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.ResponseType),
@@ -152,7 +156,14 @@ public sealed class ClientService
         var descriptor = new OpenIddictApplicationDescriptor();
 
         await _applicationManager.PopulateAsync(descriptor, application, cancellationToken);
-
+        
+        if (application is not SoteriaApplication soteriaApplication)
+        {
+            throw new InvalidOperationException(
+                "The OpenIddict application is not using the Soteria application entity.");
+        }
+        soteriaApplication.IsEnabled = request.IsEnabled;
+        
         descriptor.DisplayName = request.DisplayName;
 
         descriptor.RedirectUris.Clear();
@@ -303,13 +314,15 @@ public sealed record ClientSummary(
     string ClientId,
     string DisplayName,
     string ClientType,
-    string ConsentType);
+    string ConsentType,
+    bool IsEnabled);
 
 public sealed record ClientApplicationDetails(
     string ClientId,
     string DisplayName,
     string ClientType,
     string ConsentType,
+    bool IsEnabled,
     IReadOnlyList<string> EndpointPermissions,
     IReadOnlyList<string> GrantTypePermissions,
     IReadOnlyList<string> ResponseTypePermissions,
