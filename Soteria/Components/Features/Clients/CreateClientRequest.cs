@@ -1,6 +1,6 @@
-﻿namespace Soteria.Components.Features.Clients.Models;
+﻿namespace Soteria.Components.Features.Clients;
 
-public sealed class CreateClientModel
+public sealed class CreateClientRequest
 {
     public string ClientId { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;

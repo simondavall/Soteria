@@ -1,6 +1,6 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudForm Model="@Model" @ref="Form" Validation="@(ClientValidator.ValidateValue)">
+        <MudForm Model="@Request" @ref="Form" Validation="@(CreateClientValidator.ValidateValue)">
             <MudStack Spacing="3">
                 @if (!string.IsNullOrWhiteSpace(ErrorMessage))
                 {
@@ -10,31 +10,31 @@
                     </MudAlert>
                 }
 
-                <MudTextField @bind-Value="Model.ClientId"
+                <MudTextField @bind-Value="Request.ClientId"
                               Label="Client ID"
-                              For="@(() => Model.ClientId)"
+                              For="@(() => Request.ClientId)"
                               Immediate="true"
                               AutoFocus="true"
                               OnlyValidateIfDirty="true"
                               Disabled="IsSaving" />
 
-                <MudTextField @bind-Value="Model.DisplayName"
+                <MudTextField @bind-Value="Request.DisplayName"
                               Label="Display name"
-                              For="@(() => Model.DisplayName)"
+                              For="@(() => Request.DisplayName)"
                               Immediate="true"
                               OnlyValidateIfDirty="true"
                               Disabled="IsSaving" />
 
-                <MudTextField @bind-Value="Model.ClientSecret"
+                <MudTextField @bind-Value="Request.ClientSecret"
                               Label="Client secret"
-                              For="@(() => Model.ClientSecret)"
+                              For="@(() => Request.ClientSecret)"
                               Immediate="true"
                               OnlyValidateIfDirty="true"
                               Disabled="IsSaving" />
 
-                <MudTextField @bind-Value="Model.ClientHost"
+                <MudTextField @bind-Value="Request.ClientHost"
                               Label="Client host"
-                              For="@(() => Model.ClientHost)"
+                              For="@(() => Request.ClientHost)"
                               Placeholder="https://example.com"
                               Immediate="false"
                               OnlyValidateIfDirty="true"

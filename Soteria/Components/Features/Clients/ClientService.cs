@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using OpenIddict.EntityFrameworkCore.Models;
+using Soteria.Components.Features.Shared;
 using Soteria.Data;
 
 namespace Soteria.Components.Features.Clients;
@@ -10,15 +12,26 @@ public sealed class ClientService
 {
     private readonly SoteriaDbContext _dbContext;
     private readonly IOpenIddictApplicationManager _applicationManager;
+    private readonly IMudValidator<CreateClientRequest> _createClientValidator;
 
-    public ClientService(SoteriaDbContext dbContext, IOpenIddictApplicationManager applicationManager)
+    public ClientService(
+        SoteriaDbContext dbContext, 
+        IOpenIddictApplicationManager applicationManager, 
+        IMudValidator<CreateClientRequest> createClientValidator)
     {
         _dbContext = dbContext;
         _applicationManager = applicationManager;
+        _createClientValidator = createClientValidator;
     }
     
     public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
     {
+        var validationResult = await _createClientValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ClientValidationFailureException(validationResult.Errors);
+        }
+        
         var clientId = ValidateRequiredValue(request.ClientId, nameof(CreateClientRequest.ClientId),
             "Client ID is required.");
         var displayName = ValidateRequiredValue(request.DisplayName, nameof(CreateClientRequest.DisplayName),
@@ -296,13 +309,12 @@ public sealed record ClientApplicationDetails(
     IReadOnlyList<string> RedirectUris,
     IReadOnlyList<string> PostLogoutRedirectUris);
 
-public sealed record CreateClientRequest(
-    string ClientId,
-    string DisplayName,
-    string ClientSecret,
-    string ClientHost);
-
 public sealed class ClientValidationException(string propertyName, string message) : Exception(message)
 {
     public string PropertyName { get; } = propertyName;
+}
+
+public sealed class ClientValidationFailureException(List<ValidationFailure> errors) : Exception()
+{
+    public List<ValidationFailure> Errors { get; } = errors;
 }

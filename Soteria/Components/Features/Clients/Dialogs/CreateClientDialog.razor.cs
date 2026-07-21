@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Soteria.Components.Features.Clients.Models;
+using Soteria.Components.Features.Shared;
 
 // ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
@@ -11,13 +12,13 @@ public partial class CreateClientDialog
     [Inject]
     private ClientService ClientService { get; set; } = default!;
     [Inject]
-    private ClientValidator ClientValidator { get; set; } = default!;
+    private IMudValidator<CreateClientRequest> CreateClientValidator { get; set; } = default!;
 
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
     
     private MudForm Form { get; set; } = default!;
-    private CreateClientModel Model { get; } = new();
+    private CreateClientRequest Request { get; } = new();
     private string? ErrorMessage { get; set; }
     private bool IsSaving { get; set; }
 
@@ -36,14 +37,8 @@ public partial class CreateClientDialog
 
         try
         {
-            await ClientService.CreateClientAsync(
-                new CreateClientRequest(
-                    Model.ClientId,
-                    Model.DisplayName,
-                    Model.ClientSecret,
-                    Model.ClientHost));
-
-            MudDialog.Close(DialogResult.Ok(Model.ClientId.Trim()));
+            await ClientService.CreateClientAsync(Request);
+            MudDialog.Close(DialogResult.Ok(Request.ClientId.Trim()));
         }
         catch (ClientValidationException exception)
         {

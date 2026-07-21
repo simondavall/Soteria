@@ -1,17 +1,15 @@
 using DotNetEnv;
-using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using OpenIddict.Abstractions;
-using OpenIddict.Core;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
 using Soteria.Components.Features.Clients;
-using Soteria.Components.Features.Clients.Models;
+using Soteria.Components.Features.Shared;
 using Soteria.Data;
 
 namespace Soteria;
@@ -122,8 +120,9 @@ public class Program
         
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
         builder.Services.AddScoped<OpenIddictInitializer>();
+        
         builder.Services.AddScoped<ClientService>();
-        builder.Services.AddTransient<ClientValidator>();
+        builder.Services.AddTransient<IMudValidator<CreateClientRequest>, CreateClientValidator>();
 
         var app = builder.Build();
 
