@@ -13,6 +13,7 @@ using Soteria.Components.Features.Clients;
 using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
 using Soteria.Data;
+using Soteria.Data.OpenIddict;
 
 namespace Soteria;
 
@@ -86,7 +87,12 @@ public class Program
             {
                 options.UseEntityFrameworkCore()
                     .UseDbContext<SoteriaDbContext>()
-                    .ReplaceDefaultEntities<Guid>();
+                    .ReplaceDefaultEntities<
+                        SoteriaApplication,
+                        SoteriaAuthorization,
+                        SoteriaScope,
+                        SoteriaToken,
+                        Guid>();
             })
             .AddServer(options =>
             {
