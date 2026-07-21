@@ -22,6 +22,7 @@
 - Make client application registration defaults configurable
 
 # Technical Debt
+- Remove bootstrapped application creation in OpenIddictInitializer
 
 # Nice-to-have
 

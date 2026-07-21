@@ -135,13 +135,14 @@ Milestone 3.2 – Client Management
 # Current task
 
 Edit client applications.
-
-- Update application metadata.
-- Update client configuration.
-- Preserve immutable identifiers.
+- Define the client edit workflow.
+- Update the display name.
+- Replace the client secret.
+- Update the client host.
+- Recalculate the redirect URI and post-logout redirect URI from the updated client host.
+- Preserve the immutable client identifier.
 - Verify application updates.
 
 # Remaining milestone tasks
 
 - Enable and disable client applications.
-- Manage application metadata.

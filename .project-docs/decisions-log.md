@@ -302,3 +302,32 @@ This approach was adopted after verification demonstrated reliable RP-initiated 
 Returning a SignOutHttpResult produced inconsistent behaviour during endpoint execution, whereas 
 direct sign-out completed reliably.
 
+2026-07-21
+
+Decision:
+
+The initial Soteria client model exposes a single client host rather than directly managing OpenIddict's redirect URI collections.
+
+Administrators enter a single client host when creating or editing a client application.
+
+Soteria derives the client's OpenID Connect endpoints from that host using the standard ASP.NET Core OpenID Connect conventions:
+
+- Redirect URI:
+  `/signin-oidc`
+- Post-logout redirect URI:
+  `/signout-callback-oidc`
+
+The calculated URIs are stored in the OpenIddict client registration and displayed within the administration UI for reference, but are not edited directly.
+
+OpenIddict continues to support multiple redirect URIs and post-logout redirect URIs internally; Soteria deliberately exposes a simpler administration model until a future requirement justifies collection management.
+
+Reason:
+
+The initial project targets privately hosted applications following a consistent hosting convention.
+
+Using a single client host keeps client registration simple while still producing fully functional OpenID Connect registrations.
+
+Deriving the redirect URIs avoids duplicated information, prevents inconsistent endpoint configuration, and reduces administrator error.
+
+The simplified model can be expanded later without preventing Soteria from taking advantage of OpenIddict's underlying support for multiple redirect URIs.
+

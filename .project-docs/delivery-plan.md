@@ -234,7 +234,6 @@ reference resource API.
 
 - ✓ Implement client application details.
   - ✓ Retrieve the selected OpenIddict application.
-  - ✓ Display application metadata.
   - ✓ Display client type and consent configuration.
   - ✓ Display configured endpoint permissions.
   - ✓ Display configured grant type permissions.
@@ -255,9 +254,12 @@ reference resource API.
   - ✓ Verify application creation.
 
 - Edit client applications.
-  - Update application metadata.
-  - Update client configuration.
-  - Preserve immutable identifiers.
+  - Define the client edit workflow.
+  - Update the display name.
+  - Replace the client secret.
+  - Update the client host.
+  - Recalculate the redirect URI and post-logout redirect URI from the updated client host.
+  - Preserve the immutable client identifier.
   - Verify application updates.
 
 - Enable and disable client applications.
@@ -266,34 +268,14 @@ reference resource API.
   - Display application status.
   - Verify enabled and disabled behaviour.
 
-- Manage application metadata.
-  - Manage display name.
-  - Manage description.
-  - Manage client-specific metadata.
-  - Verify metadata persistence.
-
 ---
 
 ## Milestone 3.3 – OpenID Connect Configuration
 
-- Manage redirect URIs.
-  - Add redirect URIs.
-  - Edit redirect URIs.
-  - Remove redirect URIs.
-  - Validate redirect URI format.
-  - Verify redirect URI configuration.
-
-- Manage post-logout redirect URIs.
-  - Add post-logout redirect URIs.
-  - Edit post-logout redirect URIs.
-  - Remove post-logout redirect URIs.
-  - Verify logout configuration.
-
-- Manage client authentication.
-  - Configure client type.
-  - Configure client secret.
-  - Support secret regeneration.
-  - Verify client authentication.
+- Manage client type.
+  - Configure the client as public or confidential.
+  - Apply the authentication requirements appropriate to the selected client type.
+  - Verify public and confidential client authentication.
 
 - Manage OpenID Connect permissions.
   - Configure endpoint permissions.
@@ -303,12 +285,6 @@ reference resource API.
   - Configure PKCE requirements.
   - Configure consent behaviour.
   - Verify permission changes.
-
-- Replace hard-coded client registration.
-  - Remove development-only client registration.
-  - Load clients from the OpenIddict stores.
-  - Verify dynamic client registration.
-  - Verify existing Reference Web application behaviour.
 
 ---
 
