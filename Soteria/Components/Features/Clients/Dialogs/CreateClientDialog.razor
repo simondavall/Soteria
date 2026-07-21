@@ -1,0 +1,73 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm Model="@Request" @ref="Form" Validation="@(CreateClientValidator.ValidateValueAsync)">
+            <MudStack Spacing="3">
+                @if (ErrorMessages.Count > 0)
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
+                        <MudList T="string" Dense="true">
+                            @foreach (var message in ErrorMessages)
+                            {
+                                <MudListItem T="string">@message</MudListItem>
+                            }
+                        </MudList>
+                    </MudAlert>
+                }
+                
+                <MudTextField @bind-Value="Request.ClientId"
+                              Label="Client ID"
+                              For="@(() => Request.ClientId)"
+                              Immediate="true"
+                              DebounceInterval="400"
+                              AutoFocus="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Request.DisplayName"
+                              Label="Display name"
+                              For="@(() => Request.DisplayName)"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Request.ClientSecret"
+                              Label="Client secret"
+                              For="@(() => Request.ClientSecret)"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Request.ClientHost"
+                              Label="Client host"
+                              For="@(() => Request.ClientHost)"
+                              Placeholder="https://example.com"
+                              DebounceInterval="400"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@Cancel"
+                   Disabled="IsSaving">
+            Cancel
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="@SaveAsync"
+                   Disabled="IsSaving">
+            @if (IsSaving)
+            {
+                <MudProgressCircular Size="Size.Small"
+                                     Indeterminate="true"
+                                     Class="me-2" />
+            }
+
+            Save
+        </MudButton>
+    </DialogActions>
+</MudDialog>

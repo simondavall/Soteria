@@ -81,7 +81,7 @@ public sealed class OpenIddictInitializer(
     private static OpenIddictApplicationDescriptor CreateReferenceWebDescriptor()
     {
         var descriptor = new OpenIddictApplicationDescriptor();
-
+        
         ApplyReferenceWebConfiguration(descriptor);
 
         return descriptor;
@@ -91,31 +91,10 @@ public sealed class OpenIddictInitializer(
     {
         descriptor.ClientId = ReferenceWebClientId;
         descriptor.DisplayName = ReferenceWebDisplayName;
-        descriptor.ConsentType = OpenIddictConstants.ConsentTypes.Implicit;
-        descriptor.ClientType = OpenIddictConstants.ClientTypes.Confidential;
 
         descriptor.RedirectUris.Add(new Uri(ReferenceWebRedirectUri));
-
         descriptor.PostLogoutRedirectUris.Add(new Uri(ReferenceWebPostLogoutRedirectUri));
 
-        descriptor.Permissions.UnionWith(
-        [
-            Permissions.Endpoints.Authorization,
-            Permissions.Endpoints.EndSession,
-            Permissions.Endpoints.Token,
-
-            Permissions.GrantTypes.AuthorizationCode,
-            Permissions.GrantTypes.RefreshToken,
-
-            Permissions.ResponseTypes.Code,
-
-            Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OpenId,
-            Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.Profile,
-            Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.Email,
-            Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OfflineAccess,
-            Permissions.Prefixes.Scope + ReferenceApiScope
-        ]);
-
-        descriptor.Requirements.Add(OpenIddictConstants.Requirements.Features.ProofKeyForCodeExchange);
+        OpenIddictApplicationDefaults.Apply(descriptor);
     }
 }

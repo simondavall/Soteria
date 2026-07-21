@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using OpenIddict.EntityFrameworkCore.Models;
@@ -9,14 +11,48 @@ namespace Soteria.Components.Features.Clients;
 public sealed class ClientService
 {
     private readonly SoteriaDbContext _dbContext;
+    private readonly IOpenIddictApplicationManager _applicationManager;
+    private readonly IValidator<CreateClientRequest> _createClientValidator;
 
-    public ClientService(SoteriaDbContext dbContext)
+    public ClientService(
+        SoteriaDbContext dbContext,
+        IOpenIddictApplicationManager applicationManager,
+        IValidator<CreateClientRequest> createClientValidator)
     {
         _dbContext = dbContext;
+        _applicationManager = applicationManager;
+        _createClientValidator = createClientValidator;
     }
 
-    public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(
-        CancellationToken cancellationToken = default)
+    public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
+    {
+        request.ClientId = request.ClientId.Trim();
+        request.DisplayName = request.DisplayName.Trim();
+        request.ClientHost = request.ClientHost.Trim().TrimEnd('/');
+
+        var validationResult = await _createClientValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new CreateClientValidationException(validationResult.Errors);
+        }
+
+        var descriptor =
+            new OpenIddictApplicationDescriptor
+            {
+                ClientId = request.ClientId,
+                DisplayName = request.DisplayName,
+                ClientSecret = request.ClientSecret
+            };
+
+        descriptor.RedirectUris.Add(new Uri($"{request.ClientHost}/signin-oidc", UriKind.Absolute));
+        descriptor.PostLogoutRedirectUris.Add(new Uri($"{request.ClientHost}/signout-callback-oidc", UriKind.Absolute));
+
+        OpenIddictApplicationDefaults.Apply(descriptor);
+
+        await _applicationManager.CreateAsync(descriptor, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext
             .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
@@ -32,8 +68,7 @@ public sealed class ClientService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<ClientApplicationDetails?> GetClientAsync(
-        string clientId,
+    public async Task<ClientApplicationDetails?> GetClientAsync(string clientId,
         CancellationToken cancellationToken = default)
     {
         var application = await _dbContext
@@ -64,18 +99,10 @@ public sealed class ClientService
             application.DisplayName ?? application.ClientId ?? clientId,
             application.ClientType ?? string.Empty,
             application.ConsentType ?? string.Empty,
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.Endpoint),
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.GrantType),
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.ResponseType),
-            GetPermissions(
-                permissions,
-                OpenIddictConstants.Permissions.Prefixes.Scope),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.Endpoint),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.GrantType),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.ResponseType),
+            GetPermissions(permissions, OpenIddictConstants.Permissions.Prefixes.Scope),
             DeserializeStringArray(application.RedirectUris)
                 .OrderBy(uri => uri, StringComparer.OrdinalIgnoreCase)
                 .ToList(),
@@ -103,37 +130,23 @@ public sealed class ClientService
         }
     }
 
-    private static IReadOnlyList<string> GetPermissions(
-        IEnumerable<string> permissions,
-        string prefix)
+    private static IReadOnlyList<string> GetPermissions(IEnumerable<string> permissions, string prefix)
     {
         return permissions
-            .Where(permission =>
-                permission.StartsWith(prefix, StringComparison.Ordinal))
-            .Select(permission =>
-                FormatPermission(prefix, permission[prefix.Length..]))
+            .Where(permission => permission.StartsWith(prefix, StringComparison.Ordinal))
+            .Select(permission => FormatPermission(prefix, permission[prefix.Length..]))
             .OrderBy(permission => permission, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
-    private static string FormatPermission(
-        string prefix,
-        string permission)
+    private static string FormatPermission(string prefix, string permission)
     {
         return prefix switch
         {
-            OpenIddictConstants.Permissions.Prefixes.Endpoint =>
-                FormatEndpointPermission(permission),
-
-            OpenIddictConstants.Permissions.Prefixes.GrantType =>
-                FormatGrantTypePermission(permission),
-
-            OpenIddictConstants.Permissions.Prefixes.ResponseType =>
-                FormatResponseTypePermission(permission),
-
-            OpenIddictConstants.Permissions.Prefixes.Scope =>
-                FormatScopePermission(permission),
-
+            OpenIddictConstants.Permissions.Prefixes.Endpoint => FormatEndpointPermission(permission),
+            OpenIddictConstants.Permissions.Prefixes.GrantType => FormatGrantTypePermission(permission),
+            OpenIddictConstants.Permissions.Prefixes.ResponseType => FormatResponseTypePermission(permission),
+            OpenIddictConstants.Permissions.Prefixes.Scope => FormatScopePermission(permission),
             _ => FormatUnknownValue(permission)
         };
     }
@@ -205,14 +218,9 @@ public sealed class ClientService
         var words = value
             .Replace('_', ' ')
             .Replace('-', ' ')
-            .Split(
-                ' ',
-                StringSplitOptions.RemoveEmptyEntries);
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        return string.Join(
-            " ",
-            words.Select(word =>
-                char.ToUpperInvariant(word[0]) + word[1..]));
+        return string.Join(" ", words.Select(word => char.ToUpperInvariant(word[0]) + word[1..]));
     }
 }
 
@@ -233,3 +241,9 @@ public sealed record ClientApplicationDetails(
     IReadOnlyList<string> ScopePermissions,
     IReadOnlyList<string> RedirectUris,
     IReadOnlyList<string> PostLogoutRedirectUris);
+
+public sealed class CreateClientValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client application validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}

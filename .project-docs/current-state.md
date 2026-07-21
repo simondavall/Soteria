@@ -121,19 +121,27 @@ where development should continue.
 - Displayed the initial application status column.
 - Implemented the client application details page.
 - Retrieved OpenIddict application configuration directly from the database.
+- Defined the client creation workflow.
+- Implemented client application creation.
+- Added a shared OpenIddict application defaults helper.
+- Implemented FluentValidation-based client validation.
+- Introduced a dedicated client application lookup service.
+- Verified successful client application creation.
 
 
 # Current milestone
 Milestone 3.2 – Client Management
 
 # Current task
-Create client applications.
-- Define the client creation workflow.
-- Create OpenIddict applications.
-- Validate required client information.
-- Verify application creation.
+
+Edit client applications.
+
+- Update application metadata.
+- Update client configuration.
+- Preserve immutable identifiers.
+- Verify application updates.
 
 # Remaining milestone tasks
-- Edit client applications.
+
 - Enable and disable client applications.
 - Manage application metadata.

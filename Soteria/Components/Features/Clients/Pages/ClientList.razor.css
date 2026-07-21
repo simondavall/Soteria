@@ -8,6 +8,10 @@
     padding-block: 0.5rem;
 }
 
+.clients-page__header-content {
+    flex-wrap: wrap;
+}
+
 .clients-page__content {
     min-height: 28rem;
     padding: 2rem;

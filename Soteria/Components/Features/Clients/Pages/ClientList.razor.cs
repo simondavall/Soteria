@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using OpenIddict.Abstractions;
+using Soteria.Components.Features.Clients.Dialogs;
 
 namespace Soteria.Components.Features.Clients.Pages;
 
@@ -7,20 +9,44 @@ public partial class ClientList
 {
     [Inject]
     private ClientService ClientService { get; set; } = default!;
-
     [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
+    private IDialogService DialogService { get; set; } = default!;
+    [Inject]
+    private ISnackbar Snackbar { get; set; } = default!;
 
-    private IReadOnlyList<ClientSummary> Clients = [];
+    protected IReadOnlyList<ClientSummary> Clients = [];
 
     protected override async Task OnInitializedAsync()
     {
-        Clients = await ClientService.GetClientsAsync();
+        await LoadClientsAsync();
     }
 
-    private void OpenClient(ClientSummary client)
+    private async Task CreateClientAsync()
     {
-        NavigationManager.NavigateTo($"/clients/{client.ClientId}");
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Small,
+            BackdropClick = false
+        };
+
+        var dialog = await DialogService.ShowAsync<CreateClientDialog>("Create client application", options);
+
+        var result = await dialog.Result;
+        if (result is null || result.Canceled)
+        {
+            return;
+        }
+
+        await LoadClientsAsync();
+
+        Snackbar.Add("Client application created.", Severity.Success);
+    }
+
+    private async Task LoadClientsAsync()
+    {
+        Clients = await ClientService.GetClientsAsync();
     }
 
     private static string FormatClientType(string value)
