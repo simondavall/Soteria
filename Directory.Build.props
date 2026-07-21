@@ -1,0 +1,11 @@
+﻿<Project>
+    <ItemGroup>
+        <!--
+          Temporary suppression.
+          Remove once Microsoft updates the affected package versions.
+          Reviewed: 2026-07-21
+        -->
+        <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-v5pm-xwqc-g5wc" />
+        <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2m69-gcr7-jv3q" />
+    </ItemGroup>
+</Project>

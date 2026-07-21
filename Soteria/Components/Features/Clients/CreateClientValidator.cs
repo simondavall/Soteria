@@ -14,7 +14,7 @@ public sealed class CreateClientValidator : AbstractValidator<CreateClientReques
         RuleFor(x => x.ClientId)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value, cancellationToken))
+            .MustAsync(IsUniqueAsync)
             .WithMessage("A client application with this client ID already exists.");
 
         RuleFor(x => x.DisplayName)

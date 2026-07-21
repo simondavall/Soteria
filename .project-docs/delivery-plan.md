@@ -248,11 +248,11 @@ reference resource API.
 
 ## Milestone 3.2 – Client Management
 
-- Create client applications.
-  - Define the client creation workflow.
-  - Create OpenIddict applications.
-  - Validate required client information.
-  - Verify application creation.
+- ✓ Create client applications.
+  - ✓ Define the client creation workflow.
+  - ✓ Create OpenIddict applications.
+  - ✓ Validate required client information.
+  - ✓ Verify application creation.
 
 - Edit client applications.
   - Update application metadata.
