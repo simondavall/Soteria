@@ -112,9 +112,9 @@
                         <MudTd DataLabel="Status">
 
                             <MudChip T="string"
-                                     Color="Color.Success"
+                                     Color="@(context.IsEnabled ? Color.Success : Color.Error)"
                                      Variant="Variant.Filled">
-                                Active
+                                @(context.IsEnabled ? "Enabled" : "Disabled")
                             </MudChip>
 
                         </MudTd>

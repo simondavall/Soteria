@@ -34,7 +34,13 @@
                               OnlyValidateIfDirty="true"
                               Disabled="IsSaving"
                               AutoFocus="true" />
-
+                
+                <MudSwitch T="bool"
+                           @bind-Value="Request.IsEnabled"
+                           Label="Enabled"
+                           Color="Color.Success"
+                           Disabled="IsSaving" />
+                
                 <MudTextField @bind-Value="Request.ClientSecret"
                               Label="New client secret"
                               HelperText="Leave empty to keep the existing client secret."
