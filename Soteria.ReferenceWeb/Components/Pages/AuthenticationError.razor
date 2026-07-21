@@ -1,0 +1,29 @@
+﻿@page "/authentication-error"
+
+<PageTitle>Authentication error</PageTitle>
+
+<div class="container py-5">
+    <div class="alert alert-danger" role="alert">
+        <h1 class="h3">@Title</h1>
+        <p class="mb-0">@Message</p>
+    </div>
+
+    <a class="btn btn-primary" href="/">
+        Return home
+    </a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? Reason { get; set; }
+
+    private string Title =>
+        Reason == "disabled"
+            ? "Application is disabled"
+            : "Unauthorized";
+
+    private string Message =>
+        Reason == "disabled"
+            ? "This application has been disabled and cannot currently sign you in."
+            : "You are not authorized to sign in to this application.";
+}

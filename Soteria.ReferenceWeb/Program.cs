@@ -89,6 +89,22 @@ builder.Services.AddAuthentication(options =>
 
         options.TokenValidationParameters.NameClaimType = "name";
         options.TokenValidationParameters.RoleClaimType = "role";
+        
+        options.Events.OnRemoteFailure = context =>
+        {
+            var error = context.Request.Query["error"].ToString();
+            var reason = string.Equals(
+                error,
+                "unauthorized_client",
+                StringComparison.Ordinal)
+                ? "disabled"
+                : "unauthorized";
+
+            context.Response.Redirect($"/authentication-error?reason={reason}");
+            context.HandleResponse();
+
+            return Task.CompletedTask;
+        };
     });
 
 builder.Services.AddHttpContextAccessor();
