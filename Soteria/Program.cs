@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using OpenIddict.Abstractions;
+using static OpenIddict.Server.OpenIddictServerEvents;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
@@ -22,7 +23,7 @@ public class Program
     public static async Task Main(string[] args)
     {
         Env.TraversePath().Load();
-        
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -48,8 +49,8 @@ public class Program
         });
 
         var connectionString = builder.Configuration.GetConnectionString("SoteriaDb")
-            ?? throw new InvalidOperationException(
-                "Connection string 'SoteriaDb' not found.");
+                               ?? throw new InvalidOperationException(
+                                   "Connection string 'SoteriaDb' not found.");
 
         builder.Services.AddDbContext<SoteriaDbContext>(options =>
             options.UseSqlite(connectionString));
@@ -69,19 +70,21 @@ public class Program
         var accessTokenLifetimeMinutes = tokenConfiguration.GetValue<int>("AccessTokenLifetimeMinutes");
         if (accessTokenLifetimeMinutes <= 0)
         {
-            throw new InvalidOperationException("OpenIddict:Tokens:AccessTokenLifetimeMinutes must be greater than zero.");
+            throw new InvalidOperationException(
+                "OpenIddict:Tokens:AccessTokenLifetimeMinutes must be greater than zero.");
         }
 
         var refreshTokenLifetimeDays = tokenConfiguration.GetValue<int>("RefreshTokenLifetimeDays");
         if (refreshTokenLifetimeDays <= 0)
         {
-            throw new InvalidOperationException("OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
+            throw new InvalidOperationException(
+                "OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
         }
-        
+
         var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
                             ?? throw new InvalidOperationException(
                                 "The OpenIddict:EncryptionKey configuration value is required.");
-        
+
         builder.Services.AddOpenIddict()
             .AddCore(options =>
             {
@@ -99,12 +102,12 @@ public class Program
                 options.SetAuthorizationEndpointUris("/connect/authorize")
                     .SetEndSessionEndpointUris("/connect/logout")
                     .SetTokenEndpointUris("/connect/token");
-                
+
                 options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
                     .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
 
                 //options.DisableAccessTokenEncryption();
-                
+
                 options.RegisterScopes(
                     OpenIddictConstants.Scopes.Email,
                     OpenIddictConstants.Scopes.Profile,
@@ -113,6 +116,14 @@ public class Program
                 options.AllowAuthorizationCodeFlow()
                     .AllowRefreshTokenFlow()
                     .RequireProofKeyForCodeExchange();
+
+                options.AddEventHandler<ValidateAuthorizationRequestContext>(builder => builder
+                    .UseScopedHandler<ValidateClientIsEnabled>()
+                    .SetOrder(int.MaxValue - 100_000));
+
+                options.AddEventHandler<ValidateTokenRequestContext>(builder => builder
+                    .UseScopedHandler<ValidateClientIsEnabled>()
+                    .SetOrder(int.MaxValue - 100_000));
 
                 options.UseAspNetCore()
                     .EnableAuthorizationEndpointPassthrough()
@@ -125,26 +136,26 @@ public class Program
                     options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
                 }
             });
-        
+
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
-        
+
         builder.Services.AddScoped<OpenIddictInitializer>();
-        
+
         builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
         builder.Services.AddScoped<ClientService>();
-        
+
         builder.Services.AddTransient<CreateClientValidator>();
-        builder.Services.AddTransient<IValidator<CreateClientRequest>>(
-            provider => provider.GetRequiredService<CreateClientValidator>());
-        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(
-            provider => provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider =>
+            provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(provider =>
+            provider.GetRequiredService<CreateClientValidator>());
 
         builder.Services.AddTransient<EditClientValidator>();
-        builder.Services.AddTransient<IValidator<EditClientRequest>>(
-            provider => provider.GetRequiredService<EditClientValidator>());
-        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(
-            provider => provider.GetRequiredService<EditClientValidator>());
-        
+        builder.Services.AddTransient<IValidator<EditClientRequest>>(provider =>
+            provider.GetRequiredService<EditClientValidator>());
+        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(provider =>
+            provider.GetRequiredService<EditClientValidator>());
+
         var app = builder.Build();
 
         await using (var scope = app.Services.CreateAsyncScope())
