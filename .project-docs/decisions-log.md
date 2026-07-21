@@ -331,3 +331,25 @@ Deriving the redirect URIs avoids duplicated information, prevents inconsistent 
 
 The simplified model can be expanded later without preventing Soteria from taking advantage of OpenIddict's underlying support for multiple redirect URIs.
 
+2026-07-21
+
+Decision:
+
+Client applications have an explicit enabled state stored as part of the Soteria application model rather than as OpenIddict application metadata.
+
+When a client application is disabled:
+
+- New authorization requests are rejected.
+- Authorization-code exchange is rejected.
+- Refresh-token exchange is rejected.
+- Existing access tokens remain valid until their normal expiry.
+- Existing access tokens are not revoked.
+- Existing refresh tokens are not revoked.
+
+Resource APIs continue to validate access tokens locally without consulting Soteria on each request.
+
+Reason:
+
+The enabled state is a first-class Soteria domain concept and is expected to be queried frequently. Representing it as a dedicated persisted property makes the model explicit, simplifies querying and avoids overloading OpenIddict metadata intended for extensibility.
+
+Allowing existing access tokens to expire naturally preserves the current high-performance resource-server validation model while preventing disabled applications from obtaining any new tokens. This avoids introducing a database lookup on every protected API request while ensuring that disabled applications lose access once their short-lived access tokens expire.

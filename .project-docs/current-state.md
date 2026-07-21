@@ -127,22 +127,27 @@ where development should continue.
 - Implemented FluentValidation-based client validation.
 - Introduced a dedicated client application lookup service.
 - Verified successful client application creation.
-
+- Defined the client edit workflow.
+- Implemented client application editing.
+- Implemented optional client secret replacement.
+- Implemented client host updates.
+- Derived redirect URI and post-logout redirect URI from the client host.
+- Verified successful client application updates.
 
 # Current milestone
 Milestone 3.2 – Client Management
 
 # Current task
 
-Edit client applications.
-- Define the client edit workflow.
-- Update the display name.
-- Replace the client secret.
-- Update the client host.
-- Recalculate the redirect URI and post-logout redirect URI from the updated client host.
-- Preserve the immutable client identifier.
-- Verify application updates.
+- Enable and disable client applications.
+    - Define the enabled state.
+    - Persist the enabled state on the client application.
+    - Prevent disabled applications from starting new authentication.
+    - Prevent disabled applications from obtaining new tokens.
+    - Allow existing access tokens to remain valid until expiry.
+    - Display application status.
+    - Verify enabled and disabled behaviour.
 
 # Remaining milestone tasks
 
-- Enable and disable client applications.
+- None
