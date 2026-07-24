@@ -5,4 +5,5 @@ namespace Soteria.Data;
 // Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser<Guid>
 {
+    public string? DisplayName { get; set; } = string.Empty;
 }

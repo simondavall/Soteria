@@ -11,7 +11,7 @@ using Soteria.Data;
 namespace Soteria.Data.Migrations
 {
     [DbContext(typeof(SoteriaDbContext))]
-    [Migration("20260721191842_InitialCreate")]
+    [Migration("20260724154506_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -177,6 +177,9 @@ namespace Soteria.Data.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
