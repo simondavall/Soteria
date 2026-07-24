@@ -1,0 +1,30 @@
+﻿.user-details-page {
+    width: 100%;
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.user-details-page__header {
+    padding-block: 0.5rem;
+}
+
+.user-details-page__header-content {
+    flex-wrap: wrap;
+}
+
+.user-details-page__content {
+    padding: 2rem;
+    border-radius: 0.75rem;
+}
+
+.user-details-page__personal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+@media (max-width: 59.99rem) {
+    .user-details-page__personal-grid {
+        grid-template-columns: 1fr;
+    }
+}

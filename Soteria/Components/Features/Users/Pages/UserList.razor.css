@@ -1,0 +1,36 @@
+﻿.users-page {
+    width: 100%;
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.users-page ::deep tbody tr {
+    cursor: pointer;
+}
+
+.users-page__header {
+    padding-block: 0.5rem;
+}
+
+.users-page__header-content {
+    flex-wrap: wrap;
+}
+
+.users-page__content {
+    min-height: 28rem;
+    padding: 2rem;
+    border-radius: 0.75rem;
+}
+
+.users-page__content .mud-table {
+    margin-top: 0.5rem;
+}
+
+.users-page__empty-state {
+    min-height: 24rem;
+    justify-content: center;
+}
+
+.users-page__empty-description {
+    max-width: 32rem;
+}

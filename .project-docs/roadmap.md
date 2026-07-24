@@ -29,12 +29,12 @@ Enable Soteria to act as an OpenID Connect Provider capable of authenticating a 
 
 - ✓ Establish the OpenID Connect provider architecture.
 - ✓ Create reference web and API applications.
-- Configure the OpenIddict provider.
-- Establish development signing and encryption credentials.
-- Support Authorization Code Flow with PKCE.
-- Register an initial development client.
-- Establish the initial scopes and claims.
-- A consuming application can authenticate users through Soteria and securely access protected APIs using OAuth-issued access tokens.
+- ✓ Configure the OpenIddict provider.
+- ✓ Establish development signing and encryption credentials.
+- ✓ Support Authorization Code Flow with PKCE.
+- ✓ Register an initial development client.
+- ✓ Establish the initial scopes and claims.
+- ✓ A consuming application can authenticate users through Soteria and securely access protected APIs using OAuth-issued access tokens.
 
 **Deliverable**
 
@@ -50,11 +50,11 @@ Allow administrators to manage applications that delegate authentication to Sote
 
 **Includes**
 
-- Register client applications.
-- Configure redirect URIs.
-- Configure client authentication.
-- Configure OpenID Connect settings.
-- Enable or disable client applications.
+- ✓ Register client applications.
+- ✓ Configure redirect URIs.
+- ✓ Configure client authentication.
+- ✓ Configure OpenID Connect settings.
+- ✓ Enable or disable client applications.
 
 **Deliverable**
 
