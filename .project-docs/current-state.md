@@ -13,24 +13,17 @@ where development should continue.
 
 # Current task
 
-## Implement user details.
-- Retrieve the selected user.
-- Display account information.
-- Display profile information.
-- Display email information.
-- Display lockout information.
-- Verify user details.
+## Create user accounts.
+- Define the administrative registration workflow.
+- Create new user accounts.
+- Support registration of existing users.
+- Associate users with one or more client applications.
+- Send the account confirmation email.
+- Verify user registration.
 
 # Remaining milestone tasks
 
-- Create user accounts.
 - Edit user accounts.
-
-# Remaining milestone tasks
-
-- Create user accounts.
-- Edit user accounts.
-
 
 # Completed
 
@@ -188,3 +181,9 @@ where development should continue.
 - Updated ASP.NET Core Identity profile management to allow users to maintain their display name.
 - Preserved nullable DisplayName semantics, allowing the application to fall back to the username where required.
 - Updated the user administration listing to display Username and DisplayName separately.
+- Implemented the user details page.
+- Added a dedicated user details query using the established direct Entity Framework Core pattern.
+- Displayed account, profile, email and lockout information for the selected user.
+- Added graceful handling for unknown users.
+- Preserved read-only administration workflow pending user editing.
+- Refined the user details page into consolidated User Details and Permissions sections.
