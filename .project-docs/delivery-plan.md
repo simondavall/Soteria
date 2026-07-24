@@ -298,13 +298,13 @@ reference resource API.
   - ✓ Support searching users.
   - ✓ Verify user listing.
 
-- Implement user details.
-  - Retrieve the selected user.
-  - Display account information.
-  - Display profile information.
-  - Display email information.
-  - Display lockout information.
-  - Verify user details.
+- ✓ Implement user details.
+  - ✓ Retrieve the selected user.
+  - ✓ Display account information.
+  - ✓ Display profile information.
+  - ✓ Display email information.
+  - ✓ Display lockout information.
+  - ✓ Verify user details.
 
 - Create user accounts.
   - Define the administrative registration workflow.
