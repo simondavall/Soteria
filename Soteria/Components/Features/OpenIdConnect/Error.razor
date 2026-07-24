@@ -1,0 +1,67 @@
+﻿@page "/connect/error"
+@attribute [ExcludeFromInteractiveRouting]
+
+<PageTitle>Authentication error</PageTitle>
+
+<MudContainer
+    MaxWidth="MaxWidth.Small"
+    Class="mt-8">
+
+    <MudPaper
+        Elevation="2"
+        Class="pa-6">
+
+        <MudText Typo="Typo.h4">
+            @Model.Title
+        </MudText>
+
+        <MudText Class="mt-4">
+            @Model.Message
+        </MudText>
+
+        <MudText Class="mt-4">
+            Please contact your system administrator if you believe this is incorrect.
+        </MudText>
+
+        <MudDivider Class="my-6" />
+
+        <MudButton
+            Href="/"
+            Variant="Variant.Filled"
+            Color="Color.Primary">
+
+            Close
+
+        </MudButton>
+
+        @if (ShowTechnicalDetails)
+        {
+            <MudDivider Class="my-6" />
+
+            <MudText
+                Typo="Typo.subtitle2"
+                GutterBottom="true">
+
+                Technical details
+
+            </MudText>
+
+            <MudText Typo="Typo.body2">
+                Error: @DisplayValue(ErrorCode)
+            </MudText>
+
+            <MudText Typo="Typo.body2">
+                Description: @DisplayValue(ErrorDescription)
+            </MudText>
+
+            @if (!string.IsNullOrWhiteSpace(ErrorUri))
+            {
+                <MudText Typo="Typo.body2">
+                    Error URI: @ErrorUri
+                </MudText>
+            }
+        }
+
+    </MudPaper>
+
+</MudContainer>

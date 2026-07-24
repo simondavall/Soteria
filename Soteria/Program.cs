@@ -127,7 +127,8 @@ public class Program
 
                 options.UseAspNetCore()
                     .EnableAuthorizationEndpointPassthrough()
-                    .EnableEndSessionEndpointPassthrough();
+                    .EnableEndSessionEndpointPassthrough()
+                    .EnableStatusCodePagesIntegration();
 
                 if (builder.Environment.IsDevelopment())
                 {
@@ -175,8 +176,8 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
-        app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+        
+        app.UseStatusCodePagesWithReExecute("/connect/error", createScopeForStatusCodePages: true);
         app.UseHttpsRedirection();
 
         app.UseAuthentication();

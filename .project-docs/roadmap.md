@@ -55,7 +55,6 @@ Allow administrators to manage applications that delegate authentication to Sote
 - Configure client authentication.
 - Configure OpenID Connect settings.
 - Enable or disable client applications.
-- Manage application metadata.
 
 **Deliverable**
 
@@ -103,6 +102,12 @@ Control which users can access each client application and what authorisation in
 **Deliverable**
 
 Client applications trust Soteria as the source of truth for both authentication and authorisation.
+
+---
+
+# Phase 6 - Extended Application Configuration
+
+Allow other grant and client types.
 
 ---
 
