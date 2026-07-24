@@ -28,7 +28,6 @@ where development should continue.
 
 # Remaining milestone tasks
 
-- Implement user details.
 - Create user accounts.
 - Edit user accounts.
 
@@ -183,3 +182,9 @@ where development should continue.
 - Displayed user email, email-confirmation status and current lockout status.
 - Added client-side user searching.
 - Preserved user-row navigation to the user details page.
+- Added the DisplayName profile property to ApplicationUser.
+- Recreated the Identity Entity Framework migration from the current model.
+- Recreated the development database.
+- Updated ASP.NET Core Identity profile management to allow users to maintain their display name.
+- Preserved nullable DisplayName semantics, allowing the application to fall back to the username where required.
+- Updated the user administration listing to display Username and DisplayName separately.
