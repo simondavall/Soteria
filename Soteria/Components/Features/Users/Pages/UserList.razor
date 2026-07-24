@@ -51,7 +51,7 @@
             <MudTextField T="string"
                           @bind-Value="_searchText"
                           Label="Search users"
-                          Placeholder="Search by display name, email or status"
+                          Placeholder="Search by username, display name, email or status"
                           Variant="Variant.Outlined"
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search"
@@ -66,6 +66,7 @@
                       OnRowClick="SelectUser">
 
                 <HeaderContent>
+                    <MudTh>Username</MudTh>
                     <MudTh>Display Name</MudTh>
                     <MudTh>Email</MudTh>
                     <MudTh>Email Confirmed</MudTh>
@@ -73,6 +74,10 @@
                 </HeaderContent>
 
                 <RowTemplate>
+                    <MudTd DataLabel="Username">
+                        @context.UserName
+                    </MudTd>
+
                     <MudTd DataLabel="Display Name">
                         @context.DisplayName
                     </MudTd>

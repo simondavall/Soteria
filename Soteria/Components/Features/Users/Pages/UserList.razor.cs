@@ -28,7 +28,8 @@ public partial class UserList
 
         var searchText = _searchText.Trim();
 
-        return user.DisplayName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+        return user.UserName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+               || (user.DisplayName?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
                || user.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase)
                || user.EmailConfirmed.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase)
                || user.IsLockedOut.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase);

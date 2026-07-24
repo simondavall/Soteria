@@ -12,11 +12,12 @@ public sealed class UserService(SoteriaDbContext dbContext)
 
         return await dbContext.Users
             .AsNoTracking()
-            .OrderBy(user => user.UserName ?? user.Email)
+            .OrderBy(user => user.UserName)
             .ThenBy(user => user.Id)
             .Select(user => new UserSummary(
                 user.Id,
-                user.UserName ?? user.Email ?? user.Id.ToString(),
+                user.UserName ?? string.Empty,
+                user.DisplayName,
                 user.Email ?? string.Empty,
                 user.EmailConfirmed,
                 user.LockoutEnd.HasValue && user.LockoutEnd.Value > now))
@@ -26,7 +27,8 @@ public sealed class UserService(SoteriaDbContext dbContext)
 
 public sealed record UserSummary(
     Guid UserId,
-    string DisplayName,
+    string UserName,
+    string? DisplayName,
     string Email,
     bool EmailConfirmed,
     bool IsLockedOut);

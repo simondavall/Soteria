@@ -31,6 +31,19 @@
 
                 <div class="account-field"
                      data-validation-field>
+                    <label for="display-name">Display name</label>
+
+                    <InputText id="display-name"
+                               class="account-input"
+                               @bind-Value="Input.DisplayName"
+                               autocomplete="name"
+                               placeholder="Display name"/>
+
+                    <ValidationMessage For="@(() => Input.DisplayName)"/>
+                </div>
+
+                <div class="account-field"
+                     data-validation-field>
                     <label for="phone-number">Phone number</label>
 
                     <InputText id="phone-number"
