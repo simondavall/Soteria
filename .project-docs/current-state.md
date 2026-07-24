@@ -142,19 +142,26 @@ where development should continue.
 - Prevented disabled client applications from redeeming refresh tokens.
 - Verified existing access tokens remain valid until expiry.
 - Verified re-enabling a client immediately restores authentication.
+- Added a shared authentication error page for browser-facing OpenID Connect failures.
+- Integrated OpenIddict status-code pages with ASP.NET Core.
+- Mapped recognised protocol errors to user-friendly messages.
+- Added safe fallback handling for unrecognised authentication errors.
+- Preserved OpenIddict protocol validation while separating presentation into Soteria.
+- Excluded the error page from interactive routing to preserve the OpenIddict server response during status-code re-execution.
 
 # Current milestone
 
-Milestone 3.3 – OpenID Connect Configuration
+## Milestone 3.2 – Client Management
 
 # Current task
 
-Manage client type.
-- Configure the client as public or confidential.
-- Apply the authentication requirements appropriate to the selected client type.
-- Verify public and confidential client authentication.
+Implement provider-owned OpenID Connect authentication error handling.
+
+- Define the provider-owned error-handling process.
+- Present browser-facing authorization failures through a shared Soteria error page.
+- Map recognised OpenID Connect protocol errors to user-friendly messages.
+- Display safe fallback content for unrecognised errors.
 
 # Remaining milestone tasks
 
-- Manage OpenID Connect permissions.
-- Implement user-friendly OpenID Connect authentication error handling
+- None

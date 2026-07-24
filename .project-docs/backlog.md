@@ -20,6 +20,7 @@
 # Enhancements
 - Review concurrent access-token renewal within the consuming application. If multiple requests detect an expiring access token simultaneously, consider coordinating refresh operations so only a single refresh-token exchange occurs while other requests await the result.
 - Make client application registration defaults configurable
+- Allow other grant and consent types (explicit, public, etc.)
 
 # Technical Debt
 - Remove bootstrapped application creation in OpenIddictInitializer

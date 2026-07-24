@@ -271,25 +271,13 @@ reference resource API.
   - ✓ Display application status.
   - ✓ Verify enabled and disabled behaviour.
 
----
-
-## Milestone 3.3 – OpenID Connect Configuration
-
-- Manage client type.
-  - Configure the client as public or confidential.
-  - Apply the authentication requirements appropriate to the selected client type.
-  - Verify public and confidential client authentication.
-
-- Manage OpenID Connect permissions.
-  - Configure endpoint permissions.
-  - Configure grant type permissions.
-  - Configure response type permissions.
-  - Configure scope permissions.
-  - Configure PKCE requirements.
-  - Configure consent behaviour.
-  - Verify permission changes.
-
-- Implement user-friendly OpenID Connect authentication error handling
+- ✓ Implement user-friendly OpenID Connect authentication error handling.
+  - ✓ Define the provider-owned OpenID Connect error-handling process.
+  - ✓ Present browser-facing authorization errors through a shared Soteria error page.
+  - ✓ Map recognised OpenID Connect protocol errors to user-friendly messages.
+  - ✓ Display safe fallback content for unrecognised errors.
+  - ✓ Keep protocol validation within OpenIddict and presentation within Soteria.
+  - ✓ Verify disabled-client authentication displays the friendly error page.
 
 ---
 
@@ -341,3 +329,23 @@ reference resource API.
 - Manage application claims.
 - Determine issued claims.
 - Issue application authorisation information.
+
+# Phase 6 - Extended Application Configuration
+
+## Milestone 6.1 – OpenID Connect Configuration
+
+- Manage client type.
+  - Configure the client as public or confidential.
+  - Apply the authentication requirements appropriate to the selected client type.
+  - Verify public and confidential client authentication.
+
+- Manage OpenID Connect permissions.
+  - Configure endpoint permissions.
+  - Configure grant type permissions.
+  - Configure response type permissions.
+  - Configure scope permissions.
+  - Configure PKCE requirements.
+  - Configure consent behaviour.
+  - Verify permission changes.
+
+---
