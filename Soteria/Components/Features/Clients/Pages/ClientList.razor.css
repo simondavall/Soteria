@@ -4,6 +4,11 @@
     margin: 0 auto;
 }
 
+.clients-page ::deep tbody tr
+{
+    cursor: pointer;
+}
+
 .clients-page__header {
     padding-block: 0.5rem;
 }

@@ -22,7 +22,7 @@
                     <MudAvatar Color="Color.Primary"
                                Variant="Variant.Filled"
                                Size="Size.Large">
-                        <MudIcon Icon="@Icons.Material.Filled.Apps" />
+                        <MudIcon Icon="@Icons.Material.Filled.Apps"/>
                     </MudAvatar>
 
                     <MudStack Spacing="0">
@@ -58,7 +58,7 @@
                           Spacing="3">
 
                     <MudIcon Icon="@Icons.Material.Filled.Apps"
-                             Size="Size.Large" />
+                             Size="Size.Large"/>
 
                     <MudText Typo="Typo.h5">
                         No client applications
@@ -73,9 +73,11 @@
             }
             else
             {
-                <MudTable Items="Clients"
+                <MudTable T="ClientSummary"
+                          Items="Clients"
                           Hover="true"
-                          Dense="true">
+                          Dense="true"
+                          OnRowClick="SelectClient">
 
                     <HeaderContent>
 
@@ -90,11 +92,7 @@
                     <RowTemplate>
 
                         <MudTd DataLabel="Display Name">
-
-                            <MudLink Href="@($"/clients/{context.ClientId}")">
-                                @context.DisplayName
-                            </MudLink>
-
+                            @context.DisplayName
                         </MudTd>
 
                         <MudTd DataLabel="Client Id">

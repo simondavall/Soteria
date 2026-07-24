@@ -13,6 +13,8 @@ public partial class ClientList
     private IDialogService DialogService { get; set; } = default!;
     [Inject]
     private ISnackbar Snackbar { get; set; } = default!;
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
 
     protected IReadOnlyList<ClientSummary> Clients = [];
 
@@ -49,6 +51,11 @@ public partial class ClientList
         Clients = await ClientService.GetClientsAsync();
     }
 
+    private void SelectClient(TableRowClickEventArgs<ClientSummary> args)
+    {
+        Navigation.NavigateTo($"/clients/{args.Item?.ClientId ?? string.Empty}");
+    }
+    
     private static string FormatClientType(string value)
     {
         return value switch
