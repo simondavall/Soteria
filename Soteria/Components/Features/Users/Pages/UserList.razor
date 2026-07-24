@@ -1,0 +1,112 @@
+﻿@page "/users"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<PageTitle>Users</PageTitle>
+
+<div class="users-page">
+    <MudStack Spacing="4">
+        <header class="users-page__header">
+            <MudStack Row="true"
+                      AlignItems="AlignItems.Center"
+                      Justify="Justify.SpaceBetween"
+                      Spacing="3"
+                      Class="users-page__header-content">
+
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="2">
+
+                    <MudAvatar Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Size="Size.Large">
+                        <MudIcon Icon="@Icons.Material.Filled.ManageAccounts"/>
+                    </MudAvatar>
+
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h4"
+                                 HtmlTag="h1">
+                            Users
+                        </MudText>
+
+                        <MudText Typo="Typo.body1"
+                                 Color="Color.Secondary">
+                            Manage users registered with Soteria.
+                        </MudText>
+                    </MudStack>
+                </MudStack>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.PersonAdd"
+                           Disabled="true">
+                    Create user
+                </MudButton>
+            </MudStack>
+        </header>
+
+        <MudPaper Class="users-page__content">
+            <MudTable T="UserSummary"
+                      Items="Users"
+                      Hover="true"
+                      Dense="true"
+                      OnRowClick="SelectUser">
+
+                <HeaderContent>
+                    <MudTh>Display Name</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Email Confirmed</MudTh>
+                    <MudTh>Locked Out</MudTh>
+                </HeaderContent>
+
+                <RowTemplate>
+                    <MudTd DataLabel="Display Name">
+                        @context.DisplayName
+                    </MudTd>
+
+                    <MudTd DataLabel="Email">
+                        @context.Email
+                    </MudTd>
+
+                    <MudTd DataLabel="Email Confirmed">
+                        <MudChip T="string"
+                                 Color="@(context.EmailConfirmed ? Color.Success : Color.Warning)"
+                                 Variant="Variant.Filled">
+                            @(context.EmailConfirmed ? "Confirmed" : "Unconfirmed")
+                        </MudChip>
+                    </MudTd>
+
+                    <MudTd DataLabel="Locked Out">
+                        <MudChip T="string"
+                                 Color="@(context.IsLockedOut ? Color.Error : Color.Success)"
+                                 Variant="Variant.Filled">
+                            @(context.IsLockedOut ? "Locked out" : "Active")
+                        </MudChip>
+                    </MudTd>
+                </RowTemplate>
+
+                <NoRecordsContent>
+                    <MudStack Class="users-page__empty-state"
+                              AlignItems="AlignItems.Center"
+                              Justify="Justify.Center"
+                              Spacing="3">
+
+                        <MudIcon Icon="@Icons.Material.Filled.ManageAccounts"
+                                 Size="Size.Large"/>
+
+                        <MudText Typo="Typo.h5">
+                            No users
+                        </MudText>
+
+                        <MudText Class="users-page__empty-description"
+                                 Align="Align.Center">
+                            User listing will be implemented in a subsequent task.
+                        </MudText>
+                    </MudStack>
+                </NoRecordsContent>
+            </MudTable>
+        </MudPaper>
+    </MudStack>
+</div>
