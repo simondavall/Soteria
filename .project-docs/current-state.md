@@ -5,7 +5,27 @@ where development should continue.
 
 # Current phase
 
-# Phase 3 – Client Application Management
+## Phase 4 – Identity Management
+
+# Current milestone
+
+## Milestone 4.1 – User Administration
+
+# Current task
+
+## Create the user administration feature.
+- Define authenticated administration navigation.
+- Create the authenticated user list page layout.
+- Create the authenticated user details page layout.
+- Define the user administration navigation workflow.
+
+# Remaining milestone tasks
+
+- Implement user listing.
+- Implement user details.
+- Create user accounts.
+- Edit user accounts.
+
 
 # Completed
 
@@ -148,20 +168,3 @@ where development should continue.
 - Added safe fallback handling for unrecognised authentication errors.
 - Preserved OpenIddict protocol validation while separating presentation into Soteria.
 - Excluded the error page from interactive routing to preserve the OpenIddict server response during status-code re-execution.
-
-# Current milestone
-
-## Milestone 3.2 – Client Management
-
-# Current task
-
-Implement provider-owned OpenID Connect authentication error handling.
-
-- Define the provider-owned error-handling process.
-- Present browser-facing authorization failures through a shared Soteria error page.
-- Map recognised OpenID Connect protocol errors to user-friendly messages.
-- Display safe fallback content for unrecognised errors.
-
-# Remaining milestone tasks
-
-- None

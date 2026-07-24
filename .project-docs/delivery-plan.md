@@ -285,54 +285,174 @@ reference resource API.
 
 ## Milestone 4.1 – User Administration
 
-- Browse users.
-- Search users.
-- View user details.
+- Create the user administration feature.
+  - Define authenticated administration navigation.
+  - Create the authenticated user list page layout.
+  - Create the authenticated user details page layout.
+  - Define the user administration navigation workflow.
+
+- Implement user listing.
+  - Retrieve registered users.
+  - Display user summary information.
+  - Display account status.
+  - Support searching users.
+  - Verify user listing.
+
+- Implement user details.
+  - Retrieve the selected user.
+  - Display account information.
+  - Display profile information.
+  - Display email information.
+  - Display lockout information.
+  - Verify user details.
+
+- Create user accounts.
+  - Define the administrative registration workflow.
+  - Create new user accounts.
+  - Support registration of existing users.
+  - Associate users with one or more client applications.
+  - Send the account confirmation email.
+  - Verify user registration.
+
+- Edit user accounts.
+  - Define the user edit workflow.
+  - Update account information.
+  - Update profile information.
+  - Update client application assignments.
+  - Verify user account updates.
 
 ---
 
-## Milestone 4.2 – User Management
+## Milestone 4.2 – Identity Account Management
 
-- Create users.
-- Edit users.
-- Enable and disable users.
 - Manage passwords.
+  - Reset user passwords.
+  - Generate temporary passwords.
+  - Verify password reset behaviour.
+
 - Manage email addresses.
-- Manage lockout.
+  - Update email addresses.
+  - Manage email confirmation.
+  - Resend confirmation emails.
+  - Verify email management.
+
+- Manage account lockout.
+  - Display lockout status.
+  - Remove account lockout.
+  - Verify lockout management.
+
+- Manage user profile information.
+  - Update display name.
+  - Update profile information.
+  - Verify profile updates.
 
 ---
 
-## Milestone 4.3 – Identity Enhancements
+## Milestone 4.3 – User Self-Service
 
-- Continue expanding identity management capabilities.
+- Review the existing ASP.NET Core Identity pages.
+  - Identify reusable functionality.
+  - Identify required customisation.
+  - Define the self-service workflow.
 
+- Integrate user self-service.
+  - Configure account management.
+  - Configure profile management.
+  - Configure password management.
+  - Verify self-service account management.
+
+- Integrate two-factor authentication.
+  - Configure authenticator application support.
+  - Configure recovery codes.
+  - Configure two-factor management.
+  - Verify two-factor authentication.
+
+- Verify the self-service experience.
+  - Verify profile management.
+  - Verify password management.
+  - Verify email confirmation.
+  - Verify two-factor authentication.
+
+  
 ---
 
 # Phase 5 – Application Access Management
 
-## Milestone 5.1 – Application Access
+## Milestone 5.1 – Client User Management
 
-- Grant and revoke application access.
-- Browse application assignments.
+- Assign users to client applications.
+- Remove users from client applications.
+- Manage client application membership.
+
+## Milestone 5.2 – Client Administration
+
+- Appoint Client Administrators.
+- Revoke Client Administrator privileges.
+- Manage client administrator assignments.
+
+## Milestone 5.3 – Application Roles
+
+- Define application roles.
+- Assign application roles.
+- Revoke application roles.
+
+## Milestone 5.4 – Claims & Authorisation
+
+- Define application claims.
+- Configure claim issuance.
+- Restrict administration pages.
+- Enforce application authorisation.
+
+## Milestone 5.5 – OpenID Connect Integration
+
+- Enforce client assignment during authorisation.
+- Enforce client assignment during token redemption.
+- Enforce client assignment during refresh token redemption.
 
 ---
 
-## Milestone 5.2 – Roles
+# Phase 6 – External Identity Providers
 
-- Manage application roles.
-- Assign user roles.
+## Milestone 6.1 – Federation
+
+- Configure external identity providers.
+- External login management.
+- Account linking.
+
+## Milestone 6.2 – Identity Synchronisation
+
+- External identity synchronisation.
+- Claims mapping.
+- Federation enhancements.
 
 ---
 
-## Milestone 5.3 – Claims
+# Phase 7 – Operational Features
 
-- Manage application claims.
-- Determine issued claims.
-- Issue application authorisation information.
+## Milestone 7.1 – Auditing
 
-# Phase 6 - Extended Application Configuration
+- Audit user administration.
+- Audit application administration.
+- Audit authentication activity.
 
-## Milestone 6.1 – OpenID Connect Configuration
+## Milestone 7.2 – Monitoring
+
+- Operational monitoring.
+- Health reporting.
+- Administrative diagnostics.
+
+## Milestone 7.3 – Production Readiness
+
+- Security review.
+- Performance review.
+- Deployment preparation.
+- Production validation.
+
+---
+
+# Phase 8 - Extended Application Configuration
+
+## Milestone 8.1 – OpenID Connect Configuration
 
 - Manage client type.
   - Configure the client as public or confidential.
@@ -349,3 +469,4 @@ reference resource API.
   - Verify permission changes.
 
 ---
+
