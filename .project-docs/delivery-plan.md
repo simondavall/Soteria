@@ -285,11 +285,11 @@ reference resource API.
 
 ## Milestone 4.1 – User Administration
 
-- Create the user administration feature.
-  - Define authenticated administration navigation.
-  - Create the authenticated user list page layout.
-  - Create the authenticated user details page layout.
-  - Define the user administration navigation workflow.
+- ✓ Create the user administration feature.
+  - ✓ Define authenticated administration navigation.
+  - ✓ Create the authenticated user list page layout.
+  - ✓ Create the authenticated user details page layout.
+  - ✓ Define the user administration navigation workflow.
 
 - Implement user listing.
   - Retrieve registered users.
