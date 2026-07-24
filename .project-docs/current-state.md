@@ -13,12 +13,18 @@ where development should continue.
 
 # Current task
 
-## Implement user listing.
-- Retrieve registered users.
-- Display user summary information.
-- Display account status.
-- Support searching users.
-- Verify user listing.
+## Implement user details.
+- Retrieve the selected user.
+- Display account information.
+- Display profile information.
+- Display email information.
+- Display lockout information.
+- Verify user details.
+
+# Remaining milestone tasks
+
+- Create user accounts.
+- Edit user accounts.
 
 # Remaining milestone tasks
 
@@ -172,3 +178,8 @@ where development should continue.
 - Created the initial user list page.
 - Created the initial user details page.
 - Established the user administration navigation workflow.
+- Implemented the user administration listing.
+- Added the user feature service using the established direct Entity Framework Core query pattern.
+- Displayed user email, email-confirmation status and current lockout status.
+- Added client-side user searching.
+- Preserved user-row navigation to the user details page.
