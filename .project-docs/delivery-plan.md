@@ -291,12 +291,12 @@ reference resource API.
   - ✓ Create the authenticated user details page layout.
   - ✓ Define the user administration navigation workflow.
 
-- Implement user listing.
-  - Retrieve registered users.
-  - Display user summary information.
-  - Display account status.
-  - Support searching users.
-  - Verify user listing.
+- ✓ Implement user listing.
+  - ✓ Retrieve registered users.
+  - ✓ Display user summary information.
+  - ✓ Display account status.
+  - ✓ Support searching users.
+  - ✓ Verify user listing.
 
 - Implement user details.
   - Retrieve the selected user.

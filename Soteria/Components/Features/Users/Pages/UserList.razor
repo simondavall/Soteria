@@ -48,8 +48,19 @@
         </header>
 
         <MudPaper Class="users-page__content">
+            <MudTextField T="string"
+                          @bind-Value="_searchText"
+                          Label="Search users"
+                          Placeholder="Search by display name, email or status"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          Clearable="true"/>
+
             <MudTable T="UserSummary"
                       Items="Users"
+                      Filter="FilterUser"
                       Hover="true"
                       Dense="true"
                       OnRowClick="SelectUser">
@@ -71,18 +82,18 @@
                     </MudTd>
 
                     <MudTd DataLabel="Email Confirmed">
-                        <MudChip T="string"
+                        <MudChip T="bool"
                                  Color="@(context.EmailConfirmed ? Color.Success : Color.Warning)"
                                  Variant="Variant.Filled">
-                            @(context.EmailConfirmed ? "Confirmed" : "Unconfirmed")
+                            @context.EmailConfirmed
                         </MudChip>
                     </MudTd>
 
                     <MudTd DataLabel="Locked Out">
-                        <MudChip T="string"
+                        <MudChip T="bool"
                                  Color="@(context.IsLockedOut ? Color.Error : Color.Success)"
                                  Variant="Variant.Filled">
-                            @(context.IsLockedOut ? "Locked out" : "Active")
+                            @context.IsLockedOut
                         </MudChip>
                     </MudTd>
                 </RowTemplate>
@@ -102,7 +113,7 @@
 
                         <MudText Class="users-page__empty-description"
                                  Align="Align.Center">
-                            User listing will be implemented in a subsequent task.
+                            No registered users match the current search.
                         </MudText>
                     </MudStack>
                 </NoRecordsContent>

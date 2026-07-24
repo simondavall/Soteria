@@ -13,6 +13,7 @@ using Soteria.Components.Account.Email;
 using Soteria.Components.Features.Clients;
 using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
+using Soteria.Components.Features.Users;
 using Soteria.Data;
 using Soteria.Data.OpenIddict;
 
@@ -144,6 +145,7 @@ public class Program
 
         builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
         builder.Services.AddScoped<ClientService>();
+        builder.Services.AddScoped<UserService>();
 
         builder.Services.AddTransient<CreateClientValidator>();
         builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider =>
