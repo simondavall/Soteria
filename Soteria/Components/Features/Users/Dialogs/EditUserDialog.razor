@@ -28,51 +28,35 @@
                     </MudText>
 
                     <MudGrid Spacing="3">
-                        <MudItem xs="12"
-                                 md="6">
-
-                            <MudStack Spacing="3">
-                                <MudTextField Value="@Request.UserId.ToString()"
-                                              Label="User ID"
-                                              ReadOnly="true"
-                                              Variant="Variant.Outlined" />
-
-                                <MudTextField Value="@Request.UserName"
-                                              Label="Username"
-                                              ReadOnly="true"
-                                              Variant="Variant.Outlined" />
-
-                                <MudTextField Value="@Request.DisplayName"
-                                              Label="Display Name"
-                                              ReadOnly="true"
-                                              Variant="Variant.Outlined" />
-
-                                <MudTextField Value="@Request.Email"
-                                              Label="Email"
-                                              ReadOnly="true"
-                                              Variant="Variant.Outlined" />
-                            </MudStack>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Value="@Request.UserId.ToString()"
+                                          Label="User ID"
+                                          ReadOnly="true"/>
                         </MudItem>
 
-                        <MudItem xs="12"
-                                 md="6">
+                        <MudItem xs="12" md="6">
+                            <MudTextField Value="@Request.UserName"
+                                          Label="Username"
+                                          ReadOnly="true"/>
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
 
                             <MudStack Spacing="3">
-                                <MudTextField Value="@Request.EmailConfirmed.ToString()"
-                                              Label="Email Confirmed"
-                                              ReadOnly="true"
-                                              Variant="Variant.Outlined" />
-
                                 <MudStack Row="true"
                                           AlignItems="AlignItems.End"
                                           Spacing="2">
 
-                                    <MudTextField Value="@Request.IsLockedOut.ToString()"
-                                                  Label="Locked Out"
-                                                  ReadOnly="true"
-                                                  Variant="Variant.Outlined"
-                                                  Class="flex-grow-1" />
+                                    <MudText Typo="Typo.overline"
+                                             Color="Color.Default">
+                                        Locked Out
+                                    </MudText>
 
+                                    <MudChip T="bool"
+                                             Color="@(Request.IsLockedOut ? Color.Error : Color.Success)"
+                                             Variant="Variant.Filled">
+                                        @Request.IsLockedOut
+                                    </MudChip>
                                     @if (Request.IsLockedOut)
                                     {
                                         <MudButton Variant="Variant.Outlined"
@@ -83,14 +67,22 @@
                                             Unlock
                                         </MudButton>
                                     }
+
                                 </MudStack>
 
-                                <MudTextField Value="@FormatLockoutEnd(Request.LockoutEnd)"
-                                              Label="Lockout End"
-                                              ReadOnly="true"
-                                              Variant="Variant.Outlined" />
+
                             </MudStack>
                         </MudItem>
+                        
+                        @if (Request.IsLockedOut)
+                        {
+                            <MudItem xs="12" md="6">
+                                <MudTextField Value="@FormatLockoutEnd(Request.LockoutEnd)"
+                                              Label="Lockout End"
+                                              ReadOnly="true"/>
+                            </MudItem>
+                        }
+
                     </MudGrid>
                 </MudStack>
             </MudPaper>
@@ -127,7 +119,7 @@
             {
                 <MudProgressCircular Size="Size.Small"
                                      Indeterminate="true"
-                                     Class="me-2" />
+                                     Class="me-2"/>
             }
 
             Save

@@ -107,7 +107,7 @@
         else
         {
             <MudStack Spacing="4">
-                <MudPaper Class="user-details-page__content"
+                <MudPaper Class="p-2 user-details-page__content"
                           Elevation="1">
 
                     <MudStack Spacing="3">
@@ -132,6 +132,19 @@
                                 <div class="user-details-page__field">
                                     <MudText Typo="Typo.overline"
                                              Color="Color.Secondary">
+                                        Email
+                                    </MudText>
+
+                                    <MudText Typo="Typo.body1">
+                                        @User.Email
+                                    </MudText>
+                                </div>
+                            </div>
+
+                            <div class="user-details-page__column">
+                                <div class="user-details-page__field">
+                                    <MudText Typo="Typo.overline"
+                                             Color="Color.Secondary">
                                         Username
                                     </MudText>
 
@@ -150,47 +163,40 @@
                                         @User.DisplayName
                                     </MudText>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="user-details-page__field">
-                                    <MudText Typo="Typo.overline"
-                                             Color="Color.Secondary">
-                                        Email
-                                    </MudText>
+                        <div class="user-details-page__status-row">
+                            <div class="user-details-page__status">
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Email Confirmed
+                                </MudText>
 
-                                    <MudText Typo="Typo.body1">
-                                        @User.Email
-                                    </MudText>
-                                </div>
+                                <MudChip T="bool"
+                                         Color="@(User.EmailConfirmed ? Color.Success : Color.Warning)"
+                                         Variant="Variant.Filled"
+                                         Size="Size.Small">
+                                    @User.EmailConfirmed
+                                </MudChip>
                             </div>
 
-                            <div class="user-details-page__column">
-                                <div class="user-details-page__field">
-                                    <MudText Typo="Typo.overline"
-                                             Color="Color.Secondary">
-                                        Email Confirmed
-                                    </MudText>
+                            <div class="user-details-page__status">
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Locked Out
+                                </MudText>
 
-                                    <MudChip T="bool"
-                                             Color="@(User.EmailConfirmed ? Color.Success : Color.Warning)"
-                                             Variant="Variant.Filled">
-                                        @User.EmailConfirmed
-                                    </MudChip>
-                                </div>
-
-                                <div class="user-details-page__field">
-                                    <MudText Typo="Typo.overline"
-                                             Color="Color.Secondary">
-                                        Locked Out
-                                    </MudText>
-
-                                    <MudChip T="bool"
-                                             Color="@(User.IsLockedOut ? Color.Error : Color.Success)"
-                                             Variant="Variant.Filled">
-                                        @User.IsLockedOut
-                                    </MudChip>
-                                </div>
-
-                                <div class="user-details-page__field">
+                                <MudChip T="bool"
+                                         Color="@(User.IsLockedOut ? Color.Error : Color.Success)"
+                                         Variant="Variant.Filled"
+                                         Size="Size.Small">
+                                    @User.IsLockedOut
+                                </MudChip>
+                            </div>
+                            @if (User.IsLockedOut)
+                            {
+                                <div class="user-details-page__status">
                                     <MudText Typo="Typo.overline"
                                              Color="Color.Secondary">
                                         Lockout End
@@ -200,12 +206,13 @@
                                         @FormatLockoutEnd(User.LockoutEnd)
                                     </MudText>
                                 </div>
-                            </div>
+                            }
+
                         </div>
                     </MudStack>
                 </MudPaper>
 
-                <MudPaper Class="user-details-page__content"
+                <MudPaper Class="p-2 user-details-page__content"
                           Elevation="1">
 
                     <MudStack Spacing="3">
