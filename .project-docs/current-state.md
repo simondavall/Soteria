@@ -5,23 +5,20 @@ where development should continue.
 
 # Current phase
 
-## Phase 4 – Identity Management
+## Phase 5 – Application Access Management
 
 # Current milestone
 
-## Milestone 4.1 – User Administration
+## Milestone 5.1 – Client User Management
 
 # Current task
 
-- Edit user administration workflow
-  - Display all user details in a read-only edit dialog.
-  - Allow administrators to unlock locked user accounts.
-  - Display a Permissions placeholder for future Phase 5 implementation.
-  - Persist unlock changes only when Save is selected.
+- Assign users to client applications.
 
 # Remaining milestone tasks
 
-- None
+- Remove users from client applications.
+- Manage client application membership.
 
 # Completed
 
