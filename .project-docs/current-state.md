@@ -13,17 +13,16 @@ where development should continue.
 
 # Current task
 
-## Create user accounts.
-- Define the administrative registration workflow.
-- Create new user accounts.
-- Support registration of existing users.
-- Associate users with one or more client applications.
-- Send the account confirmation email.
-- Verify user registration.
+- Edit user accounts.
+  - Define the user edit workflow.
+  - Update account information.
+  - Update profile information.
+  - Update client application assignments.
+  - Verify user account updates.
 
 # Remaining milestone tasks
 
-- Edit user accounts.
+- None
 
 # Completed
 
@@ -187,3 +186,10 @@ where development should continue.
 - Added graceful handling for unknown users.
 - Preserved read-only administration workflow pending user editing.
 - Refined the user details page into consolidated User Details and Permissions sections.
+- Added Create User dialog from the User Administration page.
+- Implemented administrative registration for new Identity users.
+- Existing users now redirect directly to their User Details page.
+- UserName and Email are both initialised from the submitted email address.
+- Reused the existing ASP.NET Core Identity confirmation email workflow.
+- Added FluentValidation for both client-side and server-side validation.
+- Permissions remain a Phase 5 placeholder.

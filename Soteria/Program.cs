@@ -14,6 +14,7 @@ using Soteria.Components.Features.Clients;
 using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
 using Soteria.Components.Features.Users;
+using Soteria.Components.Features.Users.Queries;
 using Soteria.Data;
 using Soteria.Data.OpenIddict;
 
@@ -145,20 +146,20 @@ public class Program
 
         builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
         builder.Services.AddScoped<ClientService>();
-        builder.Services.AddScoped<UserService>();
-
         builder.Services.AddTransient<CreateClientValidator>();
-        builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider =>
-            provider.GetRequiredService<CreateClientValidator>());
-        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(provider =>
-            provider.GetRequiredService<CreateClientValidator>());
-
         builder.Services.AddTransient<EditClientValidator>();
-        builder.Services.AddTransient<IValidator<EditClientRequest>>(provider =>
-            provider.GetRequiredService<EditClientValidator>());
-        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(provider =>
-            provider.GetRequiredService<EditClientValidator>());
+        builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider => provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(provider => provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IValidator<EditClientRequest>>(provider => provider.GetRequiredService<EditClientValidator>());
+        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(provider => provider.GetRequiredService<EditClientValidator>());
 
+        builder.Services.AddScoped<IUserLookup, UserLookup>();
+        builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<CreateUserValidator>();
+        builder.Services.AddScoped<IValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
+        builder.Services.AddScoped<IMudValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
+
+        
         var app = builder.Build();
 
         await using (var scope = app.Services.CreateAsyncScope())

@@ -306,13 +306,13 @@ reference resource API.
   - ✓ Display lockout information.
   - ✓ Verify user details.
 
-- Create user accounts.
-  - Define the administrative registration workflow.
-  - Create new user accounts.
-  - Support registration of existing users.
-  - Associate users with one or more client applications.
-  - Send the account confirmation email.
-  - Verify user registration.
+- ✓ Create user accounts.
+  - ✓ Define the administrative registration workflow.
+  - ✓ Create new user accounts.
+  - ✓ Support registration of existing users.
+  - ✓ Add placeholder to associate users with one or more client applications.
+  - ✓ Send the account confirmation email.
+  - ✓ Verify user registration.
 
 - Edit user accounts.
   - Define the user edit workflow.
