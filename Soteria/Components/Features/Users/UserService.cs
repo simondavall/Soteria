@@ -1,16 +1,79 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text;
+using System.Text.Encodings.Web;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Soteria.Data;
 
 namespace Soteria.Components.Features.Users;
 
-public sealed class UserService(SoteriaDbContext dbContext)
+public sealed class UserService
 {
-    public async Task<IReadOnlyList<UserSummary>> GetUsersAsync(
-        CancellationToken cancellationToken = default)
+    private readonly SoteriaDbContext _dbContext;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserStore<ApplicationUser> _userStore;
+    private readonly IEmailSender<ApplicationUser> _emailSender;
+    private readonly NavigationManager _navigationManager;
+    private readonly IValidator<CreateUserRequest> _createUserValidator;
+
+    public UserService(
+        SoteriaDbContext dbContext,
+        UserManager<ApplicationUser> userManager,
+        IUserStore<ApplicationUser> userStore,
+        IEmailSender<ApplicationUser> emailSender,
+        NavigationManager navigationManager,
+        IValidator<CreateUserRequest> createUserValidator)
+    {
+        _dbContext = dbContext;
+        _userManager = userManager;
+        _userStore = userStore;
+        _emailSender = emailSender;
+        _navigationManager = navigationManager;
+        _createUserValidator = createUserValidator;
+    }
+
+    public async Task<CreateUserResult> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
+    {
+        request.Email = request.Email.Trim();
+
+        var existingUser = await _userManager.FindByEmailAsync(request.Email);
+        if (existingUser is not null)
+        {
+            return new CreateUserResult(existingUser.Id, false);
+        }
+
+        var validationResult = await _createUserValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new CreateUserValidationException(validationResult.Errors);
+        }
+
+        var user = new ApplicationUser();
+
+        await _userStore.SetUserNameAsync(user, request.Email, cancellationToken);
+
+        var emailStore = GetEmailStore();
+        await emailStore.SetEmailAsync(user, request.Email, cancellationToken);
+        
+        var identityResult = await _userManager.CreateAsync(user, request.Password);
+        if (!identityResult.Succeeded)
+        {
+            throw new CreateUserIdentityException(identityResult.Errors);
+        }
+
+        await SendConfirmationEmailAsync(user);
+
+        return new CreateUserResult(user.Id, true);
+    }
+
+    public async Task<IReadOnlyList<UserSummary>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
 
-        return await dbContext.Users
+        return await _dbContext.Users
             .AsNoTracking()
             .OrderBy(user => user.UserName)
             .ThenBy(user => user.Id)
@@ -20,17 +83,16 @@ public sealed class UserService(SoteriaDbContext dbContext)
                 user.DisplayName,
                 user.Email ?? string.Empty,
                 user.EmailConfirmed,
-                user.LockoutEnd.HasValue && user.LockoutEnd.Value > now))
+                user.LockoutEnd.HasValue
+                && user.LockoutEnd.Value > now))
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<UserDetailsModel?> GetUserAsync(
-        Guid userId,
-        CancellationToken cancellationToken = default)
+    public async Task<UserDetailsModel?> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
 
-        return await dbContext.Users
+        return await _dbContext.Users
             .AsNoTracking()
             .Where(user => user.Id == userId)
             .Select(user => new UserDetailsModel(
@@ -39,11 +101,46 @@ public sealed class UserService(SoteriaDbContext dbContext)
                 user.DisplayName,
                 user.Email ?? string.Empty,
                 user.EmailConfirmed,
-                user.LockoutEnd.HasValue && user.LockoutEnd.Value > now,
+                user.LockoutEnd.HasValue
+                && user.LockoutEnd.Value > now,
                 user.LockoutEnd))
             .SingleOrDefaultAsync(cancellationToken);
     }
+
+    private async Task SendConfirmationEmailAsync(ApplicationUser user)
+    {
+        var userId = await _userManager.GetUserIdAsync(user);
+        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        var callbackUrl =
+            _navigationManager.GetUriWithQueryParameters(
+                _navigationManager
+                    .ToAbsoluteUri("Account/ConfirmEmail")
+                    .AbsoluteUri,
+                new Dictionary<string, object?>
+                {
+                    ["userId"] = userId,
+                    ["code"] = code
+                });
+
+        await _emailSender.SendConfirmationLinkAsync(user, user.Email!, HtmlEncoder.Default.Encode(callbackUrl));
+    }
+
+    private IUserEmailStore<ApplicationUser> GetEmailStore()
+    {
+        if (!_userManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The configured user store does not support email.");
+        }
+
+        return (IUserEmailStore<ApplicationUser>)_userStore;
+    }
 }
+
+public sealed record CreateUserResult(
+    Guid UserId,
+    bool UserCreated);
 
 public sealed record UserSummary(
     Guid UserId,
@@ -61,3 +158,13 @@ public sealed record UserDetailsModel(
     bool EmailConfirmed,
     bool IsLockedOut,
     DateTimeOffset? LockoutEnd);
+
+public sealed class CreateUserValidationException(IReadOnlyList<ValidationFailure> failures) : Exception("User validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class CreateUserIdentityException(IEnumerable<IdentityError> errors) : Exception("User creation failed.")
+{
+    public IReadOnlyList<IdentityError> Errors { get; } = errors.ToList();
+}

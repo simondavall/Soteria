@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Soteria.Components.Features.Users.Dialogs;
 
 namespace Soteria.Components.Features.Users.Pages;
 
@@ -7,7 +8,8 @@ public partial class UserList
 {
     [Inject]
     private UserService UserService { get; set; } = default!;
-
+    [Inject]
+    private IDialogService DialogService { get; set; } = default!;
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
@@ -17,6 +19,30 @@ public partial class UserList
     protected override async Task OnInitializedAsync()
     {
         Users = await UserService.GetUsersAsync();
+    }
+
+    private async Task CreateUserAsync()
+    {
+        var options =
+            new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false
+            };
+
+        var dialog = await DialogService.ShowAsync<CreateUserDialog>("Create user", options);
+        
+        var result = await dialog.Result;
+        if (result is null
+            || result.Canceled
+            || result.Data is not Guid userId)
+        {
+            return;
+        }
+
+        Navigation.NavigateTo($"/users/{userId}");
     }
 
     private bool FilterUser(UserSummary user)

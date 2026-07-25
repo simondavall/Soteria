@@ -1,0 +1,89 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm Model="@Request"
+                 @ref="Form"
+                 Validation="@(CreateUserValidator.ValidateValueAsync)">
+
+            <MudStack Spacing="3">
+                @if (ErrorMessages.Count > 0)
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
+
+                        <MudList T="string"
+                                 Dense="true">
+
+                            @foreach (var message in ErrorMessages)
+                            {
+                                <MudListItem T="string">
+                                    @message
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudAlert>
+                }
+
+                <MudTextField @bind-Value="Request.Email"
+                              Label="Email"
+                              For="@(() => Request.Email)"
+                              InputType="InputType.Email"
+                              Immediate="true"
+                              DebounceInterval="400"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving"
+                              AutoFocus="true" />
+
+                <MudTextField @bind-Value="Request.Password"
+                              Label="Password"
+                              For="@(() => Request.Password)"
+                              InputType="InputType.Password"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Request.ConfirmPassword"
+                              Label="Confirm password"
+                              For="@(() => Request.ConfirmPassword)"
+                              InputType="InputType.Password"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudDivider />
+
+                <MudStack Spacing="1">
+                    <MudText Typo="Typo.h6">
+                        Permissions
+                    </MudText>
+
+                    <MudText Typo="Typo.body2"
+                             Color="Color.Secondary">
+                        Permission assignment will be introduced in Phase 5.
+                    </MudText>
+                </MudStack>
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@Cancel"
+                   Disabled="IsSaving">
+            Cancel
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="@RegisterAsync"
+                   Disabled="IsSaving">
+
+            @if (IsSaving)
+            {
+                <MudProgressCircular Size="Size.Small"
+                                     Indeterminate="true"
+                                     Class="me-2" />
+            }
+
+            Register
+        </MudButton>
+    </DialogActions>
+</MudDialog>
