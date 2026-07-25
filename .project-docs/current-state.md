@@ -13,12 +13,11 @@ where development should continue.
 
 # Current task
 
-- Edit user accounts.
-  - Define the user edit workflow.
-  - Update account information.
-  - Update profile information.
-  - Update client application assignments.
-  - Verify user account updates.
+- Edit user administration workflow
+  - Display all user details in a read-only edit dialog.
+  - Allow administrators to unlock locked user accounts.
+  - Display a Permissions placeholder for future Phase 5 implementation.
+  - Persist unlock changes only when Save is selected.
 
 # Remaining milestone tasks
 
@@ -193,3 +192,8 @@ where development should continue.
 - Reused the existing ASP.NET Core Identity confirmation email workflow.
 - Added FluentValidation for both client-side and server-side validation.
 - Permissions remain a Phase 5 placeholder.
+- Added Edit User dialog launched from the User Details page.
+- Displayed all user account information as read-only.
+- Implemented administrative account unlock workflow.
+- Unlock updates the dialog immediately and persists only when Save is selected.
+- Cleared LockoutEnd when unlocking an account.

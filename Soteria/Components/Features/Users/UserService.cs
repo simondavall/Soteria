@@ -107,6 +107,46 @@ public sealed class UserService
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<EditUserRequest?> GetUserForEditAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await GetUserAsync(userId, cancellationToken);
+        if (user is null)
+        {
+            return null;
+        }
+
+        return new EditUserRequest
+        {
+            UserId = user.UserId,
+            UserName = user.UserName,
+            DisplayName = user.DisplayName,
+            Email = user.Email,
+            EmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = user.IsLockedOut,
+            LockoutEnd = user.LockoutEnd
+        };
+    }
+
+    public async Task UpdateUserAsync(EditUserRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+        if (user is null)
+        {
+            throw new InvalidOperationException($"The user '{request.UserId}' could not be found.");
+        }
+
+        if (!request.UnlockRequested)
+        {
+            return;
+        }
+
+        var result = await _userManager.SetLockoutEndDateAsync(user, null);
+        if (!result.Succeeded)
+        {
+            throw new EditUserIdentityException(result.Errors);
+        }
+    }
+    
     private async Task SendConfirmationEmailAsync(ApplicationUser user)
     {
         var userId = await _userManager.GetUserIdAsync(user);
@@ -165,6 +205,11 @@ public sealed class CreateUserValidationException(IReadOnlyList<ValidationFailur
 }
 
 public sealed class CreateUserIdentityException(IEnumerable<IdentityError> errors) : Exception("User creation failed.")
+{
+    public IReadOnlyList<IdentityError> Errors { get; } = errors.ToList();
+}
+
+public sealed class EditUserIdentityException(IEnumerable<IdentityError> errors) : Exception("User update failed.")
 {
     public IReadOnlyList<IdentityError> Errors { get; } = errors.ToList();
 }

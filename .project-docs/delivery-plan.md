@@ -314,66 +314,12 @@ reference resource API.
   - ✓ Send the account confirmation email.
   - ✓ Verify user registration.
 
-- Edit user accounts.
-  - Define the user edit workflow.
-  - Update account information.
-  - Update profile information.
-  - Update client application assignments.
-  - Verify user account updates.
+- ✓ Edit user administration workflow
+  - ✓ Display all user details in a read-only edit dialog.
+  - ✓ Allow administrators to unlock locked user accounts.
+  - ✓ Display a Permissions placeholder for future Phase 5 implementation.
+  - ✓ Persist unlock changes only when Save is selected.
 
----
-
-## Milestone 4.2 – Identity Account Management
-
-- Manage passwords.
-  - Reset user passwords.
-  - Generate temporary passwords.
-  - Verify password reset behaviour.
-
-- Manage email addresses.
-  - Update email addresses.
-  - Manage email confirmation.
-  - Resend confirmation emails.
-  - Verify email management.
-
-- Manage account lockout.
-  - Display lockout status.
-  - Remove account lockout.
-  - Verify lockout management.
-
-- Manage user profile information.
-  - Update display name.
-  - Update profile information.
-  - Verify profile updates.
-
----
-
-## Milestone 4.3 – User Self-Service
-
-- Review the existing ASP.NET Core Identity pages.
-  - Identify reusable functionality.
-  - Identify required customisation.
-  - Define the self-service workflow.
-
-- Integrate user self-service.
-  - Configure account management.
-  - Configure profile management.
-  - Configure password management.
-  - Verify self-service account management.
-
-- Integrate two-factor authentication.
-  - Configure authenticator application support.
-  - Configure recovery codes.
-  - Configure two-factor management.
-  - Verify two-factor authentication.
-
-- Verify the self-service experience.
-  - Verify profile management.
-  - Verify password management.
-  - Verify email confirmation.
-  - Verify two-factor authentication.
-
-  
 ---
 
 # Phase 5 – Application Access Management
@@ -469,4 +415,32 @@ reference resource API.
   - Verify permission changes.
 
 ---
+
+## Milestone 8.2 – User Self-Service
+
+- Review the existing ASP.NET Core Identity pages.
+  - Identify reusable functionality.
+  - Identify required customisation.
+  - Define the self-service workflow.
+
+- Integrate user self-service.
+  - Configure account management.
+  - Configure profile management.
+  - Configure password management.
+  - Verify self-service account management.
+
+- Integrate two-factor authentication.
+  - Configure authenticator application support.
+  - Configure recovery codes.
+  - Configure two-factor management.
+  - Verify two-factor authentication.
+
+- Verify the self-service experience.
+  - Verify profile management.
+  - Verify password management.
+  - Verify email confirmation.
+  - Verify two-factor authentication.
+
+---
+
 
