@@ -443,34 +443,21 @@ reference resource API.
   - ✓ Refresh the Permissions card after successful creation.
   - ✓ Verify duplicate memberships are rejected.
 
-- Edit Client Memberships.
-  - Open the Client Membership dialog by selecting a membership row.
-  - Retrieve the selected Client Membership.
-  - Verify the membership belongs to the selected user.
-  - Display the client application as read-only.
-  - Allow the Membership Level to be changed.
-  - Retrieve available Application Roles for the client application.
-  - Display Application Roles using a multi-select checklist.
-  - Add and remove Application Role assignments.
-  - Prevent duplicate role assignments.
-  - Prevent assignment of roles belonging to another client application.
-  - Display validation and persistence errors without closing the dialog.
-  - Refresh the Permissions card after successful update.
-  - Verify Membership Level updates are persisted.
-  - Verify Application Role assignments are persisted.
-  ```
-  Edit Client Assignment
-  
-  Client application   [ Reference Web ] - read only
-  Membership level     [ User ▼ ]
-  
-  Application roles
-  [ ] Reader
-  [ ] Approver
-  [ ] Report Manager
-  
-  Delete                   Cancel   Save
-  ```
+- ✓ Edit Client Memberships.
+  - ✓ Open the Client Membership dialog by selecting a membership row.
+  - ✓ Retrieve the selected Client Membership.
+  - ✓ Verify the membership belongs to the selected user.
+  - ✓ Display the client application as read-only.
+  - ✓ Allow the Membership Level to be changed.
+  - ✓ Retrieve available Application Roles for the client application.
+  - ✓ Display Application Roles using a multi-select checklist.
+  - ✓ Add and remove Application Role assignments.
+  - ✓ Prevent duplicate role assignments.
+  - ✓ Prevent assignment of roles belonging to another client application.
+  - ✓ Display validation and persistence errors without closing the dialog.
+  - ✓ Refresh the Permissions card after successful update.
+  - ✓ Verify Membership Level updates are persisted.
+  - ✓ Verify Application Role assignments are persisted.
 
 - Remove Client Memberships through an explicit confirmed operation.
   - Add a Remove action to the Client Membership dialog.
