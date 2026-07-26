@@ -322,6 +322,292 @@ reference resource API.
 
 ---
 
+# Phase 5 – Application Authorisation
+
+## Milestone 5.1 – Authorisation Persistence Model
+
+- Create the Authorization persistence model.
+  - Create the System Role persistence model.
+    - Create the `SystemRole` entity.
+    - Create the `UserSystemRole` assignment entity.
+    - Enforce unique System Role names.
+    - Enforce unique user and System Role assignments.
+
+  - Create the Client Membership persistence model.
+    - Create the `ClientMembership` entity.
+    - Associate memberships with users and client applications.
+    - Add the `User` and `Administrator` Membership Levels.
+    - Enforce one membership per user and client application.
+
+  - Create the Application Role persistence model.
+    - Create the `ApplicationRole` entity.
+    - Associate Application Roles with client applications.
+    - Enforce unique role names within each client application.
+
+  - Create the Application Role Assignment persistence model.
+    - Create the `ClientMembershipApplicationRole` entity.
+    - Associate Application Roles with Client Membership.
+    - Enforce unique role assignments.
+    - Ensure assigned roles belong to the same client application as the membership.
+
+  - Configure entity relationships and deletion behaviour.
+    - Remove Application Role assignments when Client Membership is removed.
+    - Remove related authorisation data when a user is deleted.
+    - Prevent unrestricted cascading deletion of client applications.
+
+  - Seed the initial `SoteriaAdministrator` System Role.
+  - Create and apply the Entity Framework migration.
+  - Verify the resulting database schema.
+
+---
+
+## Milestone 5.2 – System Administration Bootstrap
+
+- Implement System Role assignment services.
+- Provide a controlled process for assigning the initial Soteria Administrator.
+- Authorise global Soteria administration using System Roles.
+- Ensure System Roles do not grant Client Membership.
+- Ensure System Roles are not issued to consuming applications.
+- Verify Soteria Administrator access.
+- Verify non-administrators cannot access global administration features.
+
+---
+
+## Milestone 5.3 – Client Membership Management
+
+- Implement Client Membership services.
+
+  - Create Client Membership.
+  - Remove Client Membership.
+  - Retrieve memberships by user.
+  - Retrieve memberships by client application.
+  - Prevent duplicate memberships.
+
+- Integrate Client Membership into user registration.
+
+  - Replace the Phase 4 client-assignment placeholder.
+  - Require at least one client application when registering a new user.
+  - Add memberships to existing users without creating duplicate accounts.
+
+- Implement membership administration.
+
+  - Display Client Memberships on User Details.
+  - Display users belonging to a client application.
+  - Assign users to client applications.
+  - Remove users from client applications.
+  - Display Membership Level.
+
+- Verify Client Membership management.
+
+- Verify removing membership removes associated Application Role assignments.
+
+---
+
+## Milestone 5.4 – Delegated Client Administration
+
+- Implement Membership Level management.
+
+  - Promote a Client Membership to `Administrator`.
+  - Demote a Client Membership to `User`.
+
+- Implement delegated administration rules.
+
+  - Restrict Client Administrators to client applications they administer.
+  - Restrict user visibility to relevant client memberships.
+  - Prevent access to unrelated client information.
+  - Permit Client Administrators to register users for administered clients.
+  - Permit Client Administrators to manage membership for administered clients.
+  - Permit Client Administrators to appoint additional Client Administrators.
+  - Permit Client Administrators to revoke Client Administrator privileges.
+
+- Ensure each active client application retains at least one Client Administrator.
+
+- Enforce client scope within application services.
+
+- Verify delegated administration.
+
+---
+
+## Milestone 5.5 – Application Role Management
+
+- Implement Application Role services.
+
+  - Create Application Roles.
+  - Edit Application Roles.
+  - Remove Application Roles through an explicit confirmed operation.
+  - Retrieve roles belonging to a client application.
+
+- Implement Application Role administration.
+
+  - Display Application Roles on Client Details.
+  - Add Application Roles to a client application.
+  - Edit role Display Name and Description.
+  - Preserve the stable role Name used for claims and policies.
+
+- Validate Application Role names.
+
+  - Enforce uniqueness within the client application.
+  - Prefer permission-oriented names.
+  - Prevent roles from being moved between client applications.
+
+- Restrict Application Role management to authorised administrators.
+
+- Verify Application Role management.
+
+---
+
+## Milestone 5.6 – Application Role Assignment
+
+- Implement Application Role assignment services.
+
+  - Assign roles through Client Membership.
+  - Remove assigned roles.
+  - Retrieve roles assigned to a membership.
+  - Prevent duplicate assignments.
+  - Reject roles belonging to another client application.
+
+- Implement role-assignment administration.
+
+  - Display assigned roles on User Details.
+  - Assign roles for each Client Membership.
+  - Remove assigned roles.
+  - Restrict Client Administrators to roles belonging to administered clients.
+
+- Ensure Client Membership alone does not grant Application Roles.
+
+- Verify Application Role assignment and removal.
+
+---
+
+## Milestone 5.7 – Claim Issuance
+
+- Issue Application Role names as standard role claims.
+- Issue only roles assigned through the Client Membership for the requesting client.
+- Do not issue System Roles.
+- Do not issue Membership Level.
+- Preserve identity-oriented ID token claims.
+- Configure role-claim destinations.
+- Configure access-token claims for protected APIs.
+- Preserve the separation between audience, scope and roles.
+- Reload current Application Roles whenever tokens are issued.
+- Configure named authorisation policies in the reference applications.
+- Verify ID token claims.
+- Verify access token claims.
+- Verify roles belonging to other clients are never issued.
+
+---
+
+## Milestone 5.8 – Authorisation Enforcement
+
+- Enforce client status during OpenID Connect requests.
+
+  - Preserve the existing enabled-client validation.
+  - Preserve the existing user-friendly browser error handling.
+
+- Enforce Client Membership during authorisation.
+
+  - Resolve the requesting client application.
+  - Load the authenticated user's Client Membership.
+  - Reject the authorisation request when membership does not exist.
+  - Prevent authorisation-code and token issuance.
+
+- Enforce Client Membership during authorisation-code redemption.
+
+  - Revalidate the client application.
+  - Revalidate Client Membership.
+  - Reload current Application Roles.
+  - Reject redemption when membership no longer exists.
+
+- Enforce Client Membership during refresh-token redemption.
+
+  - Revalidate the user.
+  - Revalidate the client application.
+  - Revalidate Client Membership.
+  - Reload current Application Roles.
+  - Reject refresh when membership no longer exists.
+  - Issue updated claims when role assignments have changed.
+
+- Restrict Soteria administration pages.
+
+  - Authorise global administration using System Roles.
+  - Authorise delegated administration using Membership Level.
+  - Protect user, client, membership and role-management pages.
+
+- Enforce authorisation within application services.
+
+  - Do not rely solely on page or component visibility.
+  - Apply client scoping to all delegated administration operations.
+
+- Verify end-to-end authorisation.
+
+  - Verify users without Client Membership cannot authenticate to the client.
+  - Verify membership removal prevents future token issuance.
+  - Verify role changes appear in newly issued tokens.
+  - Verify existing access tokens remain valid until expiry.
+  - Verify consuming applications enforce Application Role policies.
+  - Verify Soteria administration access follows System Role and Membership Level rules.
+
+
+---
+
+# Phase 5 – Application Authorisation
+
+## Milestone 5.1 – Client Membership
+
+- Introduce the Client Membership domain model and administrative workflow.
+  - Create the Client Membership persistence model.
+  - Associate users with one or more client applications.
+  - Remove Client Membership.
+  - Display Client Membership within User Details.
+  - Display Membership Level.
+  - Prevent duplicate memberships.
+  - Remove the temporary Phase 4 registration placeholder.
+  - Verify membership management.
+
+## Milestone 5.2 – Delegated Administration
+
+- Introduce delegated administration using Membership Level.
+  - Implement Membership Levels.
+  - Appoint Client Administrators.
+  - Revoke Client Administrator privileges.
+  - Ensure every client retains at least one Client Administrator.
+  - Restrict client visibility using Client Membership.
+  - Restrict administration operations to administered clients.
+  - Verify delegated administration.
+
+## Milestone 5.3 – Application Roles
+
+- Implement application-specific permissions.
+  - Create Application Role persistence.
+  - Manage Application Roles per client application.
+  - Assign Application Roles to Client Membership.
+  - Remove Application Roles.
+  - Display assigned roles.
+  - Verify role management.
+
+## Milestone 5.4 – Claim Issuance
+
+- Issue application permissions to consuming applications.
+  - Issue Application Role claims.
+  - Do not issue System Roles.
+  - Do not issue Membership Levels.
+  - Configure ID token claims.
+  - Configure access token claims.
+  - Configure authorisation policies.
+  - Verify issued claims.
+
+Milestone 5.5 – Authorisation Enforcement
+
+- Apply the authorisation model during authentication and administration.
+  - Enforce Client Membership during OpenID Connect authorisation.
+  - Enforce Client Membership during authorisation-code redemption.
+  - Enforce Client Membership during refresh-token redemption.
+  - Reload current Application Roles during token issuance.
+  - Reject requests where Client Membership no longer exists.
+  - Restrict Soteria administration pages.
+  - Enforce client scope within application services.
+  - Verify end-to-end authorisation.
+
 # Phase 5 – Application Access Management
 
 ## Milestone 5.1 – Client User Management

@@ -1,53 +1,16 @@
-﻿**# Soteria Authorisation Design Discussion
+﻿# Soteria Phase 5 Authorisation Architecture
 
-> **Status:** Working design discussion
+> **Status:** Architectural reference
 >
-> This document records the architectural discussion that took place during the planning of Phase 4. It is **not** part of the current implementation.
->
-> Its purpose is to capture the agreed direction for Phase 5 so that a future implementation can begin with the existing reasoning rather than repeating the architectural discussion.
->
-> Unless superseded by later project decisions, this document should be treated as the starting point for Phase 5 planning.
+> This document defines the agreed Phase 5 authorisation architecture for Soteria. It records the agreed design and the minimum implementation guidance required to understand and implement the model.
 
 ---
 
-# Background
+# Purpose
 
-During planning for Phase 4 it became apparent that the project originally blurred two separate concerns:
+ASP.NET Core Identity is responsible for authentication and identity management.
 
-* user account management;
-* application authorisation.
-
-After discussion it was agreed that these should remain separate responsibilities.
-
-Phase 4 focuses on **Identity Management**.
-
-Phase 5 focuses on **Application Access Management**.
-
-This separation aligns with Soteria's role as both an Identity Provider and an authorisation service.
-
----
-
-# Overall Responsibility Model
-
-ASP.NET Core Identity remains responsible for:
-
-* user accounts;
-* passwords;
-* email confirmation;
-* lockout;
-* two-factor authentication;
-* account recovery;
-* authentication.
-
-Soteria is responsible for:
-
-* client applications;
-* application access;
-* application administration;
-* application roles;
-* application claims;
-* authorisation decisions;
-* determining which authorisation information is issued to consuming applications.
+Soteria is responsible for application access, delegated administration, application roles and claim issuance.
 
 Identity determines **who the user is**.
 
@@ -55,195 +18,313 @@ Soteria determines **what the user may do**.
 
 ---
 
-# User Categories
+# Responsibility Model
 
-Three logical categories of user were identified.
+## ASP.NET Core Identity
+
+Responsible for:
+
+- User accounts
+- Authentication
+- Passwords
+- Email confirmation
+- Lockout
+- Two-factor authentication
+- Account recovery
+
+## Soteria
+
+Responsible for:
+
+- Client applications
+- Client membership
+- System roles
+- Application roles
+- Claim issuance
+- Authorisation decisions
+
+---
+
+# Authority Model
+
+## System Roles
+
+System Roles define global authority within Soteria.
+
+Initially:
+
+- Soteria Administrator
+
+System Roles:
+
+- authorise Soteria administration;
+- never grant client access;
+- are never issued to consuming applications.
+
+## Client Membership
+
+A Client Membership grants access to one client application.
+
+Membership records:
+
+- Membership Level
+- Assigned Application Roles
+
+Membership Levels:
+
+- User
+- Administrator
+
+Constraints:
+
+- unique(UserId, ApplicationId)
+
+Removing a membership removes access to that client and its application-role assignments.
+
+## Application Roles
+
+Application Roles belong to a single client application.
+
+Role names are permission-oriented, for example:
+
+- Reports.View
+- Reports.Edit
+- Orders.Approve
+
+`Name` is the stable value used for claims and policies.
+
+`DisplayName` is used only within Soteria.
+
+Constraints:
+
+- unique(ApplicationId, Name)
+
+---
+
+# User Categories
 
 ## Soteria Administrator
 
-A Soteria Administrator has unrestricted access to Soteria itself.
+May:
 
-Responsibilities include:
+- manage users;
+- manage client applications;
+- assign System Roles;
+- manage all client memberships;
+- assign application roles.
 
-* managing client applications;
-* registering Client Administrators;
-* managing all user accounts;
-* overriding client administration when necessary.
-
-This is considered a global Soteria responsibility rather than a client-specific responsibility.
-
----
+A System Role does not automatically grant access to consuming applications.
 
 ## Client Administrator
 
-A Client Administrator administers one or more specific client applications.
+Represented by:
 
-Responsibilities include:
+- MembershipLevel = Administrator
 
-* registering users;
-* assigning users to client applications;
-* appointing additional Client Administrators;
-* revoking Client Administrator privileges;
-* assigning application roles;
-* removing application access;
-* clearing account lockout.
+May administer only the client applications they belong to.
 
-Client Administrators should not become global administrators.
+May:
 
-Their authority exists only within the client applications they administer.
+- register users;
+- manage client membership;
+- appoint additional Client Administrators;
+- assign Application Roles;
+- clear account lockout.
 
----
+Cannot modify ASP.NET Core Identity account data other than supported administration operations.
 
 ## Client User
 
-Client Users authenticate through Soteria and manage their own account.
-
-Responsibilities include:
-
-* changing passwords;
-* configuring two-factor authentication;
-* managing their own profile;
-* maintaining their own account using the existing ASP.NET Core Identity pages.
-
-They do not manage their own application permissions.
+May manage only their own Identity account using the standard Identity pages.
 
 ---
 
 # Registration Model
 
-The existing ASP.NET Core Identity self-registration model will be replaced.
+Registration is an administrative workflow.
 
-Users do not register themselves.
+Users do not self-register.
 
-Registration becomes an administrative workflow.
+Creating a user:
 
-Only administrators have access to the Register page.
+- create the Identity account if it does not exist;
+- create one or more Client Memberships;
+- send an email confirmation link;
+- require password change on first use.
 
-Initially this page will remain unrestricted during Phase 4 development. Phase 5 introduces the required authorisation.
+If the email already exists:
 
----
+- reuse the existing Identity account;
+- add new Client Memberships only.
 
-## Creating a new user
-
-A Client Administrator supplies:
-
-* email address;
-* temporary password;
-* confirmation password;
-* one or more client applications.
-
-The list of client applications is restricted to those administered by the current Client Administrator.
-
-At least one client must be selected.
-
-If the email address does not already exist:
-
-* a new Soteria account is created;
-* client assignments are created;
-* an email confirmation message is sent.
-
-The confirmation email links directly to the Change Password workflow rather than the default email confirmation page.
-
-Successfully changing the password also marks the email address as confirmed.
-
-The temporary password is communicated to the user outside Soteria.
-
-The temporary password is never included in email.
-
----
-
-## Existing users
-
-Registration also supports existing Soteria users.
-
-If the supplied email address already belongs to an existing account:
-
-* a second Soteria account is not created;
-* new client assignments are added;
-* existing client assignments remain unchanged.
-
-This allows one Soteria identity to belong to multiple client applications.
+One Identity account may belong to multiple client applications.
 
 ---
 
 # Visibility Rules
 
-Client Administrators only see information necessary to administer users belonging to the client applications they administer.
+Client Administrators may only view and manage users belonging to client applications they administer.
 
-Initially this includes:
-
-* display name;
-* email address;
-* email confirmed;
-* lockout status;
-* client assignment status;
-* client roles.
-
-Client Administrators do not see assignments belonging to client applications they do not administer.
-
-They do not gain visibility of unrelated client information.
+They must not see memberships or administration data belonging to unrelated client applications.
 
 ---
 
-# Client Administration
+# Persistence Model
 
-Client Administrators may appoint additional Client Administrators.
+## System Roles
 
-They may also revoke Client Administrator privileges.
+```text
+SystemRole
+    Id
+    Name
+    DisplayName
+    Description
 
-Every client application must always have at least one Client Administrator.
+UserSystemRole
+    UserId
+    SystemRoleId
+```
 
-This constraint should be enforced when changes are saved rather than when a client application is initially created.
+## Client Membership
 
-This allows Soteria Administrators to create new client applications before assigning the first Client Administrator.
+```text
+ClientMembership
+    Id
+    UserId
+    ApplicationId
+    MembershipLevel
+    CreatedUtc
+```
+
+## Application Roles
+
+```text
+ApplicationRole
+    Id
+    ApplicationId
+    Name
+    DisplayName
+    Description
+```
+
+## Application Role Assignments
+
+```text
+ClientMembershipApplicationRole
+    ClientMembershipId
+    ApplicationRoleId
+```
+
+## Relationships
+
+```text
+ApplicationUser
+    ├── UserSystemRoles
+    └── ClientMemberships
+
+SystemRole
+    └── UserSystemRoles
+
+SoteriaApplication
+    ├── ClientMemberships
+    └── ApplicationRoles
+
+ClientMembership
+    └── ApplicationRoleAssignments
+```
+
+## Deletion
+
+- Removing Client Membership removes role assignments.
+- Removing a user removes memberships, role assignments and System Role assignments.
+- Client applications should normally be disabled rather than deleted.
+
+The model should remain compatible with future audit fields.
 
 ---
 
-# User Enable / Disable
+# Claim Design
 
-During this discussion the previously proposed global user enabled/disabled state was reconsidered.
+Only Application Roles are issued to consuming applications.
 
-The conclusion reached was that a separate enabled flag may not be required.
+System Roles and Membership Levels remain internal to Soteria.
 
-Instead, application access is controlled through client assignments.
+## ID Token
 
-Removing a user's assignment from a client application prevents access to that client while leaving access to other client applications unaffected.
+Typical claims:
 
-This approach is considered simpler and more closely reflects the project's authorisation model.
+- sub
+- name
+- preferred_username
+- email
 
-This remains subject to review during Phase 5 implementation.
+Application Role claims may be included where required.
+
+## Access Token
+
+Typical claims:
+
+- sub
+- aud
+- scope
+- role
+
+Only roles belonging to the requesting client application are issued.
+
+Protected APIs authorise using Application Role claims.
+
+Named policies are preferred over embedded role strings.
+
+During refresh-token redemption:
+
+- revalidate Client Membership;
+- reload current Application Roles;
+- reject if membership has been removed.
 
 ---
 
-# Application Assignments
+# Authorisation Flow
 
-Users may belong to multiple client applications.
-
-Each client application independently determines:
-
-* whether the user has access;
-* whether the user is a Client Administrator;
-* which application roles are assigned.
-
-Application assignments therefore become part of Soteria's own domain model rather than ASP.NET Core Identity.
+1. Validate client.
+2. Authenticate user.
+3. Load Client Membership.
+4. Reject if no membership exists.
+5. Load Application Roles.
+6. Issue claims.
+7. Issue tokens.
 
 ---
 
-# Roles and Claims
+# Enforcement Model
 
-The discussion concluded that roles and claims have different responsibilities.
+## Client Validation
 
-Roles define permissions.
+Validate the client and confirm it is enabled.
 
-Claims communicate identity and authorisation information to consuming applications.
+## Authorisation Request
 
-The current expectation is:
+- authenticate the user;
+- load Client Membership;
+- reject if no membership exists;
+- load current Application Roles.
 
-* application roles are stored by Soteria;
-* Soteria determines which roles are transformed into issued claims;
-* consuming applications make authorisation decisions using those claims.
+## Authorisation Code Redemption
 
-Exactly how roles are persisted remains a Phase 5 design activity.
+Revalidate Client Membership and reload current Application Roles before issuing tokens.
+
+## Refresh Token Redemption
+
+Revalidate Client Membership.
+
+Reload current Application Roles.
+
+Reject the request if membership has been removed.
+
+## Soteria Administration
+
+- System Roles authorise global administration.
+- Membership Level authorises delegated client administration.
+- Services enforce client scope and must not rely solely on UI authorisation.
 
 ---
 
@@ -251,79 +332,34 @@ Exactly how roles are persisted remains a Phase 5 design activity.
 
 ## Phase 4
 
-Phase 4 establishes the user management experience.
-
-It intentionally leaves all pages accessible during development.
-
-The objective is to produce the required pages, services and components without introducing the complete authorisation model.
-
----
+Implements Identity management and administration pages.
 
 ## Phase 5
 
-Phase 5 introduces the security model.
+Implements:
 
-This includes:
-
-* page authorisation;
-* application assignments;
-* Client Administrator restrictions;
-* role management;
-* claim issuance;
-* enforcement during OpenID Connect authorisation;
-* enforcement during authorisation-code redemption;
-* enforcement during refresh-token redemption.
-
-The components produced during Phase 4 should therefore be designed so these restrictions can be added without significant restructuring.
+- Client Membership
+- System Roles
+- Application Roles
+- Claim issuance
+- Authorisation enforcement
 
 ---
 
-# Open Questions
+# Remaining Open Questions
 
-The following topics remain intentionally undecided.
-
-## Storage model
-
-The persistence model for:
-
-* application assignments;
-* application roles;
-* role assignment.
-
----
-
-## Claim issuance
-
-Exactly which application roles become claims.
-
-Exactly which claims are issued to each consuming application.
-
----
-
-## Enforcement
-
-The implementation details for checking application assignments during:
-
-* OpenID Connect authorisation;
-* authorisation-code redemption;
-* refresh-token redemption.
-
----
-
-## Client Administration
-
-Whether additional delegated administration capabilities become necessary once the initial implementation has been proven.
+- Future delegated administration capabilities.
+- Governance, audit history and token revocation.
 
 ---
 
 # Design Principles
 
-The following principles emerged from the discussion.
-
-* Keep authentication separate from authorisation.
-* Keep ASP.NET Core Identity responsible for user identity.
-* Keep Soteria responsible for application authorisation.
-* Avoid global permissions when authority belongs to an individual client application.
-* Allow one user to belong to multiple client applications.
-* Build Phase 4 so that Phase 5 can introduce security without restructuring the user-management feature.
-* Continue preferring explicit behaviour over hidden framework abstraction.**
+- Separate authentication from authorisation.
+- Identity owns identity.
+- Soteria owns application access.
+- Keep System Roles separate from Client Membership.
+- Keep Client Membership separate from Application Roles.
+- Administrative authority does not imply application access.
+- Every authorisation decision begins with Client Membership.
+- Only roles belonging to the requesting client are issued.
