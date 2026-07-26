@@ -77,12 +77,27 @@ public partial class UserDetails
         await LoadUserAsync();
     }
 
-    private async Task AssignClientAsync()
+    private Task AssignClientAsync()
     {
-        var parameters = new DialogParameters<AssignClientDialog>
+        return OpenClientMembershipDialogAsync();
+    }
+    
+    private Task EditClientMembershipAsync(ClientMembershipDetailsModel membership)
+    {
+        return OpenClientMembershipDialogAsync(membership.ClientMembershipId);
+    }
+
+    private async Task OpenClientMembershipDialogAsync(Guid? clientMembershipId = null)
+    {
+        var parameters = new DialogParameters<ClientMembershipDialog>
         {
             { dialog => dialog.UserId, UserId }
         };
+
+        if (clientMembershipId.HasValue)
+        {
+            parameters.Add(dialog => dialog.ClientMembershipId, clientMembershipId.Value);
+        }
 
         var options = new DialogOptions
         {
@@ -92,7 +107,9 @@ public partial class UserDetails
             BackdropClick = false
         };
 
-        var dialog = await DialogService.ShowAsync<AssignClientDialog>("Assign client", parameters, options);
+        var title = clientMembershipId.HasValue ? "Edit client assignment" : "Assign client";
+
+        var dialog = await DialogService.ShowAsync<ClientMembershipDialog>(title, parameters, options);
         var result = await dialog.Result;
         if (result is null || result.Canceled || result.Data is not true)
         {

@@ -13,16 +13,15 @@ where development should continue.
 
 # Current task
 
-Edit Client Memberships.
-- Open a Client Membership for editing from the Permissions card.
-- Allow Membership Level to be updated.
-- Assign and remove Application Roles.
-- Prevent assignment of Application Roles belonging to another client application.
-- Refresh the Permissions card after successful updates.
+Remove Client Memberships through an explicit confirmed operation.
+- Allow administrators to remove a Client Membership.
+- Require explicit confirmation before deletion.
+- Remove associated Application Role assignments.
+- Refresh the Permissions card after successful removal.
 
 # Remaining milestone tasks
 
-- Remove Client Memberships through an explicit confirmed operation.
+- None
 
 # Completed
 
@@ -262,3 +261,16 @@ Edit Client Memberships.
 - Prevented duplicate Client Memberships through both validation and persistence checks.
 - Displayed validation and persistence errors without closing the dialog.
 - Refreshed the Permissions card immediately after successful Client Membership creation.
+- Reused the Client Membership dialog for both creation and editing workflows.
+- Opened the Client Membership dialog by selecting anywhere within a Client Membership row.
+- Added scoped clickable-row styling to the Client Membership table.
+- Retrieved Client Memberships for editing while verifying ownership by the selected user.
+- Displayed the associated client application as read-only during editing.
+- Allowed Membership Level to be updated.
+- Retrieved Application Roles belonging to the selected client application.
+- Displayed Application Roles using a multi-select checklist.
+- Added and removed Client Membership Application Role assignments.
+- Prevented duplicate Application Role assignments.
+- Prevented assignment of Application Roles belonging to another client application.
+- Displayed validation and persistence errors without closing the dialog.
+- Refreshed the Permissions card immediately after successful Client Membership updates.

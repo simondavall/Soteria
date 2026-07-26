@@ -21,6 +21,7 @@ public sealed class UserService
     private readonly NavigationManager _navigationManager;
     private readonly IValidator<CreateUserRequest> _createUserValidator;
     private readonly IValidator<CreateClientMembershipRequest> _createClientMembershipValidator;
+    private readonly IValidator<EditClientMembershipRequest> _editClientMembershipValidator;
 
     public UserService(
         SoteriaDbContext dbContext,
@@ -29,7 +30,8 @@ public sealed class UserService
         IEmailSender<ApplicationUser> emailSender,
         NavigationManager navigationManager,
         IValidator<CreateUserRequest> createUserValidator,
-        IValidator<CreateClientMembershipRequest> createClientMembershipValidator)
+        IValidator<CreateClientMembershipRequest> createClientMembershipValidator,
+        IValidator<EditClientMembershipRequest> editClientMembershipValidator)
     {
         _dbContext = dbContext;
         _userManager = userManager;
@@ -38,6 +40,7 @@ public sealed class UserService
         _navigationManager = navigationManager;
         _createUserValidator = createUserValidator;
         _createClientMembershipValidator = createClientMembershipValidator;
+        _editClientMembershipValidator = editClientMembershipValidator;
     }
 
     public async Task<CreateUserResult> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
@@ -169,6 +172,188 @@ public sealed class UserService
             .ToList();
     }
 
+    public async Task<EditClientMembershipRequest?> GetClientMembershipForEditAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
+    {
+        var membership = await _dbContext.ClientMemberships
+            .AsNoTracking()
+            .Where(item => item.Id == clientMembershipId && item.UserId == userId)
+            .Select(item => new
+            {
+                item.Id,
+                item.UserId,
+                item.ApplicationId,
+                item.Application.ClientId,
+                item.Application.DisplayName,
+                item.MembershipLevel
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (membership is null)
+        {
+            return null;
+        }
+
+        var applicationRoles = await _dbContext.ApplicationRoles
+            .AsNoTracking()
+            .Where(role => role.ApplicationId == membership.ApplicationId)
+            .OrderBy(role => role.DisplayName)
+            .ThenBy(role => role.Name)
+            .ThenBy(role => role.Id)
+            .Select(role => role.Id)
+            .ToListAsync(cancellationToken);
+
+        var selectedRoleIds =
+            await _dbContext.ClientMembershipApplicationRoles
+                .AsNoTracking()
+                .Where(assignment =>
+                    assignment.ClientMembershipId == membership.Id
+                    && assignment.ClientMembership.UserId == userId)
+                .Select(assignment => assignment.ApplicationRoleId)
+                .ToHashSetAsync(cancellationToken);
+
+        return new EditClientMembershipRequest
+        {
+            UserId = membership.UserId,
+            ClientMembershipId = membership.Id,
+            ClientId = membership.ClientId ?? string.Empty,
+            ApplicationName = membership.DisplayName ?? membership.ClientId ?? string.Empty,
+            MembershipLevel = membership.MembershipLevel,
+            AvailableApplicationRoleIds = applicationRoles,
+            SelectedApplicationRoleIds = selectedRoleIds
+        };
+    }
+    
+    public async Task<IReadOnlyList<ClientMembershipApplicationRoleItem>> GetClientMembershipApplicationRolesAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
+    {
+        var membership = await _dbContext.ClientMemberships
+            .AsNoTracking()
+            .Where(item => item.Id == clientMembershipId && item.UserId == userId)
+            .Select(item => new
+            {
+                item.ApplicationId
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (membership is null)
+        {
+            return [];
+        }
+
+        return await _dbContext.ApplicationRoles
+            .AsNoTracking()
+            .Where(role => role.ApplicationId == membership.ApplicationId)
+            .OrderBy(role => role.DisplayName)
+            .ThenBy(role => role.Name)
+            .ThenBy(role => role.Id)
+            .Select(role => new ClientMembershipApplicationRoleItem(
+                role.Id,
+                role.Name,
+                role.DisplayName,
+                role.Description))
+            .ToListAsync(cancellationToken);
+    }
+    
+    public async Task UpdateClientMembershipAsync(EditClientMembershipRequest request, CancellationToken cancellationToken = default)
+    {
+        var validationResult = await _editClientMembershipValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            throw new EditClientMembershipValidationException(validationResult.Errors);
+        }
+
+        var membership = await _dbContext.ClientMemberships
+            .Include(item => item.Application)
+            .Include(item => item.ApplicationRoleAssignments)
+            .SingleOrDefaultAsync(
+                item =>
+                    item.Id == request.ClientMembershipId
+                    && item.UserId == request.UserId,
+                cancellationToken);
+
+        if (membership is null)
+        {
+            throw new ClientMembershipNotFoundException(request.UserId, request.ClientMembershipId);
+        }
+
+        if (!string.Equals(membership.Application.ClientId, request.ClientId, StringComparison.Ordinal))
+        {
+            throw new EditClientMembershipValidationException(
+            [
+                new ValidationFailure(nameof(EditClientMembershipRequest.ClientId),
+                    "The client application associated with this membership cannot be changed.")
+            ]);
+        }
+
+        var selectedRoleIds =
+            request.SelectedApplicationRoleIds
+                .Distinct()
+                .ToHashSet();
+
+        var validRoleIds = await _dbContext.ApplicationRoles
+            .AsNoTracking()
+            .Where(role => role.ApplicationId == membership.ApplicationId && selectedRoleIds.Contains(role.Id))
+            .Select(role => role.Id)
+            .ToListAsync(cancellationToken);
+
+        if (validRoleIds.Count != selectedRoleIds.Count)
+        {
+            throw new EditClientMembershipValidationException(
+            [
+                new ValidationFailure(
+                    nameof(EditClientMembershipRequest.SelectedApplicationRoleIds),
+                    "One or more selected Application Roles do not belong to this client application.")
+            ]);
+        }
+
+        membership.MembershipLevel = request.MembershipLevel;
+
+        var existingRoleIds =
+            membership.ApplicationRoleAssignments
+                .Select(assignment => assignment.ApplicationRoleId)
+                .ToHashSet();
+
+        var assignmentsToRemove =
+            membership.ApplicationRoleAssignments
+                .Where(assignment => !selectedRoleIds.Contains(assignment.ApplicationRoleId))
+                .ToList();
+
+        var roleIdsToAdd =
+            selectedRoleIds
+                .Except(existingRoleIds)
+                .ToList();
+
+        if (assignmentsToRemove.Count > 0)
+        {
+            _dbContext.ClientMembershipApplicationRoles.RemoveRange(assignmentsToRemove);
+        }
+
+        foreach (var applicationRoleId in roleIdsToAdd)
+        {
+            _dbContext.ClientMembershipApplicationRoles.Add(
+                new ClientMembershipApplicationRole
+                {
+                    ClientMembershipId = membership.Id,
+                    ApplicationRoleId = applicationRoleId,
+                    ApplicationId = membership.ApplicationId
+                });
+        }
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new EditClientMembershipValidationException(
+            [
+                new ValidationFailure(
+                    nameof(EditClientMembershipRequest.SelectedApplicationRoleIds),
+                    "The Client Membership could not be updated because one or more role assignments are no longer valid.")
+            ]);
+        }
+    }
+    
     public async Task CreateClientMembershipAsync(CreateClientMembershipRequest request, CancellationToken cancellationToken = default) 
     {
         var validationResult = await _createClientMembershipValidator.ValidateAsync(request, cancellationToken);
@@ -390,3 +575,12 @@ public sealed class CreateClientMembershipValidationException(IReadOnlyList<Vali
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }
+
+public sealed class EditClientMembershipValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client Membership validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class ClientMembershipNotFoundException(Guid userId, Guid clientMembershipId)
+    : Exception($"Client Membership '{clientMembershipId}' could not be found for user '{userId}'.");

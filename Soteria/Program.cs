@@ -161,6 +161,9 @@ public class Program
         builder.Services.AddScoped<CreateClientMembershipValidator>();
         builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider => provider.GetRequiredService<CreateClientMembershipValidator>());
         builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider => provider.GetRequiredService<CreateClientMembershipValidator>());
+        builder.Services.AddScoped<EditClientMembershipValidator>();
+        builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider => provider.GetRequiredService<EditClientMembershipValidator>());
+        builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider => provider.GetRequiredService<EditClientMembershipValidator>());
         
         builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
         builder.Services.AddTransient<CreateApplicationRoleValidator>();
