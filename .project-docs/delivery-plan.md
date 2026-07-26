@@ -421,25 +421,77 @@ reference resource API.
 
 ## Milestone 5.3 – Application Client/Role Assignment
 
+- ✓ Display the user's Client Memberships on the User Details Permissions card.
+  - ✓ Retrieve Client Memberships for the selected user.
+  - ✓ Display the client application name.
+  - ✓ Display the Membership Level.
+  - ✓ Display assigned Application Roles.
+  - ✓ Display an appropriate empty state when the user has no Client Memberships.
+  - ✓ Preserve graceful handling when the selected user does not exist.
+  - ✓ Verify memberships belonging to other users are not displayed.
 
-- Implement Application Role assignment services.
+- Assign a user to a client application.
+  - Add an Assign Client action to the Permissions card.
+    - Create the Client Membership dialog and form.
+    - Display available client applications.
+    - Exclude client applications for which the user already has a membership.
+    - Allow the Membership Level to be selected.
+    - Default the Membership Level to User.
+    - Add the Client Membership creation operation to the application service.
+    - Enforce one Client Membership per user and client application.
+    - Display validation and persistence errors without closing the dialog.
+    - Refresh the Permissions card after successful creation.
+    - Verify duplicate memberships are rejected.
+  ```
+  Assign Client
+  
+  Client application   [ Reference Web ▼ ]
+  Membership level     [ User ▼ ]
+  
+                           Cancel   Assign
+  ```
 
-  - Assign roles through Client Membership.
-  - Remove assigned roles.
-  - Retrieve roles assigned to a membership.
-  - Prevent duplicate assignments.
-  - Reject roles belonging to another client application.
+- Edit Client Memberships.
+  - Open the Client Membership dialog by selecting a membership row.
+  - Retrieve the selected Client Membership.
+  - Verify the membership belongs to the selected user.
+  - Display the client application as read-only.
+  - Allow the Membership Level to be changed.
+  - Retrieve available Application Roles for the client application.
+  - Display Application Roles using a multi-select checklist.
+  - Add and remove Application Role assignments.
+  - Prevent duplicate role assignments.
+  - Prevent assignment of roles belonging to another client application.
+  - Display validation and persistence errors without closing the dialog.
+  - Refresh the Permissions card after successful update.
+  - Verify Membership Level updates are persisted.
+  - Verify Application Role assignments are persisted.
+  ```
+  Edit Client Assignment
+  
+  Client application   [ Reference Web ] - read only
+  Membership level     [ User ▼ ]
+  
+  Application roles
+  [ ] Reader
+  [ ] Approver
+  [ ] Report Manager
+  
+  Delete                   Cancel   Save
+  ```
 
-- Implement role-assignment administration.
-
-  - Display assigned roles on User Details.
-  - Assign roles for each Client Membership.
-  - Remove assigned roles.
-  - Restrict Client Administrators to roles belonging to administered clients.
-
-- Ensure Client Membership alone does not grant Application Roles.
-
-- Verify Application Role assignment and removal.
+- Remove Client Memberships through an explicit confirmed operation.
+  - Add a Remove action to the Client Membership dialog.
+  - Display an explicit confirmation dialog before removal.
+  - Include the client application name in the warning message.
+  - Warn that removing the Client Membership will also remove all assigned Application Roles.
+  - Require explicit confirmation before deletion.
+  - Add the Client Membership removal operation to the application service.
+  - Remove associated Application Role assignments through the configured cascade behaviour.
+  - Display removal errors without closing the confirmation dialog.
+  - Refresh the Permissions card after successful removal.
+  - Verify removing a membership removes its Application Role assignments.
+  - Verify cancelling the confirmation leaves the membership unchanged.
 
 ---
 

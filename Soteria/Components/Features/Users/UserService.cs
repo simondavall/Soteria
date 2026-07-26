@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Soteria.Data;
+using Soteria.Data.Authorization;
 
 namespace Soteria.Components.Features.Users;
 
@@ -35,7 +36,8 @@ public sealed class UserService
         _createUserValidator = createUserValidator;
     }
 
-    public async Task<CreateUserResult> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
+    public async Task<CreateUserResult> CreateUserAsync(CreateUserRequest request,
+        CancellationToken cancellationToken = default)
     {
         request.Email = request.Email.Trim();
 
@@ -57,7 +59,7 @@ public sealed class UserService
 
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, request.Email, cancellationToken);
-        
+
         var identityResult = await _userManager.CreateAsync(user, request.Password);
         if (!identityResult.Succeeded)
         {
@@ -107,6 +109,63 @@ public sealed class UserService
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<ClientMembershipDetailsModel>> GetClientMembershipsAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var memberships = await _dbContext.ClientMemberships
+            .AsNoTracking()
+            .Where(membership => membership.UserId == userId)
+            .OrderBy(membership => membership.Application.DisplayName)
+            .ThenBy(membership => membership.Application.ClientId)
+            .ThenBy(membership => membership.Id)
+            .Select(membership => new ClientMembershipQueryResult(
+                membership.Id,
+                membership.Application.DisplayName
+                ?? membership.Application.ClientId
+                ?? string.Empty,
+                membership.MembershipLevel))
+            .ToListAsync(cancellationToken);
+
+        if (memberships.Count == 0)
+        {
+            return [];
+        }
+
+        var membershipIds = memberships
+            .Select(membership => membership.ClientMembershipId)
+            .ToList();
+
+        var roleAssignments = await _dbContext.ClientMembershipApplicationRoles
+            .AsNoTracking()
+            .Where(assignment =>
+                membershipIds.Contains(assignment.ClientMembershipId)
+                && assignment.ClientMembership.UserId == userId)
+            .OrderBy(assignment => assignment.ApplicationRole.DisplayName)
+            .ThenBy(assignment => assignment.ApplicationRole.Name)
+            .ThenBy(assignment => assignment.ApplicationRole.Id)
+            .Select(assignment => new ClientMembershipRoleQueryResult(
+                assignment.ClientMembershipId,
+                assignment.ApplicationRole.DisplayName))
+            .ToListAsync(cancellationToken);
+
+        var rolesByMembership = roleAssignments
+            .GroupBy(assignment => assignment.ClientMembershipId)
+            .ToDictionary(
+                group => group.Key,
+                group => (IReadOnlyList<string>)group
+                    .Select(assignment => assignment.ApplicationRoleName)
+                    .ToList());
+
+        return memberships
+            .Select(membership => new ClientMembershipDetailsModel(
+                membership.ClientMembershipId,
+                membership.ApplicationName,
+                membership.MembershipLevel.ToString(),
+                rolesByMembership.GetValueOrDefault(
+                    membership.ClientMembershipId,
+                    [])))
+            .ToList();
+    }
+
     public async Task<EditUserRequest?> GetUserForEditAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await GetUserAsync(userId, cancellationToken);
@@ -146,7 +205,7 @@ public sealed class UserService
             throw new EditUserIdentityException(result.Errors);
         }
     }
-    
+
     private async Task SendConfirmationEmailAsync(ApplicationUser user)
     {
         var userId = await _userManager.GetUserIdAsync(user);
@@ -199,7 +258,23 @@ public sealed record UserDetailsModel(
     bool IsLockedOut,
     DateTimeOffset? LockoutEnd);
 
-public sealed class CreateUserValidationException(IReadOnlyList<ValidationFailure> failures) : Exception("User validation failed.")
+public sealed record ClientMembershipDetailsModel(
+    Guid ClientMembershipId,
+    string ApplicationName,
+    string MembershipLevel,
+    IReadOnlyList<string> ApplicationRoles);
+
+internal sealed record ClientMembershipQueryResult(
+    Guid ClientMembershipId,
+    string ApplicationName,
+    MembershipLevel MembershipLevel);
+
+internal sealed record ClientMembershipRoleQueryResult(
+    Guid ClientMembershipId,
+    string ApplicationRoleName);
+
+public sealed class CreateUserValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("User validation failed.")
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }

@@ -216,15 +216,95 @@
                           Elevation="1">
 
                     <MudStack Spacing="3">
-                        <MudText Typo="Typo.h6"
-                                 HtmlTag="h2">
-                            Permissions
-                        </MudText>
+                        <div>
+                            <MudText Typo="Typo.h6"
+                                     HtmlTag="h2">
+                                Permissions
+                            </MudText>
 
-                        <MudText Typo="Typo.body2"
-                                 Color="Color.Secondary">
-                            Client assignments, roles and permissions will be displayed here.
-                        </MudText>
+                            <MudText Typo="Typo.body2"
+                                     Color="Color.Secondary">
+                                Client application memberships and assigned application roles.
+                            </MudText>
+                        </div>
+
+                        @if (ClientMemberships.Count == 0)
+                        {
+                            <div class="user-details-page__empty-permissions">
+                                <MudIcon Icon="@Icons.Material.Filled.AdminPanelSettings"
+                                         Size="Size.Large"
+                                         Color="Color.Secondary"/>
+
+                                <MudText Typo="Typo.body1"
+                                         Align="Align.Center">
+                                    No client memberships
+                                </MudText>
+
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary"
+                                         Align="Align.Center">
+                                    This user has not been granted access to any client applications.
+                                </MudText>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="user-details-page__table-container">
+                                <MudTable T="ClientMembershipDetailsModel"
+                                          Items="@ClientMemberships"
+                                          Hover="true"
+                                          Dense="true"
+                                          Elevation="0"
+                                          Class="user-details-page__permissions-table">
+
+                                    <HeaderContent>
+                                        <MudTh>Client Application</MudTh>
+                                        <MudTh>Membership Level</MudTh>
+                                        <MudTh>Application Roles</MudTh>
+                                    </HeaderContent>
+
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Client Application">
+                                            <MudText Typo="Typo.body2">
+                                                @context.ApplicationName
+                                            </MudText>
+                                        </MudTd>
+
+                                        <MudTd DataLabel="Membership Level">
+                                            <MudChip T="string"
+                                                     Size="Size.Small"
+                                                     Variant="Variant.Outlined"
+                                                     Color="Color.Primary">
+                                                @context.MembershipLevel
+                                            </MudChip>
+                                        </MudTd>
+
+                                        <MudTd DataLabel="Application Roles">
+                                            @if (context.ApplicationRoles.Count == 0)
+                                            {
+                                                <MudText Typo="Typo.body2"
+                                                         Color="Color.Secondary">
+                                                    None
+                                                </MudText>
+                                            }
+                                            else
+                                            {
+                                                <div class="user-details-page__roles">
+                                                    @foreach (var role in context.ApplicationRoles)
+                                                    {
+                                                        <MudChip T="string"
+                                                                 Size="Size.Small"
+                                                                 Variant="Variant.Filled">
+                                                            @role
+                                                        </MudChip>
+                                                    }
+                                                </div>
+                                            }
+                                        </MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </div>
+                        }
                     </MudStack>
                 </MudPaper>
             </MudStack>

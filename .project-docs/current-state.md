@@ -13,18 +13,18 @@ where development should continue.
 
 # Current task
 
-- Implement Application Role assignment services.
-  - Assign roles through Client Membership.
-  - Remove assigned roles.
-  - Retrieve roles assigned to a membership.
-  - Prevent duplicate assignments.
-  - Reject roles belonging to another client application.
+Assign a user to a client application.
+- Add an Assign Client action to the Permissions card.
+- Allow an administrator to create a Client Membership.
+- Select the client application.
+- Select the Membership Level.
+- Prevent duplicate memberships.
+- Refresh the Permissions card after successful assignment.
 
 # Remaining milestone tasks
 
-- Implement role-assignment administration.
-- Ensure Client Membership alone does not grant Application Roles.
-- Verify Application Role assignment and removal.
+- Edit Client Memberships.
+- Remove Client Memberships through an explicit confirmed operation.
 
 # Completed
 
@@ -247,3 +247,10 @@ where development should continue.
 - Removed Application Roles through the application service.
 - Refreshed the Application Roles section immediately after successful removal.
 - Preserved cancellation without deleting the Application Role.
+- Displayed Client Memberships on the User Details page.
+- Added a dedicated Client Membership query using the established direct Entity Framework Core pattern.
+- Displayed the associated client application, Membership Level and assigned Application Roles.
+- Displayed "None" when a membership has no assigned Application Roles.
+- Added an empty-state message when the user has no Client Memberships.
+- Preserved graceful handling for unknown users.
+- Ensured Client Memberships belonging to other users are never displayed.
