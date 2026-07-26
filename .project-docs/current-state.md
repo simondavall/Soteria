@@ -13,18 +13,26 @@ where development should continue.
 
 # Current task
 
-- Implement Application Role services.
-    - Create Application Roles.
-    - Edit Application Roles.
-    - Remove Application Roles through an explicit confirmed operation.
-    - Retrieve roles belonging to a client application.
+- Create Application Roles with validation.
+  - Add a Create Application Role action to Client Details.
+  - Create the Application Role dialog and form.
+  - Add the Application Role creation operation to the application service.
+  - Associate the new role with the selected client application.
+  - Require Name and Display Name.
+  - Allow Description to be omitted.
+  - Enforce unique role names within the selected client application.
+  - Permit the same role name to be used by different client applications.
+  - Validate the stable Name used for claims and authorisation policies.
+  - Encourage permission-oriented role names.
+  - Display validation and persistence errors without closing the dialog.
+  - Refresh the Application Roles section after successful creation.
+  - Verify successful Application Role creation.
+  - Verify invalid and duplicate roles are rejected.
 
 # Remaining milestone tasks
 
-- Implement Application Role administration.
-- Validate Application Role names.
-- Restrict Application Role management to authorised administrators.
-- Verify Application Role management.
+- Edit Application Roles.
+- Remove Application Roles through an explicit confirmed operation.
 
 # Completed
 
@@ -214,3 +222,9 @@ where development should continue.
 - Recreated the initial Entity Framework migration from the updated model.
 - Recreated the development database.
 - Verified the complete authorisation persistence schema.
+- Displayed Application Roles on the Client Details page.
+- Added a dedicated Application Role query using the established direct Entity Framework Core pattern.
+- Displayed Application Role Name, Display Name and Description.
+- Added an empty-state message when no Application Roles exist.
+- Preserved graceful handling for unknown client applications.
+- Refined the Client Details page layout with a dedicated Application Roles card.

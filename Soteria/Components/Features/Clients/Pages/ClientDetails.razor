@@ -91,7 +91,7 @@
         else
         {
             <MudStack Spacing="4">
-                <MudPaper Class="client-details-page__content"
+                <MudPaper Class="p-2 client-details-page__content"
                           Elevation="1">
 
                     <MudStack Spacing="3">
@@ -161,7 +161,62 @@
                     </MudStack>
                 </MudPaper>
 
-                <MudPaper Class="client-details-page__content"
+                <MudPaper Class="p-2 client-details-page__content"
+                          Elevation="1">
+
+                    <MudStack Spacing="3">
+                        <MudText Typo="Typo.h6"
+                                 HtmlTag="h2">
+                            Application Roles
+                        </MudText>
+
+                        <MudTable T="ApplicationRoleSummary"
+                                  Items="ApplicationRoles"
+                                  Hover="true"
+                                  Elevation="0"
+                                  Breakpoint="Breakpoint.Sm">
+
+                            <HeaderContent>
+                                <MudTh>Name</MudTh>
+                                <MudTh>Display name</MudTh>
+                                <MudTh>Description</MudTh>
+                            </HeaderContent>
+
+                            <RowTemplate>
+                                <MudTd DataLabel="Name">
+                                    @context.Name
+                                </MudTd>
+
+                                <MudTd DataLabel="Display name">
+                                    @context.DisplayName
+                                </MudTd>
+
+                                <MudTd DataLabel="Description">
+                                    @if (string.IsNullOrWhiteSpace(context.Description))
+                                    {
+                                        <MudText Typo="Typo.body2"
+                                                 Color="Color.Secondary">
+                                            Not provided
+                                        </MudText>
+                                    }
+                                    else
+                                    {
+                                        @context.Description
+                                    }
+                                </MudTd>
+                            </RowTemplate>
+
+                            <NoRecordsContent>
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">
+                                    No application roles have been defined.
+                                </MudText>
+                            </NoRecordsContent>
+                        </MudTable>
+                    </MudStack>
+                </MudPaper>
+                
+                <MudPaper Class="p-2 client-details-page__content"
                           Elevation="1">
 
                     <MudStack Spacing="3">
@@ -282,7 +337,7 @@
                     </MudStack>
                 </MudPaper>
 
-                <MudPaper Class="client-details-page__content"
+                <MudPaper Class="p-2 client-details-page__content"
                           Elevation="1">
 
                     <MudStack Spacing="4">

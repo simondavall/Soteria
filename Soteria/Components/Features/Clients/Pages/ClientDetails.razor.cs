@@ -18,7 +18,7 @@ public partial class ClientDetails
     public string ClientId { get; set; } = string.Empty;
     
     private ClientApplicationDetails? Client { get; set; }
-
+    private IReadOnlyList<ApplicationRoleSummary> ApplicationRoles { get; set; } = [];
     private bool IsLoading { get; set; }
 
     protected override async Task OnParametersSetAsync()
@@ -33,6 +33,7 @@ public partial class ClientDetails
         try
         {
             Client = await ClientService.GetClientAsync(ClientId);
+            ApplicationRoles = Client is null ? [] : await ClientService.GetApplicationRolesAsync(ClientId);
         }
         finally
         {

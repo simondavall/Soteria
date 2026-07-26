@@ -134,6 +134,22 @@ public sealed class ClientService
                 .ToList());
     }
 
+    public async Task<IReadOnlyList<ApplicationRoleSummary>> GetApplicationRolesAsync(
+        string clientId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.ApplicationRoles
+            .AsNoTracking()
+            .Where(role => role.Application.ClientId == clientId)
+            .OrderBy(role => role.DisplayName)
+            .ThenBy(role => role.Name)
+            .Select(role => new ApplicationRoleSummary(
+                role.Name,
+                role.DisplayName,
+                role.Description))
+            .ToListAsync(cancellationToken);
+    }
+    
     public async Task UpdateClientAsync(EditClientRequest request, CancellationToken cancellationToken = default)
     {
         request.DisplayName = request.DisplayName.Trim();
@@ -309,6 +325,11 @@ public sealed class ClientService
         return string.Join(" ", words.Select(word => char.ToUpperInvariant(word[0]) + word[1..]));
     }
 }
+
+public sealed record ApplicationRoleSummary(
+    string Name,
+    string DisplayName,
+    string? Description);
 
 public sealed record ClientSummary(
     string ClientId,

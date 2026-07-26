@@ -363,25 +363,60 @@ reference resource API.
 
 ## Milestone 5.2 – Application Role Management
 
-- Implement Application Role services.
-  - Create Application Roles.
-  - Edit Application Roles.
-  - Remove Application Roles through an explicit confirmed operation.
-  - Retrieve roles belonging to a client application.
+- ✓ Display Application Roles on Client Details.
+  - ✓ Add an Application Roles section to the Client Details page.
+  - ✓ Retrieve Application Roles belonging to the selected client application.
+  - ✓ Display each role's Name, Display Name and Description.
+  - ✓ Display an appropriate empty state when the client has no Application Roles.
+  - ✓ Preserve graceful handling when the client application does not exist.
+  - ✓ Verify roles belonging to other client applications are not displayed.
+  - ✓ Verify existing Client Details behaviour remains unchanged.
 
-- Implement Application Role administration.
-  - Display Application Roles on Client Details.
-  - Add Application Roles to a client application.
-  - Edit role Display Name and Description.
-  - Preserve the stable role Name used for claims and policies.
+- Create Application Roles with validation.
+  - Add a Create Application Role action to Client Details.
+  - Create the Application Role dialog and form.
+  - Add the Application Role creation operation to the application service.
+  - Associate the new role with the selected client application.
+  - Require Name and Display Name.
+  - Allow Description to be omitted.
+  - Enforce unique role names within the selected client application.
+  - Permit the same role name to be used by different client applications.
+  - Validate the stable Name format used for claims and authorisation policies.
+  - Encourage permission-oriented role names.
+  - Display validation and persistence errors without closing the dialog.
+  - Refresh the Application Roles section after successful creation.
+  - Verify successful Application Role creation.
+  - Verify invalid and duplicate roles are rejected.
 
-- Validate Application Role names.
-  - Enforce uniqueness within the client application.
-  - Prefer permission-oriented names.
-  - Prevent roles from being moved between client applications.
+- Edit Application Roles.
+  - Add an Edit action for each Application Role.
+  - Create the Application Role edit dialog and form.
+  - Retrieve the selected role and verify that it belongs to the selected client application.
+  - Add the Application Role update operation to the application service.
+  - Display the stable Name as read-only.
+  - Allow Display Name and Description to be edited.
+  - Prevent the role from being moved to another client application.
+  - Validate the editable fields.
+  - Display validation and persistence errors without closing the dialog.
+  - Refresh the Application Roles section after a successful update.
+  - Verify Display Name and Description can be updated.
+  - Verify the stable Name and client application association cannot be changed.
 
-- Restrict Application Role management to authorised administrators.
-- Verify Application Role management.
+- Remove Application Roles through an explicit confirmed operation.
+  - Add a Remove action for each Application Role.
+  - Retrieve the number of current assignments for the selected role.
+  - Display an explicit confirmation dialog before removal.
+  - Include the role name and current assignment count in the warning message.
+  - Warn that removing the role will also remove its existing assignments.
+  - Require an explicit confirmation action before deletion.
+  - Add the Application Role removal operation to the application service.
+  - Verify that the role belongs to the selected client application before removal.
+  - Remove associated Application Role assignments through the configured cascade behaviour.
+  - Display removal errors without closing the confirmation dialog.
+  - Refresh the Application Roles section after successful removal.
+  - Verify removal of an unassigned Application Role.
+  - Verify removal of an assigned Application Role also removes its assignments.
+  - Verify cancelling the confirmation leaves the role and its assignments unchanged.
 
 ---
 
