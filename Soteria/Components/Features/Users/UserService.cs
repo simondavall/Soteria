@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Soteria.Data;
 using Soteria.Data.Authorization;
+using Soteria.Data.OpenIddict;
 
 namespace Soteria.Components.Features.Users;
 
@@ -19,6 +20,7 @@ public sealed class UserService
     private readonly IEmailSender<ApplicationUser> _emailSender;
     private readonly NavigationManager _navigationManager;
     private readonly IValidator<CreateUserRequest> _createUserValidator;
+    private readonly IValidator<CreateClientMembershipRequest> _createClientMembershipValidator;
 
     public UserService(
         SoteriaDbContext dbContext,
@@ -26,7 +28,8 @@ public sealed class UserService
         IUserStore<ApplicationUser> userStore,
         IEmailSender<ApplicationUser> emailSender,
         NavigationManager navigationManager,
-        IValidator<CreateUserRequest> createUserValidator)
+        IValidator<CreateUserRequest> createUserValidator,
+        IValidator<CreateClientMembershipRequest> createClientMembershipValidator)
     {
         _dbContext = dbContext;
         _userManager = userManager;
@@ -34,10 +37,10 @@ public sealed class UserService
         _emailSender = emailSender;
         _navigationManager = navigationManager;
         _createUserValidator = createUserValidator;
+        _createClientMembershipValidator = createClientMembershipValidator;
     }
 
-    public async Task<CreateUserResult> CreateUserAsync(CreateUserRequest request,
-        CancellationToken cancellationToken = default)
+    public async Task<CreateUserResult> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
     {
         request.Email = request.Email.Trim();
 
@@ -166,6 +169,99 @@ public sealed class UserService
             .ToList();
     }
 
+    public async Task CreateClientMembershipAsync(CreateClientMembershipRequest request, CancellationToken cancellationToken = default) 
+    {
+        var validationResult = await _createClientMembershipValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new CreateClientMembershipValidationException(validationResult.Errors);
+        }
+
+        var userExists = await _dbContext.Users
+            .AsNoTracking()
+            .AnyAsync(
+                user => user.Id == request.UserId,
+                cancellationToken);
+
+        if (!userExists)
+        {
+            throw new InvalidOperationException($"The user '{request.UserId}' could not be found.");
+        }
+
+        var application = await _dbContext
+            .Set<SoteriaApplication>()
+            .SingleOrDefaultAsync(
+                item => item.ClientId == request.ClientId,
+                cancellationToken);
+
+        if (application is null)
+        {
+            throw new CreateClientMembershipValidationException(
+            [
+                new ValidationFailure(
+                    nameof(CreateClientMembershipRequest.ClientId),
+                    "The selected client application could not be found.")
+            ]);
+        }
+
+        var duplicateExists = await _dbContext.ClientMemberships
+            .AsNoTracking()
+            .AnyAsync(
+                membership =>
+                    membership.UserId == request.UserId
+                    && membership.ApplicationId == application.Id,
+                cancellationToken);
+
+        if (duplicateExists)
+        {
+            throw CreateDuplicateMembershipException();
+        }
+
+        var membership = new ClientMembership
+        {
+            Id = Guid.NewGuid(),
+            UserId = request.UserId,
+            ApplicationId = application.Id,
+            MembershipLevel = request.MembershipLevel,
+            CreatedUtc = DateTime.UtcNow
+        };
+
+        _dbContext.ClientMemberships.Add(membership);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            var membershipNowExists =
+                await _dbContext.ClientMemberships
+                    .AsNoTracking()
+                    .AnyAsync(
+                        item =>
+                            item.UserId == request.UserId
+                            && item.ApplicationId == application.Id,
+                        cancellationToken);
+
+            if (!membershipNowExists)
+            {
+                throw;
+            }
+
+            throw CreateDuplicateMembershipException();
+        }
+    }
+
+    private static CreateClientMembershipValidationException CreateDuplicateMembershipException()
+    {
+        return new CreateClientMembershipValidationException(
+        [
+            new ValidationFailure(
+                nameof(CreateClientMembershipRequest.ClientId),
+                "The user already belongs to this client application.")
+        ]);
+    }
+    
     public async Task<EditUserRequest?> GetUserForEditAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await GetUserAsync(userId, cancellationToken);
@@ -287,4 +383,10 @@ public sealed class CreateUserIdentityException(IEnumerable<IdentityError> error
 public sealed class EditUserIdentityException(IEnumerable<IdentityError> errors) : Exception("User update failed.")
 {
     public IReadOnlyList<IdentityError> Errors { get; } = errors.ToList();
+}
+
+public sealed class CreateClientMembershipValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client Membership validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }

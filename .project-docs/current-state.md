@@ -13,17 +13,15 @@ where development should continue.
 
 # Current task
 
-Assign a user to a client application.
-- Add an Assign Client action to the Permissions card.
-- Allow an administrator to create a Client Membership.
-- Select the client application.
-- Select the Membership Level.
-- Prevent duplicate memberships.
-- Refresh the Permissions card after successful assignment.
+Edit Client Memberships.
+- Open a Client Membership for editing from the Permissions card.
+- Allow Membership Level to be updated.
+- Assign and remove Application Roles.
+- Prevent assignment of Application Roles belonging to another client application.
+- Refresh the Permissions card after successful updates.
 
 # Remaining milestone tasks
 
-- Edit Client Memberships.
 - Remove Client Memberships through an explicit confirmed operation.
 
 # Completed
@@ -254,3 +252,13 @@ Assign a user to a client application.
 - Added an empty-state message when the user has no Client Memberships.
 - Preserved graceful handling for unknown users.
 - Ensured Client Memberships belonging to other users are never displayed.
+- Added Assign Client action to the User Details Permissions card.
+- Created the Client Membership assignment dialog.
+- Added a dedicated available-client lookup using the established lookup-service pattern.
+- Excluded client applications for which the user already has a Client Membership.
+- Defaulted new Client Memberships to the User Membership Level.
+- Added Client Membership creation using the established UserService pattern.
+- Validated that the selected client application still exists before creation.
+- Prevented duplicate Client Memberships through both validation and persistence checks.
+- Displayed validation and persistence errors without closing the dialog.
+- Refreshed the Permissions card immediately after successful Client Membership creation.

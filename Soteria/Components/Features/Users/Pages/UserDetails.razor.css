@@ -93,6 +93,11 @@
     text-align: center;
 }
 
+.user-details-page__permissions-header {
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
 @media (max-width: 59.99rem) {
     .user-details-page__columns {
         grid-template-columns: 1fr;

@@ -77,6 +77,31 @@ public partial class UserDetails
         await LoadUserAsync();
     }
 
+    private async Task AssignClientAsync()
+    {
+        var parameters = new DialogParameters<AssignClientDialog>
+        {
+            { dialog => dialog.UserId, UserId }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            BackdropClick = false
+        };
+
+        var dialog = await DialogService.ShowAsync<AssignClientDialog>("Assign client", parameters, options);
+        var result = await dialog.Result;
+        if (result is null || result.Canceled || result.Data is not true)
+        {
+            return;
+        }
+
+        await LoadUserAsync();
+    }
+    
     private void ReturnToUserList()
     {
         Navigation.NavigateTo("/users");
