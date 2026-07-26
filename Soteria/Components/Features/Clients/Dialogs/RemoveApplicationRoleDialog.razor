@@ -1,0 +1,72 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            @if (ErrorMessages.Count > 0)
+            {
+                <MudAlert Severity="Severity.Error"
+                          Variant="Variant.Outlined">
+
+                    <MudList T="string"
+                             Dense="true">
+
+                        @foreach (var message in ErrorMessages)
+                        {
+                            <MudListItem T="string">
+                                @message
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudAlert>
+            }
+
+            <MudAlert Severity="Severity.Warning"
+                      Variant="Variant.Outlined">
+                This operation cannot be undone.
+            </MudAlert>
+
+            <MudText Typo="Typo.body1">
+                Delete the Application Role
+                <strong>@Request.Name</strong>?
+            </MudText>
+
+            @if (Request.AssignmentCount == 0)
+            {
+                <MudText Typo="Typo.body2">
+                    This Application Role currently has no assignments.
+                </MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2">
+                    This Application Role currently has
+                    <strong>@Request.AssignmentCount</strong>
+                    @(Request.AssignmentCount == 1 ? "assignment" : "assignments").
+                    Deleting the role will also permanently remove
+                    @(Request.AssignmentCount == 1 ? "this assignment" : "these assignments").
+                </MudText>
+            }
+        </MudStack>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@Cancel"
+                   Disabled="IsDeleting">
+            Cancel
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Error"
+                   OnClick="@DeleteAsync"
+                   Disabled="IsDeleting">
+
+            @if (IsDeleting)
+            {
+                <MudProgressCircular Size="Size.Small"
+                                     Indeterminate="true"
+                                     Class="me-2" />
+            }
+
+            Delete Application Role
+        </MudButton>
+    </DialogActions>
+</MudDialog>
