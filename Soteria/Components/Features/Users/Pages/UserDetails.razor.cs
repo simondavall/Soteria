@@ -8,17 +8,15 @@ public partial class UserDetails
 {
     [Parameter]
     public Guid UserId { get; set; }
-
     [Inject]
     private UserService UserService { get; set; } = default!;
-
     [Inject]
     private IDialogService DialogService { get; set; } = default!;
-
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
     private UserDetailsModel? User { get; set; }
+    private IReadOnlyList<ClientMembershipDetailsModel> ClientMemberships { get; set; } = [];
     private bool IsLoading { get; set; }
 
     protected override async Task OnParametersSetAsync()
@@ -29,10 +27,15 @@ public partial class UserDetails
     private async Task LoadUserAsync()
     {
         IsLoading = true;
+        ClientMemberships = [];
 
         try
         {
             User = await UserService.GetUserAsync(UserId);
+            if (User is not null)
+            {
+                ClientMemberships = await UserService.GetClientMembershipsAsync(UserId);
+            }
         }
         finally
         {
@@ -46,6 +49,7 @@ public partial class UserDetails
         if (request is null)
         {
             User = null;
+            ClientMemberships = [];
             return;
         }
 
