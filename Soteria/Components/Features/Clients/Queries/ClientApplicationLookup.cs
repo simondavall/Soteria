@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OpenIddict.EntityFrameworkCore.Models;
 using Soteria.Data;
 using Soteria.Data.OpenIddict;
 
@@ -16,7 +15,7 @@ public sealed class ClientApplicationLookup(SoteriaDbContext dbContext) : IClien
     public Task<bool> ClientIdExistsAsync(string clientId, CancellationToken cancellationToken = default)
     {
         return dbContext
-            .Set<OpenIddictEntityFrameworkCoreApplication<Guid>>()
+            .Set<SoteriaApplication>()
             .AsNoTracking()
             .AnyAsync(
                 application => application.ClientId == clientId,

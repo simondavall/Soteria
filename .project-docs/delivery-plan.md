@@ -430,26 +430,18 @@ reference resource API.
   - ✓ Preserve graceful handling when the selected user does not exist.
   - ✓ Verify memberships belonging to other users are not displayed.
 
-- Assign a user to a client application.
-  - Add an Assign Client action to the Permissions card.
-    - Create the Client Membership dialog and form.
-    - Display available client applications.
-    - Exclude client applications for which the user already has a membership.
-    - Allow the Membership Level to be selected.
-    - Default the Membership Level to User.
-    - Add the Client Membership creation operation to the application service.
-    - Enforce one Client Membership per user and client application.
-    - Display validation and persistence errors without closing the dialog.
-    - Refresh the Permissions card after successful creation.
-    - Verify duplicate memberships are rejected.
-  ```
-  Assign Client
-  
-  Client application   [ Reference Web ▼ ]
-  Membership level     [ User ▼ ]
-  
-                           Cancel   Assign
-  ```
+- ✓ Assign a user to a client application.
+  - ✓ Add an Assign Client action to the Permissions card.
+  - ✓ Create the Client Membership dialog and form.
+  - ✓ Display available client applications.
+  - ✓ Exclude client applications for which the user already has a membership.
+  - ✓ Allow the Membership Level to be selected.
+  - ✓ Default the Membership Level to User.
+  - ✓ Add the Client Membership creation operation to the application service.
+  - ✓ Enforce one Client Membership per user and client application.
+  - ✓ Display validation and persistence errors without closing the dialog.
+  - ✓ Refresh the Permissions card after successful creation.
+  - ✓ Verify duplicate memberships are rejected.
 
 - Edit Client Memberships.
   - Open the Client Membership dialog by selecting a membership row.

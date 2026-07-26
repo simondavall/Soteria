@@ -33,6 +33,7 @@ public partial class AssignClientDialog
     protected override async Task OnParametersSetAsync()
     {
         Request.UserId = UserId;
+        Request.ClientId = string.Empty;
         Request.MembershipLevel = MembershipLevel.User;
 
         IsLoading = true;
@@ -40,10 +41,6 @@ public partial class AssignClientDialog
         try
         {
             AvailableClients = await ClientApplicationLookup.GetAvailableClientsAsync(UserId);
-            if (AvailableClients.Count == 1)
-            {
-                Request.ClientId = AvailableClients[0].ClientId;
-            }
         }
         finally
         {
