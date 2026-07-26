@@ -1,4 +1,4 @@
-﻿# Soteria Authorisation Design Discussion
+﻿**# Soteria Authorisation Design Discussion
 
 > **Status:** Working design discussion
 >
@@ -326,4 +326,4 @@ The following principles emerged from the discussion.
 * Avoid global permissions when authority belongs to an individual client application.
 * Allow one user to belong to multiple client applications.
 * Build Phase 4 so that Phase 5 can introduce security without restructuring the user-management feature.
-* Continue preferring explicit behaviour over hidden framework abstraction.
+* Continue preferring explicit behaviour over hidden framework abstraction.**

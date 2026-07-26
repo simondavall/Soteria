@@ -357,48 +357,9 @@ reference resource API.
 
 ---
 
-# Phase 6 – External Identity Providers
+# Phase 6 - Extended Application Configuration
 
-## Milestone 6.1 – Federation
-
-- Configure external identity providers.
-- External login management.
-- Account linking.
-
-## Milestone 6.2 – Identity Synchronisation
-
-- External identity synchronisation.
-- Claims mapping.
-- Federation enhancements.
-
----
-
-# Phase 7 – Operational Features
-
-## Milestone 7.1 – Auditing
-
-- Audit user administration.
-- Audit application administration.
-- Audit authentication activity.
-
-## Milestone 7.2 – Monitoring
-
-- Operational monitoring.
-- Health reporting.
-- Administrative diagnostics.
-
-## Milestone 7.3 – Production Readiness
-
-- Security review.
-- Performance review.
-- Deployment preparation.
-- Production validation.
-
----
-
-# Phase 8 - Extended Application Configuration
-
-## Milestone 8.1 – OpenID Connect Configuration
+## Milestone 6.1 – OpenID Connect Configuration
 
 - Manage client type.
   - Configure the client as public or confidential.
@@ -415,32 +376,3 @@ reference resource API.
   - Verify permission changes.
 
 ---
-
-## Milestone 8.2 – User Self-Service
-
-- Review the existing ASP.NET Core Identity pages.
-  - Identify reusable functionality.
-  - Identify required customisation.
-  - Define the self-service workflow.
-
-- Integrate user self-service.
-  - Configure account management.
-  - Configure profile management.
-  - Configure password management.
-  - Verify self-service account management.
-
-- Integrate two-factor authentication.
-  - Configure authenticator application support.
-  - Configure recovery codes.
-  - Configure two-factor management.
-  - Verify two-factor authentication.
-
-- Verify the self-service experience.
-  - Verify profile management.
-  - Verify password management.
-  - Verify email confirmation.
-  - Verify two-factor authentication.
-
----
-
-

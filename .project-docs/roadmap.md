@@ -70,14 +70,9 @@ Provide central administration of user identities.
 
 **Includes**
 
-- Create, edit, enable and disable users.
-- Search and manage users.
-- Manage passwords.
-- Manage email addresses.
-- Account lockout.
-- User self-service account management.
-- Two-factor authentication.
-- Additional identity management features as the project evolves.
+- ✓ Create & edit users.
+- ✓ Search and manage users.
+- ✓ Reset account lockout.
 
 **Deliverable**
 
@@ -107,7 +102,7 @@ Client applications trust Soteria as the source of truth for both authentication
 
 # Phase 6 - Extended Application Configuration
 
-Allow other grant and client types.
+Allow other client types and permissions.
 
 ---
 
