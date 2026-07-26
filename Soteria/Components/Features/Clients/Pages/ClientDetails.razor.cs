@@ -73,6 +73,32 @@ public partial class ClientDetails
         await LoadClientAsync();
     }
     
+    private async Task CreateApplicationRoleAsync()
+    {
+        var parameters = new DialogParameters
+        {
+            [nameof(CreateApplicationRoleDialog.ClientId)] = ClientId
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true
+        };
+
+        var dialog = await DialogService.ShowAsync<CreateApplicationRoleDialog>("Create application role", parameters, options);
+        
+        var result = await dialog.Result;
+        if (result is null || result.Canceled)
+        {
+            return;
+        }
+
+        ApplicationRoles = await ClientService.GetApplicationRolesAsync(ClientId);
+    }
+    
     private void ReturnToClientList()
     {
         NavigationManager.NavigateTo("/clients");

@@ -159,6 +159,10 @@ public class Program
         builder.Services.AddScoped<IValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
         builder.Services.AddScoped<IMudValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
 
+        builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
+        builder.Services.AddTransient<CreateApplicationRoleValidator>();
+        builder.Services.AddTransient<IValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
+        builder.Services.AddTransient<IMudValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
         
         var app = builder.Build();
 

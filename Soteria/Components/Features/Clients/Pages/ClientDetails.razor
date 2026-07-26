@@ -165,10 +165,23 @@
                           Elevation="1">
 
                     <MudStack Spacing="3">
-                        <MudText Typo="Typo.h6"
-                                 HtmlTag="h2">
-                            Application Roles
-                        </MudText>
+                        <MudStack Row="true"
+                                  AlignItems="AlignItems.Center"
+                                  Justify="Justify.SpaceBetween"
+                                  Spacing="2">
+
+                            <MudText Typo="Typo.h6"
+                                     HtmlTag="h2">
+                                Application Roles
+                            </MudText>
+
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       OnClick="CreateApplicationRoleAsync">
+                                Create role
+                            </MudButton>
+                        </MudStack>
 
                         <MudTable T="ApplicationRoleSummary"
                                   Items="ApplicationRoles"

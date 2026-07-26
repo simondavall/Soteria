@@ -1,0 +1,75 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm Model="@Request"
+                 @ref="Form"
+                 Validation="@(CreateApplicationRoleValidator.ValidateValueAsync)">
+
+            <MudStack Spacing="3">
+                @if (ErrorMessages.Count > 0)
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
+
+                        <MudList T="string"
+                                 Dense="true">
+
+                            @foreach (var message in ErrorMessages)
+                            {
+                                <MudListItem T="string">
+                                    @message
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudAlert>
+                }
+
+                <MudTextField @bind-Value="Request.Name"
+                              Label="Name"
+                              For="@(() => Request.Name)"
+                              HelperText="Stable name used for claims and authorisation policies."
+                              Immediate="true"
+                              DebounceInterval="400"
+                              AutoFocus="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Request.DisplayName"
+                              Label="Display name"
+                              For="@(() => Request.DisplayName)"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+
+                <MudTextField @bind-Value="Request.Description"
+                              Label="Description"
+                              For="@(() => Request.Description)"
+                              Lines="3"
+                              Immediate="true"
+                              OnlyValidateIfDirty="true"
+                              Disabled="IsSaving" />
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="@Cancel"
+                   Disabled="IsSaving">
+            Cancel
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="@SaveAsync"
+                   Disabled="IsSaving">
+
+            @if (IsSaving)
+            {
+                <MudProgressCircular Size="Size.Small"
+                                     Indeterminate="true"
+                                     Class="me-2" />
+            }
+
+            Save
+        </MudButton>
+    </DialogActions>
+</MudDialog>
