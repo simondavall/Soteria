@@ -88,8 +88,8 @@ Control which users can access each client application and what authorisation in
 
 **Includes**
 
-- Grant and revoke application access.
-- Manage application roles.
+- ✓ Grant and revoke application access.
+- ✓ Manage application roles.
 - Manage application claims.
 - Determine the authorisation information issued to client applications.
 - Additional access management features as the project evolves.
