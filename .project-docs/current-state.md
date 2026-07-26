@@ -13,23 +13,25 @@ where development should continue.
 
 # Current task
 
-- Edit Application Roles.
-  - Add an Edit action for each Application Role.
-  - Create the Application Role edit dialog and form.
-  - Retrieve the selected role and verify that it belongs to the selected client application.
-  - Add the Application Role update operation to the application service.
-  - Display the stable Name as read-only.
-  - Allow Display Name and Description to be edited.
-  - Prevent the role from being moved to another client application.
-  - Validate the editable fields.
-  - Display validation and persistence errors without closing the dialog.
-  - Refresh the Application Roles section after a successful update.
-  - Verify Display Name and Description can be updated.
-  - Verify the stable Name and client application association cannot be changed.
+- Remove Application Roles through an explicit confirmed operation.
+  - Add a Remove action for each Application Role.
+  - Retrieve the number of current assignments for the selected role.
+  - Display an explicit confirmation dialog before removal.
+  - Include the role name and current assignment count in the warning message.
+  - Warn that removing the role will also remove its existing assignments.
+  - Require an explicit confirmation action before deletion.
+  - Add the Application Role removal operation to the application service.
+  - Verify that the role belongs to the selected client application before removal.
+  - Remove associated Application Role assignments through the configured cascade behaviour.
+  - Display removal errors without closing the confirmation dialog.
+  - Refresh the Application Roles section after successful removal.
+  - Verify removal of an unassigned Application Role.
+  - Verify removal of an assigned Application Role also removes its assignments.
+  - Verify cancelling the confirmation leaves the role and its assignments unchanged.
 
 # Remaining milestone tasks
 
-- Remove Application Roles through an explicit confirmed operation.
+- None
 
 # Completed
 
@@ -233,3 +235,13 @@ where development should continue.
 - Allowed duplicate Application Role names across different client applications.
 - Displayed validation and persistence errors without closing the dialog.
 - Refreshed the Application Roles section immediately after successful role creation.
+- Added Application Role editing from the Client Details page.
+- Opened the Application Role edit dialog by selecting anywhere within the role row.
+- Added scoped clickable-row styling to the Application Roles table.
+- Retrieved Application Roles for editing within the selected client application.
+- Displayed the stable Application Role Name as read-only.
+- Allowed Application Role Display Name and Description to be updated.
+- Prevented the stable Name and client application association from being changed.
+- Added FluentValidation for editable Application Role fields.
+- Displayed validation and persistence errors without closing the edit dialog.
+- Refreshed the Application Roles section immediately after successful updates.

@@ -99,6 +99,45 @@ public partial class ClientDetails
         ApplicationRoles = await ClientService.GetApplicationRolesAsync(ClientId);
     }
     
+    private async Task EditApplicationRoleAsync(TableRowClickEventArgs<ApplicationRoleSummary> eventArgs)
+    {
+        var selectedRole = eventArgs.Item;
+        if (selectedRole is null)
+        {
+            return;
+        }
+
+        var request = await ClientService.GetApplicationRoleForEditAsync(ClientId, selectedRole.Name);
+        if (request is null)
+        {
+            ApplicationRoles = await ClientService.GetApplicationRolesAsync(ClientId);
+            return;
+        }
+
+        var parameters = new DialogParameters
+        {
+            [nameof(EditApplicationRoleDialog.Request)] = request
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true
+        };
+
+        var dialog = await DialogService.ShowAsync<EditApplicationRoleDialog>("Edit application role", parameters, options);
+
+        var result = await dialog.Result;
+        if (result is null || result.Canceled)
+        {
+            return;
+        }
+
+        ApplicationRoles = await ClientService.GetApplicationRolesAsync(ClientId);
+    }
+    
     private void ReturnToClientList()
     {
         NavigationManager.NavigateTo("/clients");

@@ -16,19 +16,22 @@ public sealed class ClientService
     private readonly IValidator<CreateClientRequest> _createClientValidator;
     private readonly IValidator<EditClientRequest> _editClientValidator;
     private readonly IValidator<CreateApplicationRoleRequest> _createApplicationRoleValidator;
+    private readonly IValidator<EditApplicationRoleRequest> _editApplicationRoleValidator;
 
     public ClientService(
         SoteriaDbContext dbContext,
         IOpenIddictApplicationManager applicationManager,
         IValidator<CreateClientRequest> createClientValidator,
         IValidator<EditClientRequest> editClientValidator,
-        IValidator<CreateApplicationRoleRequest> createApplicationRoleValidator)
+        IValidator<CreateApplicationRoleRequest> createApplicationRoleValidator,
+        IValidator<EditApplicationRoleRequest> editApplicationRoleValidator)
     {
         _dbContext = dbContext;
         _applicationManager = applicationManager;
         _createClientValidator = createClientValidator;
         _editClientValidator = editClientValidator;
         _createApplicationRoleValidator = createApplicationRoleValidator;
+        _editApplicationRoleValidator = editApplicationRoleValidator;
     }
 
     public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
@@ -139,9 +142,7 @@ public sealed class ClientService
                 .ToList());
     }
 
-    public async Task<IReadOnlyList<ApplicationRoleSummary>> GetApplicationRolesAsync(
-        string clientId,
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ApplicationRoleSummary>> GetApplicationRolesAsync(string clientId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.ApplicationRoles
             .AsNoTracking()
@@ -155,8 +156,56 @@ public sealed class ClientService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task CreateApplicationRoleAsync(CreateApplicationRoleRequest request,
-        CancellationToken cancellationToken = default)
+    public async Task<EditApplicationRoleRequest?> GetApplicationRoleForEditAsync(string clientId, string name, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.ApplicationRoles
+            .AsNoTracking()
+            .Where(role =>
+                role.Application.ClientId == clientId &&
+                role.Name == name)
+            .Select(role => new EditApplicationRoleRequest
+            {
+                ClientId = clientId,
+                Name = role.Name,
+                DisplayName = role.DisplayName,
+                Description = role.Description
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+    
+    public async Task UpdateApplicationRoleAsync(EditApplicationRoleRequest request, CancellationToken cancellationToken = default)
+    {
+        request.DisplayName = request.DisplayName.Trim();
+        request.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
+
+        var validationResult = await _editApplicationRoleValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            throw new EditApplicationRoleValidationException(validationResult.Errors);
+        }
+
+        var role = await _dbContext.ApplicationRoles
+            .Include(item => item.Application)
+            .SingleOrDefaultAsync(
+                item =>
+                    item.Application.ClientId == request.ClientId &&
+                    item.Name == request.Name,
+                cancellationToken);
+
+        if (role is null)
+        {
+            throw new InvalidOperationException(
+                $"The application role '{request.Name}' could not be found for client application '{request.ClientId}'.");
+        }
+
+        role.DisplayName = request.DisplayName;
+        role.Description = request.Description;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+    
+    public async Task CreateApplicationRoleAsync(CreateApplicationRoleRequest request, CancellationToken cancellationToken = default)
     {
         request.DisplayName = request.DisplayName.Trim();
         request.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
@@ -432,6 +481,12 @@ public sealed class EditClientValidationException(IReadOnlyList<ValidationFailur
 }
 
 public sealed class CreateApplicationRoleValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Application role validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class EditApplicationRoleValidationException(IReadOnlyList<ValidationFailure> failures)
     : Exception("Application role validation failed.")
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
