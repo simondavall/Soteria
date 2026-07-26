@@ -15,6 +15,8 @@ public partial class ClientMembershipDialog
     [Inject]
     private IClientApplicationLookup ClientApplicationLookup { get; set; } = default!;
     [Inject]
+    private IDialogService DialogService { get; set; } = default!;
+    [Inject]
     private IMudValidator<CreateClientMembershipRequest> CreateClientMembershipValidator { get; set; } = default!;
     [Inject]
     private IMudValidator<EditClientMembershipRequest> EditClientMembershipValidator { get; set; } = default!;
@@ -137,6 +139,53 @@ public partial class ClientMembershipDialog
         }
     }
 
+    private async Task DeleteAsync()
+    {
+        if (EditRequest is null)
+        {
+            return;
+        }
+
+        var parameters =
+            new DialogParameters<DeleteClientMembershipDialog>
+            {
+                {
+                    dialog => dialog.ApplicationName,
+                    EditRequest.ApplicationName
+                }
+            };
+
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true,
+            BackdropClick = false
+        };
+
+        var dialog = await DialogService.ShowAsync<DeleteClientMembershipDialog>("Remove Client Membership", parameters, options);
+
+        var result = await dialog.Result;
+        if (result is null || result.Canceled)
+        {
+            return;
+        }
+
+        try
+        {
+            await UserService.RemoveClientMembershipAsync(EditRequest.UserId, EditRequest.ClientMembershipId);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (ClientMembershipNotFoundException)
+        {
+            ErrorMessages = ["The selected Client Membership could not be found."];
+        }
+        catch (Exception)
+        {
+            ErrorMessages = ["The Client Membership could not be removed."];
+        }
+    }
+    
     private bool IsRoleSelected(Guid applicationRoleId)
     {
         return EditRequest?.SelectedApplicationRoleIds.Contains(applicationRoleId) == true;

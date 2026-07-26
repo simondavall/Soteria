@@ -459,18 +459,18 @@ reference resource API.
   - ✓ Verify Membership Level updates are persisted.
   - ✓ Verify Application Role assignments are persisted.
 
-- Remove Client Memberships through an explicit confirmed operation.
-  - Add a Remove action to the Client Membership dialog.
-  - Display an explicit confirmation dialog before removal.
-  - Include the client application name in the warning message.
-  - Warn that removing the Client Membership will also remove all assigned Application Roles.
-  - Require explicit confirmation before deletion.
-  - Add the Client Membership removal operation to the application service.
-  - Remove associated Application Role assignments through the configured cascade behaviour.
-  - Display removal errors without closing the confirmation dialog.
-  - Refresh the Permissions card after successful removal.
-  - Verify removing a membership removes its Application Role assignments.
-  - Verify cancelling the confirmation leaves the membership unchanged.
+- ✓ Remove Client Memberships through an explicit confirmed operation.
+  - ✓ Add a Remove action to the Client Membership dialog.
+  - ✓ Display an explicit confirmation dialog before removal.
+  - ✓ Include the client application name in the warning message.
+  - ✓ Warn that removing the Client Membership will also remove all assigned Application Roles.
+  - ✓ Require explicit confirmation before deletion.
+  - ✓ Add the Client Membership removal operation to the application service.
+  - ✓ Remove associated Application Role assignments through the configured cascade behaviour.
+  - ✓ Display removal errors without closing the confirmation dialog.
+  - ✓ Refresh the Permissions card after successful removal.
+  - ✓ Verify removing a membership removes its Application Role assignments.
+  - ✓ Verify cancelling the confirmation leaves the membership unchanged.
 
 ---
 

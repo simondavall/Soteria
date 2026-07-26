@@ -9,19 +9,22 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 5.3 – Application Role Assignment
+## Milestone 5.4 – Claim Issuance
 
 # Current task
 
-Remove Client Memberships through an explicit confirmed operation.
-- Allow administrators to remove a Client Membership.
-- Require explicit confirmation before deletion.
-- Remove associated Application Role assignments.
-- Refresh the Permissions card after successful removal.
+Issue Application Role claims.
+- Issue Application Role names as standard role claims.
+- Issue only roles assigned through the Client Membership for the requesting client.
+- Preserve existing identity-oriented claims.
+- Configure claim destinations for ID and access tokens.
 
 # Remaining milestone tasks
 
-- None
+- Configure named authorisation policies in the reference applications.
+- Verify ID token claims.
+- Verify access token claims.
+- Verify roles belonging to other clients are never issued.
 
 # Completed
 
@@ -274,3 +277,14 @@ Remove Client Memberships through an explicit confirmed operation.
 - Prevented assignment of Application Roles belonging to another client application.
 - Displayed validation and persistence errors without closing the dialog.
 - Refreshed the Permissions card immediately after successful Client Membership updates.
+- Added Client Membership removal from the Client Membership dialog.
+- Displayed the Delete action only when editing an existing Client Membership.
+- Positioned the Delete action separately from the Save and Cancel actions.
+- Added explicit confirmation before Client Membership removal.
+- Displayed the associated client application during confirmation.
+- Warned that removing a Client Membership also removes all assigned Application Roles.
+- Verified Client Membership ownership before removal.
+- Removed Client Memberships through the application service.
+- Removed associated Application Role assignments through configured cascade behaviour.
+- Refreshed the Permissions card immediately after successful Client Membership removal.
+- Preserved cancellation without deleting the Client Membership.

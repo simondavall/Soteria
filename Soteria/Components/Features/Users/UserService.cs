@@ -487,6 +487,21 @@ public sealed class UserService
         }
     }
 
+    public async Task RemoveClientMembershipAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
+    {
+        var membership = await _dbContext.ClientMemberships
+            .SingleOrDefaultAsync(item => item.Id == clientMembershipId && item.UserId == userId, cancellationToken);
+
+        if (membership is null)
+        {
+            throw new ClientMembershipNotFoundException(userId, clientMembershipId);
+        }
+
+        _dbContext.ClientMemberships.Remove(membership);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+    
     private async Task SendConfirmationEmailAsync(ApplicationUser user)
     {
         var userId = await _userManager.GetUserIdAsync(user);
