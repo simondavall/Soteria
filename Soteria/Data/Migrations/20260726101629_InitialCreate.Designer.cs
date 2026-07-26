@@ -11,7 +11,7 @@ using Soteria.Data;
 namespace Soteria.Data.Migrations
 {
     [DbContext(typeof(SoteriaDbContext))]
-    [Migration("20260724154506_InitialCreate")]
+    [Migration("20260726101629_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -213,6 +213,9 @@ namespace Soteria.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("RequiresPasswordChange")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
@@ -233,6 +236,139 @@ namespace Soteria.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ApplicationRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ClientMembership", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MembershipLevel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("UserId", "ApplicationId")
+                        .IsUnique();
+
+                    b.ToTable("ClientMemberships", (string)null);
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ClientMembershipApplicationRole", b =>
+                {
+                    b.Property<Guid>("ClientMembershipId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ApplicationRoleId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ClientMembershipId", "ApplicationRoleId");
+
+                    b.HasIndex("ApplicationRoleId", "ApplicationId");
+
+                    b.HasIndex("ClientMembershipId", "ApplicationId");
+
+                    b.ToTable("ClientMembershipApplicationRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.SystemRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("SystemRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6f8ad0a0-72c2-4b82-bcc1-12a0e40b3508"),
+                            Description = "Provides global administrative authority within Soteria.",
+                            DisplayName = "Soteria Administrator",
+                            Name = "SoteriaAdministrator"
+                        });
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.UserSystemRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SystemRoleId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "SystemRoleId");
+
+                    b.HasIndex("SystemRoleId");
+
+                    b.ToTable("UserSystemRoles", (string)null);
                 });
 
             modelBuilder.Entity("Soteria.Data.OpenIddict.SoteriaApplication", b =>
@@ -550,6 +686,76 @@ namespace Soteria.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Soteria.Data.Authorization.ApplicationRole", b =>
+                {
+                    b.HasOne("Soteria.Data.OpenIddict.SoteriaApplication", "Application")
+                        .WithMany("ApplicationRoles")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ClientMembership", b =>
+                {
+                    b.HasOne("Soteria.Data.OpenIddict.SoteriaApplication", "Application")
+                        .WithMany("ClientMemberships")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Soteria.Data.ApplicationUser", "User")
+                        .WithMany("ClientMemberships")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ClientMembershipApplicationRole", b =>
+                {
+                    b.HasOne("Soteria.Data.Authorization.ApplicationRole", "ApplicationRole")
+                        .WithMany("ClientMembershipAssignments")
+                        .HasForeignKey("ApplicationRoleId", "ApplicationId")
+                        .HasPrincipalKey("Id", "ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Soteria.Data.Authorization.ClientMembership", "ClientMembership")
+                        .WithMany("ApplicationRoleAssignments")
+                        .HasForeignKey("ClientMembershipId", "ApplicationId")
+                        .HasPrincipalKey("Id", "ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationRole");
+
+                    b.Navigation("ClientMembership");
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.UserSystemRole", b =>
+                {
+                    b.HasOne("Soteria.Data.Authorization.SystemRole", "SystemRole")
+                        .WithMany("UserSystemRoles")
+                        .HasForeignKey("SystemRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Soteria.Data.ApplicationUser", "User")
+                        .WithMany("UserSystemRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SystemRole");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Soteria.Data.OpenIddict.SoteriaAuthorization", b =>
                 {
                     b.HasOne("Soteria.Data.OpenIddict.SoteriaApplication", "Application")
@@ -574,9 +780,35 @@ namespace Soteria.Data.Migrations
                     b.Navigation("Authorization");
                 });
 
+            modelBuilder.Entity("Soteria.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("ClientMemberships");
+
+                    b.Navigation("UserSystemRoles");
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ApplicationRole", b =>
+                {
+                    b.Navigation("ClientMembershipAssignments");
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.ClientMembership", b =>
+                {
+                    b.Navigation("ApplicationRoleAssignments");
+                });
+
+            modelBuilder.Entity("Soteria.Data.Authorization.SystemRole", b =>
+                {
+                    b.Navigation("UserSystemRoles");
+                });
+
             modelBuilder.Entity("Soteria.Data.OpenIddict.SoteriaApplication", b =>
                 {
+                    b.Navigation("ApplicationRoles");
+
                     b.Navigation("Authorizations");
+
+                    b.Navigation("ClientMemberships");
 
                     b.Navigation("Tokens");
                 });
