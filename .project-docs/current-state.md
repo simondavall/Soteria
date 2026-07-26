@@ -5,20 +5,19 @@ where development should continue.
 
 # Current phase
 
-## Phase 5 – Application Access Management
+## Phase 5 – Application Authorisation
 
 # Current milestone
 
-## Milestone 5.1 – Client User Management
+## Milestone 5.1 – Authorisation Persistence Model
 
 # Current task
 
-- Assign users to client applications.
+- Create the Authorization persistence model.
 
 # Remaining milestone tasks
 
-- Remove users from client applications.
-- Manage client application membership.
+- None
 
 # Completed
 
