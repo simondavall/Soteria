@@ -387,19 +387,19 @@ reference resource API.
   - ✓ Verify successful Application Role creation.
   - ✓ Verify invalid and duplicate roles are rejected.
 
-- Edit Application Roles.
-  - Add an Edit action for each Application Role.
-  - Create the Application Role edit dialog and form.
-  - Retrieve the selected role and verify that it belongs to the selected client application.
-  - Add the Application Role update operation to the application service.
-  - Display the stable Name as read-only.
-  - Allow Display Name and Description to be edited.
-  - Prevent the role from being moved to another client application.
-  - Validate the editable fields.
-  - Display validation and persistence errors without closing the dialog.
-  - Refresh the Application Roles section after a successful update.
-  - Verify Display Name and Description can be updated.
-  - Verify the stable Name and client application association cannot be changed.
+- ✓ Edit Application Roles.
+  - ✓ Add an Edit action for each Application Role.
+  - ✓ Create the Application Role edit dialog and form.
+  - ✓ Retrieve the selected role and verify that it belongs to the selected client application.
+  - ✓ Add the Application Role update operation to the application service.
+  - ✓ Display the stable Name as read-only.
+  - ✓ Allow Display Name and Description to be edited.
+  - ✓ Prevent the role from being moved to another client application.
+  - ✓ Validate the editable fields.
+  - ✓ Display validation and persistence errors without closing the dialog.
+  - ✓ Refresh the Application Roles section after a successful update.
+  - ✓ Verify Display Name and Description can be updated.
+  - ✓ Verify the stable Name and client application association cannot be changed.
 
 - Remove Application Roles through an explicit confirmed operation.
   - Add a Remove action for each Application Role.

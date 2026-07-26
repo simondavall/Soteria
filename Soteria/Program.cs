@@ -161,8 +161,11 @@ public class Program
 
         builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
         builder.Services.AddTransient<CreateApplicationRoleValidator>();
+        builder.Services.AddTransient<EditApplicationRoleValidator>();
         builder.Services.AddTransient<IValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
         builder.Services.AddTransient<IMudValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
+        builder.Services.AddTransient<IValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());
+        builder.Services.AddTransient<IMudValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());
         
         var app = builder.Build();
 

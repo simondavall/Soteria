@@ -4,6 +4,10 @@
     margin: 0 auto;
 }
 
+.client-details-page__application-roles-table ::deep tbody tr {
+    cursor: pointer;
+}
+
 .client-details-page__header {
     padding-block: 0.5rem;
 }
