@@ -372,21 +372,20 @@ reference resource API.
   - ✓ Verify roles belonging to other client applications are not displayed.
   - ✓ Verify existing Client Details behaviour remains unchanged.
 
-- Create Application Roles with validation.
-  - Add a Create Application Role action to Client Details.
-  - Create the Application Role dialog and form.
-  - Add the Application Role creation operation to the application service.
-  - Associate the new role with the selected client application.
-  - Require Name and Display Name.
-  - Allow Description to be omitted.
-  - Enforce unique role names within the selected client application.
-  - Permit the same role name to be used by different client applications.
-  - Validate the stable Name format used for claims and authorisation policies.
-  - Encourage permission-oriented role names.
-  - Display validation and persistence errors without closing the dialog.
-  - Refresh the Application Roles section after successful creation.
-  - Verify successful Application Role creation.
-  - Verify invalid and duplicate roles are rejected.
+- ✓ Create Application Roles with validation.
+  - ✓ Add a Create Application Role action to Client Details.
+  - ✓ Create the Application Role dialog and form.
+  - ✓ Add the Application Role creation operation to the application service.
+  - ✓ Associate the new role with the selected client application.
+  - ✓ Require Name and Display Name.
+  - ✓ Allow Description to be omitted.
+  - ✓ Enforce unique role names within the selected client application.
+  - ✓ Permit the same role name to be used by different client applications.
+  - ✓ Validate the stable Name format used for claims and authorisation policies.
+  - ✓ Display validation and persistence errors without closing the dialog.
+  - ✓ Refresh the Application Roles section after successful creation.
+  - ✓ Verify successful Application Role creation.
+  - ✓ Verify invalid and duplicate roles are rejected.
 
 - Edit Application Roles.
   - Add an Edit action for each Application Role.

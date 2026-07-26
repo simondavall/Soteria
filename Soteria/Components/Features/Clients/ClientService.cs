@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using Soteria.Data;
+using Soteria.Data.Authorization;
 using Soteria.Data.OpenIddict;
 
 namespace Soteria.Components.Features.Clients;
@@ -14,17 +15,20 @@ public sealed class ClientService
     private readonly IOpenIddictApplicationManager _applicationManager;
     private readonly IValidator<CreateClientRequest> _createClientValidator;
     private readonly IValidator<EditClientRequest> _editClientValidator;
+    private readonly IValidator<CreateApplicationRoleRequest> _createApplicationRoleValidator;
 
     public ClientService(
         SoteriaDbContext dbContext,
         IOpenIddictApplicationManager applicationManager,
         IValidator<CreateClientRequest> createClientValidator,
-        IValidator<EditClientRequest> editClientValidator)
+        IValidator<EditClientRequest> editClientValidator,
+        IValidator<CreateApplicationRoleRequest> createApplicationRoleValidator)
     {
         _dbContext = dbContext;
         _applicationManager = applicationManager;
         _createClientValidator = createClientValidator;
         _editClientValidator = editClientValidator;
+        _createApplicationRoleValidator = createApplicationRoleValidator;
     }
 
     public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
@@ -55,7 +59,8 @@ public sealed class ClientService
         await _applicationManager.CreateAsync(descriptor, cancellationToken);
     }
 
-    public async Task<EditClientRequest?> GetClientForEditAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<EditClientRequest?> GetClientForEditAsync(string clientId,
+        CancellationToken cancellationToken = default)
     {
         var application = await GetClientAsync(clientId, cancellationToken);
         if (application is null)
@@ -71,7 +76,7 @@ public sealed class ClientService
             ClientHost = GetClientHost(application.RedirectUris)
         };
     }
-    
+
     public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext
@@ -149,7 +154,69 @@ public sealed class ClientService
                 role.Description))
             .ToListAsync(cancellationToken);
     }
-    
+
+    public async Task CreateApplicationRoleAsync(CreateApplicationRoleRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        request.DisplayName = request.DisplayName.Trim();
+        request.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
+
+        var validationResult = await _createApplicationRoleValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            throw new CreateApplicationRoleValidationException(validationResult.Errors);
+        }
+
+        var application = await _dbContext
+            .Set<SoteriaApplication>()
+            .SingleOrDefaultAsync(
+                item => item.ClientId == request.ClientId,
+                cancellationToken);
+
+        if (application is null)
+        {
+            throw new InvalidOperationException(
+                $"The client application '{request.ClientId}' could not be found.");
+        }
+
+        var role = new ApplicationRole
+        {
+            Id = Guid.NewGuid(),
+            ApplicationId = application.Id,
+            Name = request.Name,
+            DisplayName = request.DisplayName,
+            Description = request.Description
+        };
+
+        _dbContext.ApplicationRoles.Add(role);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            var duplicateExists =
+                await _dbContext.ApplicationRoles
+                    .AsNoTracking()
+                    .AnyAsync(item => item.ApplicationId == application.Id && item.Name == request.Name,
+                        cancellationToken);
+
+            if (!duplicateExists)
+            {
+                throw;
+            }
+
+            throw new CreateApplicationRoleValidationException(
+            [
+                new ValidationFailure(
+                    nameof(CreateApplicationRoleRequest.Name),
+                    "An application role with this name already exists for this client application.")
+            ]);
+        }
+    }
+
     public async Task UpdateClientAsync(EditClientRequest request, CancellationToken cancellationToken = default)
     {
         request.DisplayName = request.DisplayName.Trim();
@@ -172,14 +239,15 @@ public sealed class ClientService
         var descriptor = new OpenIddictApplicationDescriptor();
 
         await _applicationManager.PopulateAsync(descriptor, application, cancellationToken);
-        
+
         if (application is not SoteriaApplication soteriaApplication)
         {
             throw new InvalidOperationException(
                 "The OpenIddict application is not using the Soteria application entity.");
         }
+
         soteriaApplication.IsEnabled = request.IsEnabled;
-        
+
         descriptor.DisplayName = request.DisplayName;
 
         descriptor.RedirectUris.Clear();
@@ -187,7 +255,7 @@ public sealed class ClientService
 
         descriptor.PostLogoutRedirectUris.Clear();
         descriptor.PostLogoutRedirectUris.Add(new Uri(request.PostLogoutRedirectUri, UriKind.Absolute));
-        
+
         await _applicationManager.UpdateAsync(application, descriptor, cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(request.ClientSecret))
@@ -195,7 +263,7 @@ public sealed class ClientService
             await _applicationManager.UpdateAsync(application, request.ClientSecret, cancellationToken);
         }
     }
-    
+
     private static string GetClientHost(IReadOnlyList<string> redirectUris)
     {
         const string redirectPath = "/signin-oidc";
@@ -212,7 +280,7 @@ public sealed class ClientService
 
         return redirectUri[..^redirectPath.Length].TrimEnd('/');
     }
-    
+
     private static IReadOnlyList<string> DeserializeStringArray(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -359,6 +427,12 @@ public sealed class CreateClientValidationException(IReadOnlyList<ValidationFail
 
 public sealed class EditClientValidationException(IReadOnlyList<ValidationFailure> failures)
     : Exception("Client application validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class CreateApplicationRoleValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Application role validation failed.")
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }
