@@ -205,7 +205,14 @@ public sealed class ClientService
 
         _dbContext.ApplicationRoles.Remove(role);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        finally
+        {
+            _dbContext.Entry(role).State = EntityState.Detached;
+        }
     }
     
     public async Task UpdateApplicationRoleAsync(EditApplicationRoleRequest request, CancellationToken cancellationToken = default)
@@ -281,10 +288,15 @@ public sealed class ClientService
         }
         catch (DbUpdateException)
         {
+            _dbContext.Entry(role).State = EntityState.Detached;
+
             var duplicateExists =
                 await _dbContext.ApplicationRoles
                     .AsNoTracking()
-                    .AnyAsync(item => item.ApplicationId == application.Id && item.Name == request.Name,
+                    .AnyAsync(
+                        item =>
+                            item.ApplicationId == application.Id &&
+                            item.Name == request.Name,
                         cancellationToken);
 
             if (!duplicateExists)
