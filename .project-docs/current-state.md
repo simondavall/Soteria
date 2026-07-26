@@ -9,29 +9,22 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 5.2 – Application Role Management
+## Milestone 5.3 – Application Role Assignment
 
 # Current task
 
-- Remove Application Roles through an explicit confirmed operation.
-  - Add a Remove action for each Application Role.
-  - Retrieve the number of current assignments for the selected role.
-  - Display an explicit confirmation dialog before removal.
-  - Include the role name and current assignment count in the warning message.
-  - Warn that removing the role will also remove its existing assignments.
-  - Require an explicit confirmation action before deletion.
-  - Add the Application Role removal operation to the application service.
-  - Verify that the role belongs to the selected client application before removal.
-  - Remove associated Application Role assignments through the configured cascade behaviour.
-  - Display removal errors without closing the confirmation dialog.
-  - Refresh the Application Roles section after successful removal.
-  - Verify removal of an unassigned Application Role.
-  - Verify removal of an assigned Application Role also removes its assignments.
-  - Verify cancelling the confirmation leaves the role and its assignments unchanged.
+- Implement Application Role assignment services.
+  - Assign roles through Client Membership.
+  - Remove assigned roles.
+  - Retrieve roles assigned to a membership.
+  - Prevent duplicate assignments.
+  - Reject roles belonging to another client application.
 
 # Remaining milestone tasks
 
-- None
+- Implement role-assignment administration.
+- Ensure Client Membership alone does not grant Application Roles.
+- Verify Application Role assignment and removal.
 
 # Completed
 
@@ -245,3 +238,12 @@ where development should continue.
 - Added FluentValidation for editable Application Role fields.
 - Displayed validation and persistence errors without closing the edit dialog.
 - Refreshed the Application Roles section immediately after successful updates.
+- Added Application Role removal from the Application Role edit dialog.
+- Positioned the Delete Application Role action separately from the Save and Cancel actions.
+- Added explicit confirmation before Application Role removal.
+- Displayed the Application Role name and assignment count during confirmation.
+- Warned that deleting an Application Role also removes its assignments.
+- Verified Application Role ownership before removal.
+- Removed Application Roles through the application service.
+- Refreshed the Application Roles section immediately after successful removal.
+- Preserved cancellation without deleting the Application Role.

@@ -24,6 +24,7 @@
 
 # Technical Debt
 - Remove bootstrapped application creation in OpenIddictInitializer
+- Review Entity Framework Core DbContext lifetime within interactive Blazor. Consider replacing the scoped SoteriaDbContext injection with IDbContextFactory<SoteriaDbContext> and creating a fresh DbContext per service operation to prevent failed tracked entity state leaking between independent administrative operations.
 
 # Nice-to-have
 

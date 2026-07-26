@@ -3,7 +3,7 @@ using MudBlazor;
 
 namespace Soteria.Components.Features.Clients.Dialogs;
 
-public partial class RemoveApplicationRoleDialog
+public partial class DeleteApplicationRoleDialog
 {
     [Inject]
     private ClientService ClientService { get; set; } = default!;
@@ -11,7 +11,7 @@ public partial class RemoveApplicationRoleDialog
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter, EditorRequired]
-    public RemoveApplicationRoleRequest Request { get; set; } = default!;
+    public DeleteApplicationRoleRequest Request { get; set; } = default!;
 
     private List<string> ErrorMessages { get; set; } = [];
     private bool IsDeleting { get; set; }

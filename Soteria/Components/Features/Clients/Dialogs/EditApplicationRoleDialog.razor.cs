@@ -77,7 +77,7 @@ public partial class EditApplicationRoleDialog
 
             var parameters = new DialogParameters
             {
-                [nameof(RemoveApplicationRoleDialog.Request)] = removalRequest
+                [nameof(DeleteApplicationRoleDialog.Request)] = removalRequest
             };
 
             var options = new DialogOptions
@@ -88,7 +88,7 @@ public partial class EditApplicationRoleDialog
                 CloseOnEscapeKey = true
             };
 
-            var dialog = await DialogService.ShowAsync<RemoveApplicationRoleDialog>("Delete Application Role", parameters, options);
+            var dialog = await DialogService.ShowAsync<DeleteApplicationRoleDialog>("Delete Application Role", parameters, options);
             var result = await dialog.Result;
             if (result is null || result.Canceled)
             {
