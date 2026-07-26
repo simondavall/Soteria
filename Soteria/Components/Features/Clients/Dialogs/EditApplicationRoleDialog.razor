@@ -49,15 +49,24 @@
     </DialogContent>
 
     <DialogActions>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Text"
+                   OnClick="@ConfirmDeleteAsync"
+                   Disabled="IsSaving || IsDeleting">
+            Delete Application Role
+        </MudButton>
+
+        <MudSpacer />
+
         <MudButton OnClick="@Cancel"
-                   Disabled="IsSaving">
+                   Disabled="IsSaving || IsDeleting">
             Cancel
         </MudButton>
 
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    OnClick="@SaveAsync"
-                   Disabled="IsSaving">
+                   Disabled="IsSaving || IsDeleting">
 
             @if (IsSaving)
             {

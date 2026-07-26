@@ -401,25 +401,26 @@ reference resource API.
   - ✓ Verify Display Name and Description can be updated.
   - ✓ Verify the stable Name and client application association cannot be changed.
 
-- Remove Application Roles through an explicit confirmed operation.
-  - Add a Remove action for each Application Role.
-  - Retrieve the number of current assignments for the selected role.
-  - Display an explicit confirmation dialog before removal.
-  - Include the role name and current assignment count in the warning message.
-  - Warn that removing the role will also remove its existing assignments.
-  - Require an explicit confirmation action before deletion.
-  - Add the Application Role removal operation to the application service.
-  - Verify that the role belongs to the selected client application before removal.
-  - Remove associated Application Role assignments through the configured cascade behaviour.
-  - Display removal errors without closing the confirmation dialog.
-  - Refresh the Application Roles section after successful removal.
-  - Verify removal of an unassigned Application Role.
-  - Verify removal of an assigned Application Role also removes its assignments.
-  - Verify cancelling the confirmation leaves the role and its assignments unchanged.
+- ✓ Remove Application Roles through an explicit confirmed operation.
+  - ✓ Add a Remove action for each Application Role.
+  - ✓ Retrieve the number of current assignments for the selected role.
+  - ✓ Display an explicit confirmation dialog before removal.
+  - ✓ Include the role name and current assignment count in the warning message.
+  - ✓ Warn that removing the role will also remove its existing assignments.
+  - ✓ Require an explicit confirmation action before deletion.
+  - ✓ Add the Application Role removal operation to the application service.
+  - ✓ Verify that the role belongs to the selected client application before removal.
+  - ✓ Remove associated Application Role assignments through the configured cascade behaviour.
+  - ✓ Display removal errors without closing the confirmation dialog.
+  - ✓ Refresh the Application Roles section after successful removal.
+  - ✓ Verify removal of an unassigned Application Role.
+  - ✓ Verify removal of an assigned Application Role also removes its assignments.
+  - ✓ Verify cancelling the confirmation leaves the role and its assignments unchanged.
 
 ---
 
-## Milestone 5.3 – Application Role Assignment
+## Milestone 5.3 – Application Client/Role Assignment
+
 
 - Implement Application Role assignment services.
 

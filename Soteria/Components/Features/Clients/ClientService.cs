@@ -173,6 +173,41 @@ public sealed class ClientService
             .SingleOrDefaultAsync(cancellationToken);
     }
     
+    public async Task<DeleteApplicationRoleRequest?> GetApplicationRoleForRemovalAsync(string clientId, string name, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.ApplicationRoles
+            .AsNoTracking()
+            .Where(role =>
+                role.Application.ClientId == clientId &&
+                role.Name == name)
+            .Select(role => new DeleteApplicationRoleRequest
+            {
+                ClientId = clientId,
+                Name = role.Name,
+                AssignmentCount = role.ClientMembershipAssignments.Count
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+    
+    public async Task RemoveApplicationRoleAsync(string clientId, string name, CancellationToken cancellationToken = default)
+    {
+        var role = await _dbContext.ApplicationRoles
+            .SingleOrDefaultAsync(
+                role =>
+                    role.Application.ClientId == clientId &&
+                    role.Name == name,
+                cancellationToken);
+
+        if (role is null)
+        {
+            throw new ApplicationRoleNotFoundException(clientId, name);
+        }
+
+        _dbContext.ApplicationRoles.Remove(role);
+        
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+    
     public async Task UpdateApplicationRoleAsync(EditApplicationRoleRequest request, CancellationToken cancellationToken = default)
     {
         request.DisplayName = request.DisplayName.Trim();
@@ -249,7 +284,10 @@ public sealed class ClientService
             var duplicateExists =
                 await _dbContext.ApplicationRoles
                     .AsNoTracking()
-                    .AnyAsync(item => item.ApplicationId == application.Id && item.Name == request.Name,
+                    .AnyAsync(
+                        item =>
+                            item.ApplicationId == application.Id &&
+                            item.Name == request.Name,
                         cancellationToken);
 
             if (!duplicateExists)
@@ -491,3 +529,6 @@ public sealed class EditApplicationRoleValidationException(IReadOnlyList<Validat
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }
+
+public sealed class ApplicationRoleNotFoundException(string clientId, string name)
+    : Exception($"The Application Role '{name}' could not be found for client application '{clientId}'.");

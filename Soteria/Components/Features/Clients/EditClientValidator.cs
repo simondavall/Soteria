@@ -3,9 +3,7 @@ using Soteria.Components.Features.Shared;
 
 namespace Soteria.Components.Features.Clients;
 
-public sealed class EditClientValidator :
-    AbstractValidator<EditClientRequest>,
-    IMudValidator<EditClientRequest>
+public sealed class EditClientValidator : AbstractValidator<EditClientRequest>, IMudValidator<EditClientRequest>
 {
     public EditClientValidator()
     {
@@ -23,17 +21,12 @@ public sealed class EditClientValidator :
             .WithMessage("The client host must not contain a fragment.");
     }
 
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValueAsync =>
-        ValidatePropertyAsync;
+    public Func<object, string, Task<IEnumerable<string>>> ValidateValueAsync => ValidatePropertyAsync;
 
-    private async Task<IEnumerable<string>> ValidatePropertyAsync(
-        object model,
-        string propertyName)
+    private async Task<IEnumerable<string>> ValidatePropertyAsync(object model, string propertyName)
     {
         var context = ValidationContext<EditClientRequest>
-            .CreateWithOptions(
-                (EditClientRequest)model,
-                options => options.IncludeProperties(propertyName));
+            .CreateWithOptions((EditClientRequest)model, options => options.IncludeProperties(propertyName));
 
         var result = await ValidateAsync(context);
 
