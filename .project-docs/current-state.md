@@ -9,15 +9,22 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 5.1 – Authorisation Persistence Model
+## Milestone 5.2 – Application Role Management
 
 # Current task
 
-- Create the Authorization persistence model.
+- Implement Application Role services.
+    - Create Application Roles.
+    - Edit Application Roles.
+    - Remove Application Roles through an explicit confirmed operation.
+    - Retrieve roles belonging to a client application.
 
 # Remaining milestone tasks
 
-- None
+- Implement Application Role administration.
+- Validate Application Role names.
+- Restrict Application Role management to authorised administrators.
+- Verify Application Role management.
 
 # Completed
 
@@ -193,3 +200,17 @@ where development should continue.
 - Implemented administrative account unlock workflow.
 - Unlock updates the dialog immediately and persists only when Save is selected.
 - Cleared LockoutEnd when unlocking an account.
+- Created the Phase 5 application authorisation persistence model.
+- Added the SystemRole persistence model.
+- Added the UserSystemRole assignment model.
+- Added the ClientMembership persistence model.
+- Added MembershipLevel support for User and Administrator memberships.
+- Added the ApplicationRole persistence model.
+- Added the ClientMembershipApplicationRole assignment model.
+- Enforced uniqueness constraints across all authorisation entities.
+- Enforced same-client Application Role assignment through composite foreign keys.
+- Configured authorisation entity deletion behaviour.
+- Seeded the initial SoteriaAdministrator System Role.
+- Recreated the initial Entity Framework migration from the updated model.
+- Recreated the development database.
+- Verified the complete authorisation persistence schema.

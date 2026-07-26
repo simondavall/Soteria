@@ -31,6 +31,7 @@ namespace Soteria.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     DisplayName = table.Column<string>(type: "TEXT", nullable: true),
+                    RequiresPasswordChange = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -95,6 +96,20 @@ namespace Soteria.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemRoles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    DisplayName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -223,6 +238,56 @@ namespace Soteria.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ApplicationRoles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    DisplayName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationRoles", x => x.Id);
+                    table.UniqueConstraint("AK_ApplicationRoles_Id_ApplicationId", x => new { x.Id, x.ApplicationId });
+                    table.ForeignKey(
+                        name: "FK_ApplicationRoles_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientMemberships",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    MembershipLevel = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    CreatedUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientMemberships", x => x.Id);
+                    table.UniqueConstraint("AK_ClientMemberships_Id_ApplicationId", x => new { x.Id, x.ApplicationId });
+                    table.ForeignKey(
+                        name: "FK_ClientMemberships_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientMemberships_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpenIddictAuthorizations",
                 columns: table => new
                 {
@@ -244,6 +309,55 @@ namespace Soteria.Data.Migrations
                         column: x => x.ApplicationId,
                         principalTable: "OpenIddictApplications",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSystemRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SystemRoleId = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSystemRoles", x => new { x.UserId, x.SystemRoleId });
+                    table.ForeignKey(
+                        name: "FK_UserSystemRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserSystemRoles_SystemRoles_SystemRoleId",
+                        column: x => x.SystemRoleId,
+                        principalTable: "SystemRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientMembershipApplicationRoles",
+                columns: table => new
+                {
+                    ClientMembershipId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ApplicationRoleId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientMembershipApplicationRoles", x => new { x.ClientMembershipId, x.ApplicationRoleId });
+                    table.ForeignKey(
+                        name: "FK_ClientMembershipApplicationRoles_ApplicationRoles_ApplicationRoleId_ApplicationId",
+                        columns: x => new { x.ApplicationRoleId, x.ApplicationId },
+                        principalTable: "ApplicationRoles",
+                        principalColumns: new[] { "Id", "ApplicationId" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientMembershipApplicationRoles_ClientMemberships_ClientMembershipId_ApplicationId",
+                        columns: x => new { x.ClientMembershipId, x.ApplicationId },
+                        principalTable: "ClientMemberships",
+                        principalColumns: new[] { "Id", "ApplicationId" },
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -278,6 +392,17 @@ namespace Soteria.Data.Migrations
                         principalTable: "OpenIddictAuthorizations",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "SystemRoles",
+                columns: new[] { "Id", "Description", "DisplayName", "Name" },
+                values: new object[] { new Guid("6f8ad0a0-72c2-4b82-bcc1-12a0e40b3508"), "Provides global administrative authority within Soteria.", "Soteria Administrator", "SoteriaAdministrator" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationRoles_ApplicationId_Name",
+                table: "ApplicationRoles",
+                columns: new[] { "ApplicationId", "Name" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -322,6 +447,27 @@ namespace Soteria.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientMembershipApplicationRoles_ApplicationRoleId_ApplicationId",
+                table: "ClientMembershipApplicationRoles",
+                columns: new[] { "ApplicationRoleId", "ApplicationId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientMembershipApplicationRoles_ClientMembershipId_ApplicationId",
+                table: "ClientMembershipApplicationRoles",
+                columns: new[] { "ClientMembershipId", "ApplicationId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientMemberships_ApplicationId",
+                table: "ClientMemberships",
+                column: "ApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientMemberships_UserId_ApplicationId",
+                table: "ClientMemberships",
+                columns: new[] { "UserId", "ApplicationId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictApplications_ClientId",
                 table: "OpenIddictApplications",
                 column: "ClientId",
@@ -353,6 +499,17 @@ namespace Soteria.Data.Migrations
                 table: "OpenIddictTokens",
                 column: "ReferenceId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemRoles_Name",
+                table: "SystemRoles",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSystemRoles_SystemRoleId",
+                table: "UserSystemRoles",
+                column: "SystemRoleId");
         }
 
         /// <inheritdoc />
@@ -377,19 +534,34 @@ namespace Soteria.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ClientMembershipApplicationRoles");
+
+            migrationBuilder.DropTable(
                 name: "OpenIddictScopes");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictTokens");
 
             migrationBuilder.DropTable(
+                name: "UserSystemRoles");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "ApplicationRoles");
+
+            migrationBuilder.DropTable(
+                name: "ClientMemberships");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictAuthorizations");
+
+            migrationBuilder.DropTable(
+                name: "SystemRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictApplications");
