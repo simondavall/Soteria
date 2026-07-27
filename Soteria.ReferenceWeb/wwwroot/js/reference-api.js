@@ -1,24 +1,26 @@
-export async function callReferenceApi() {
-    const response = await fetch("/internal/reference-api", {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-            "Accept": "application/json"
-        }
-    });
+export async function callReferenceApi(endpoint) {
+    const response = await fetch(
+        `/internal/reference-api/${encodeURIComponent(endpoint)}`,
+        {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
 
-    let message = null;
+    let body = null;
 
     try {
-        const body = await response.json();
-        message = body.message ?? null;
+        body = await response.json();
     } catch {
-        message = null;
+        body = null;
     }
 
     return {
         ok: response.ok,
         status: response.status,
-        message
+        message: body?.message ?? null,
+        data: response.ok ? body : null
     };
 }

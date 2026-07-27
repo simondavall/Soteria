@@ -482,12 +482,12 @@ reference resource API.
   - ✓ Preserve existing identity-oriented claims.
   - ✓ Configure claim destinations for ID and access tokens.
 
-- Configure named authorisation policies in the reference applications.
-  - Define named policies that map to Application Role names.
-  - Configure the reference web application to use policy-based authorisation.
-  - Demonstrate UI authorisation using issued role claims.
-  - Configure the Reference API to use the same named policies.
-  - Verify end-to-end authorisation using Application Role claims.
+- ✓ Configure named authorisation policies in the reference applications.
+  - ✓ Define named policies that map to Application Role names.
+  - ✓ Configure the reference web application to use policy-based authorisation.
+  - ✓ Demonstrate UI authorisation using issued role claims.
+  - ✓ Configure the Reference API to use the same named policies.
+  - ✓ Verify end-to-end authorisation using Application Role claims.
 
 ---
 
