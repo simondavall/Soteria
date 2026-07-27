@@ -476,19 +476,18 @@ reference resource API.
 
 ## Milestone 5.4 – Claim Issuance
 
-- Issue Application Role names as standard role claims.
-- Issue only roles assigned through the Client Membership for the requesting client.
-- Do not issue System Roles.
-- Do not issue Membership Level.
-- Preserve identity-oriented ID token claims.
-- Configure role-claim destinations.
-- Configure access-token claims for protected APIs.
-- Preserve the separation between audience, scope and roles.
-- Reload current Application Roles whenever tokens are issued.
+- ✓ Issue Application Role claims.
+  - ✓ Issue Application Role names as standard role claims.
+  - ✓ Issue only roles assigned through the Client Membership for the requesting client.
+  - ✓ Preserve existing identity-oriented claims.
+  - ✓ Configure claim destinations for ID and access tokens.
+
 - Configure named authorisation policies in the reference applications.
-- Verify ID token claims.
-- Verify access token claims.
-- Verify roles belonging to other clients are never issued.
+  - Define named policies that map to Application Role names.
+  - Configure the reference web application to use policy-based authorisation.
+  - Demonstrate UI authorisation using issued role claims.
+  - Configure the Reference API to use the same named policies.
+  - Verify end-to-end authorisation using Application Role claims.
 
 ---
 
@@ -522,42 +521,7 @@ reference resource API.
 
 ---
 
-## Milestone 5.6 – Client Membership Management
-
-- Implement Client Membership services.
-
-  - Create Client Membership.
-  - Remove Client Membership.
-  - Retrieve memberships by user.
-  - Retrieve memberships by client application.
-  - Prevent duplicate memberships.
-
-- Integrate Client Membership into user registration.
-
-  - Replace the Phase 4 client-assignment placeholder.
-  - Require at least one client application when registering a new user.
-  - Add memberships to existing users without creating duplicate accounts.
-
-- Implement membership administration.
-
-  - Display Client Memberships on User Details.
-  - Display users belonging to a client application.
-  - Assign users to client applications.
-  - Remove users from client applications.
-  - Display Membership Level.
-
-- Verify Client Membership management.
-
-- Verify removing membership removes associated Application Role assignments.
-
----
-
 ## Milestone 5.7 – Delegated Client Administration
-
-- Implement Membership Level management.
-
-  - Promote a Client Membership to `Administrator`.
-  - Demote a Client Membership to `User`.
 
 - Implement delegated administration rules.
 

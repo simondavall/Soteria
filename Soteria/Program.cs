@@ -27,8 +27,7 @@ public class Program
         Env.TraversePath().Load();
 
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
+        
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         builder.Services.AddMudServices();
@@ -119,11 +118,11 @@ public class Program
                     .AllowRefreshTokenFlow()
                     .RequireProofKeyForCodeExchange();
 
-                options.AddEventHandler<ValidateAuthorizationRequestContext>(builder => builder
+                options.AddEventHandler<ValidateAuthorizationRequestContext>(b => b
                     .UseScopedHandler<ValidateClientIsEnabled>()
                     .SetOrder(int.MaxValue - 100_000));
 
-                options.AddEventHandler<ValidateTokenRequestContext>(builder => builder
+                options.AddEventHandler<ValidateTokenRequestContext>(b => b
                     .UseScopedHandler<ValidateClientIsEnabled>()
                     .SetOrder(int.MaxValue - 100_000));
 
@@ -135,7 +134,6 @@ public class Program
                 if (builder.Environment.IsDevelopment())
                 {
                     options.AddDevelopmentSigningCertificate();
-                    //options.AddDevelopmentEncryptionCertificate();
                     options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
                 }
             });
