@@ -1,5 +1,6 @@
 using DotNetEnv;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using static OpenIddict.Server.OpenIddictServerEvents;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
+using Soteria.Components.Features.Authorization;
 using Soteria.Components.Features.Clients;
 using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
@@ -28,12 +30,24 @@ public class Program
         Env.TraversePath().Load();
 
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         builder.Services.AddMudServices();
 
         builder.Services.AddCascadingAuthenticationState();
+        
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(SoteriaAuthorizationPolicies.SoteriaAdministrator, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new SoteriaAdminRequirement());
+            });
+        });
+        builder.Services.AddScoped<IAuthorizationHandler, SoteriaAdminAuthorizationHandler>();
+        builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+        
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
@@ -138,52 +152,68 @@ public class Program
                     options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
                 }
             });
-        
+
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
         builder.Services.AddScoped<OpenIddictInitializer>();
         builder.Services.AddScoped<SoteriaAdministratorInitializer>();
-        
+
         builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
         builder.Services.AddScoped<ClientService>();
         builder.Services.AddTransient<CreateClientValidator>();
-        builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider => provider.GetRequiredService<CreateClientValidator>());
-        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(provider => provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider =>
+            provider.GetRequiredService<CreateClientValidator>());
+        builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(provider =>
+            provider.GetRequiredService<CreateClientValidator>());
         builder.Services.AddTransient<EditClientValidator>();
-        builder.Services.AddTransient<IValidator<EditClientRequest>>(provider => provider.GetRequiredService<EditClientValidator>());
-        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(provider => provider.GetRequiredService<EditClientValidator>());
+        builder.Services.AddTransient<IValidator<EditClientRequest>>(provider =>
+            provider.GetRequiredService<EditClientValidator>());
+        builder.Services.AddTransient<IMudValidator<EditClientRequest>>(provider =>
+            provider.GetRequiredService<EditClientValidator>());
 
         builder.Services.AddScoped<IUserLookup, UserLookup>();
         builder.Services.AddScoped<UserService>();
-        
+
         builder.Services.AddScoped<CreateUserValidator>();
-        builder.Services.AddScoped<IValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
-        builder.Services.AddScoped<IMudValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
-        
+        builder.Services.AddScoped<IValidator<CreateUserRequest>>(provider =>
+            provider.GetRequiredService<CreateUserValidator>());
+        builder.Services.AddScoped<IMudValidator<CreateUserRequest>>(provider =>
+            provider.GetRequiredService<CreateUserValidator>());
+
         builder.Services.AddScoped<EditUserValidator>();
-        builder.Services.AddScoped<IValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
-        builder.Services.AddScoped<IMudValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
-        
+        builder.Services.AddScoped<IValidator<EditUserRequest>>(provider =>
+            provider.GetRequiredService<EditUserValidator>());
+        builder.Services.AddScoped<IMudValidator<EditUserRequest>>(provider =>
+            provider.GetRequiredService<EditUserValidator>());
+
         builder.Services.AddScoped<CreateClientMembershipValidator>();
-        builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider => provider.GetRequiredService<CreateClientMembershipValidator>());
-        builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider => provider.GetRequiredService<CreateClientMembershipValidator>());
-        
+        builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider =>
+            provider.GetRequiredService<CreateClientMembershipValidator>());
+        builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider =>
+            provider.GetRequiredService<CreateClientMembershipValidator>());
+
         builder.Services.AddScoped<EditClientMembershipValidator>();
-        builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider => provider.GetRequiredService<EditClientMembershipValidator>());
-        builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider => provider.GetRequiredService<EditClientMembershipValidator>());
-        
+        builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider =>
+            provider.GetRequiredService<EditClientMembershipValidator>());
+        builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider =>
+            provider.GetRequiredService<EditClientMembershipValidator>());
+
         builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
-        
+
         builder.Services.AddTransient<CreateApplicationRoleValidator>();
-        builder.Services.AddTransient<IValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
-        builder.Services.AddTransient<IMudValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
-        
+        builder.Services.AddTransient<IValidator<CreateApplicationRoleRequest>>(provider =>
+            provider.GetRequiredService<CreateApplicationRoleValidator>());
+        builder.Services.AddTransient<IMudValidator<CreateApplicationRoleRequest>>(provider =>
+            provider.GetRequiredService<CreateApplicationRoleValidator>());
+
         builder.Services.AddTransient<EditApplicationRoleValidator>();
-        builder.Services.AddTransient<IValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());
-        builder.Services.AddTransient<IMudValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());
+        builder.Services.AddTransient<IValidator<EditApplicationRoleRequest>>(provider =>
+            provider.GetRequiredService<EditApplicationRoleValidator>());
+        builder.Services.AddTransient<IMudValidator<EditApplicationRoleRequest>>(provider =>
+            provider.GetRequiredService<EditApplicationRoleValidator>());
         
         var app = builder.Build();
-        
+
         await using (var scope = app.Services.CreateAsyncScope())
         {
             var openIddictInitializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
@@ -192,7 +222,7 @@ public class Program
             var soteriaAdminInitializer = scope.ServiceProvider.GetRequiredService<SoteriaAdministratorInitializer>();
             await soteriaAdminInitializer.InitializeAsync();
         }
-        
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -204,7 +234,7 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-        
+
         app.UseStatusCodePagesWithReExecute("/connect/error", createScopeForStatusCodePages: true);
         app.UseHttpsRedirection();
 

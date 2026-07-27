@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
+using Soteria.Components.Features.Authorization;
 using Soteria.Data;
 using Soteria.Data.Authorization;
 using Soteria.Data.OpenIddict;
@@ -17,6 +18,7 @@ public sealed class ClientService
     private readonly IValidator<EditClientRequest> _editClientValidator;
     private readonly IValidator<CreateApplicationRoleRequest> _createApplicationRoleValidator;
     private readonly IValidator<EditApplicationRoleRequest> _editApplicationRoleValidator;
+    private readonly ICurrentUserContext _currentUserContext;
 
     public ClientService(
         SoteriaDbContext dbContext,
@@ -24,7 +26,8 @@ public sealed class ClientService
         IValidator<CreateClientRequest> createClientValidator,
         IValidator<EditClientRequest> editClientValidator,
         IValidator<CreateApplicationRoleRequest> createApplicationRoleValidator,
-        IValidator<EditApplicationRoleRequest> editApplicationRoleValidator)
+        IValidator<EditApplicationRoleRequest> editApplicationRoleValidator,
+        ICurrentUserContext currentUserContext)
     {
         _dbContext = dbContext;
         _applicationManager = applicationManager;
@@ -32,10 +35,17 @@ public sealed class ClientService
         _editClientValidator = editClientValidator;
         _createApplicationRoleValidator = createApplicationRoleValidator;
         _editApplicationRoleValidator = editApplicationRoleValidator;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default)
     {
+        if (!await _currentUserContext.IsSoteriaAdministratorAsync(cancellationToken))
+        {
+            throw new UnauthorizedAccessException(
+                "Only Soteria Administrators can create client applications.");
+        }
+        
         request.ClientId = request.ClientId.Trim();
         request.DisplayName = request.DisplayName.Trim();
         request.ClientHost = request.ClientHost.Trim().TrimEnd('/');

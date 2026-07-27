@@ -353,3 +353,46 @@ Reason:
 The enabled state is a first-class Soteria domain concept and is expected to be queried frequently. Representing it as a dedicated persisted property makes the model explicit, simplifies querying and avoids overloading OpenIddict metadata intended for extensibility.
 
 Allowing existing access tokens to expire naturally preserves the current high-performance resource-server validation model while preventing disabled applications from obtaining any new tokens. This avoids introducing a database lookup on every protected API request while ensuring that disabled applications lose access once their short-lived access tokens expire.
+
+2026-07-27
+
+Decision:
+
+Soteria System Role authorisation will be implemented through ASP.NET Core
+authorisation policies backed by persisted `UserSystemRole` assignments.
+
+The initial `SoteriaAdministrator` policy uses a dedicated authorisation
+requirement and handler. The handler resolves the authenticated Identity user
+and checks the current persisted System Role assignment.
+
+Components and application services will evaluate current-user authorisation
+through a reusable `ICurrentUserContext` abstraction rather than directly
+inspecting claims or querying System Role assignments.
+
+Protected actions will be hidden from unauthorised users in the UI and
+authoritatively enforced again within the application service.
+
+System Roles will not be added to the Soteria authentication principal and
+will not be issued in ID tokens or access tokens.
+
+Reason:
+
+System Roles govern administration of Soteria itself and are distinct from
+client-scoped Application Roles used by consuming applications.
+
+Resolving the persisted assignment through an authorisation policy keeps
+ASP.NET Core's policy engine as the central authorisation mechanism while
+allowing System Role changes to remain independent of token and claim design.
+
+The current-user abstraction prevents duplicated principal inspection and
+database lookup logic across components and services. It also establishes an
+extension point for future client-specific administration checks.
+
+UI visibility improves the user experience but cannot protect an operation
+from direct or modified requests. Repeating enforcement within application
+services ensures that privileged operations remain protected when component
+visibility is bypassed.
+
+Keeping System Roles out of authentication and OpenID Connect claims preserves
+the boundary between internal Soteria administration and consuming-application
+authorisation.

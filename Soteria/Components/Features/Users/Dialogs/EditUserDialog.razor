@@ -91,13 +91,15 @@
 
                             <MudItem xs="12"
                                      md="6">
-
-                                <MudSwitch T="bool"
-                                           @bind-Value="Request.IsSoteriaAdministrator"
-                                           For="@(() => Request.IsSoteriaAdministrator)"
-                                           Color="Color.Primary"
-                                           Label="Soteria Admin"
-                                           Disabled="IsSaving"/>
+                                @if (CanManageSoteriaAdministrators)
+                                {
+                                    <MudSwitch T="bool"
+                                               @bind-Value="Request.IsSoteriaAdministrator"
+                                               For="@(() => Request.IsSoteriaAdministrator)"
+                                               Color="Color.Primary"
+                                               Label="Soteria Admin"
+                                               Disabled="IsSaving" />
+                                }
                             </MudItem>
                         </MudGrid>
                     </MudStack>

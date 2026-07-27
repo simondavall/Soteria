@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using OpenIddict.Abstractions;
+using Soteria.Components.Features.Authorization;
 using Soteria.Components.Features.Clients.Dialogs;
 
 namespace Soteria.Components.Features.Clients.Pages;
@@ -12,19 +13,30 @@ public partial class ClientList
     [Inject]
     private IDialogService DialogService { get; set; } = default!;
     [Inject]
+    private ICurrentUserContext CurrentUserContext { get; set; } = default!;
+    [Inject]
     private ISnackbar Snackbar { get; set; } = default!;
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
     protected IReadOnlyList<ClientSummary> Clients = [];
+    private bool CanCreateClient { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        CanCreateClient = await CurrentUserContext.IsSoteriaAdministratorAsync();
+        
         await LoadClientsAsync();
     }
 
     private async Task CreateClientAsync()
     {
+        if (!CanCreateClient)
+        {
+            Snackbar.Add("You are not authorised to create client applications.", Severity.Error);
+            return;
+        }
+
         var options = new DialogOptions
         {
             CloseButton = true,

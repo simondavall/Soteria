@@ -532,17 +532,19 @@ reference resource API.
   - ✓ Verify duplicate assignments are prevented.
   - ✓ Verify cancelling leaves Soteria Administrator status unchanged.
 
-- Enforce System Role authorisation.
-  - Add the `SoteriaAdministrator` authorisation policy.
-  - Resolve System Role authorisation from persisted assignments.
-  - Restrict global administration to `SoteriaAdministrator`.
-  - Protect administration pages independently of navigation visibility.
-  - Protect System Role management operations.
-  - Prevent unauthorised System Role assignment requests.
-  - Verify System Administrators can access global administration.
-  - Verify non-administrators are denied access.
-  - Verify direct navigation is denied.
-  - Verify direct service operations are denied.
+- ✓ Introduce Soteria Administrator action authorisation.
+  - ✓ Add the `SoteriaAdministrator` authorisation policy.
+  - ✓ Add a dedicated authorisation requirement and handler.
+  - ✓ Resolve System Role authorisation from persisted assignments.
+  - ✓ Introduce a reusable current-user authorisation context.
+  - ✓ Protect the Create Client action in the UI.
+  - ✓ Protect client creation within the application service.
+  - ✓ Protect Soteria Administrator assignment management in the UI.
+  - ✓ Protect Soteria Administrator assignment changes within the application service.
+  - ✓ Preserve account unlock behaviour for users without the System Role.
+  - ✓ Prevent unauthorised requests that bypass UI visibility.
+  - ✓ Verify Soteria Administrators can use the protected actions.
+  - ✓ Verify non-administrators cannot use the protected actions.
 
 - Verify System Role isolation.
   - Verify System Roles do not create Client Memberships.

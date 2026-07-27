@@ -274,6 +274,10 @@ Resource API
 | Persist users, clients, scopes, authorizations and tokens | Soteria database                     | Identity, OpenIddict and Soteria              |
 | Manage future application access assignments              | Soteria                              | Soteria database                              |
 | Manage future application-specific roles and claims       | Soteria                              | Soteria database                              |
+| Evaluate Soteria System Role policies                     | Soteria                              | ASP.NET Core authorisation and Soteria database |
+| Enforce privileged Soteria UI visibility                  | Soteria components                   | Current-user authorisation context              |
+| Enforce privileged administration operations              | Soteria application services         | ASP.NET Core authorisation                      |
+| Persist System Role assignments                           | Soteria                              | Soteria database                                |
 
 
 # Initial Phase 2 Provider Model
@@ -363,3 +367,80 @@ Access tokens remain encrypted. During development, Soteria and trusted Resource
 Development secrets, including confidential client secrets and the shared access-token encryption key, are supplied through an uncommitted `.env` file.
 
 The production key-distribution strategy will be defined when the production hosting model is established.
+
+# Soteria Administration Authorisation
+
+Soteria administration authorisation is separate from consuming-application
+authorisation.
+
+System Roles govern privileged operations within Soteria itself. The initial
+System Role is `SoteriaAdministrator`.
+
+System Role assignments are persisted through `SystemRole` and
+`UserSystemRole`. They are not represented as Application Roles and do not
+create Client Memberships.
+
+## Policy evaluation
+
+Soteria evaluates System Role access through ASP.NET Core authorisation
+policies.
+
+The `SoteriaAdministrator` policy uses a dedicated authorisation requirement
+and handler. The handler:
+
+- resolves the authenticated Identity user from the principal;
+- retrieves the user's persisted `UserSystemRole` assignment;
+- succeeds only when the user is assigned the stable
+  `SoteriaAdministrator` System Role.
+
+System Role evaluation therefore uses the current persisted assignment rather
+than requiring the System Role to be stored in the authentication cookie.
+
+## Current-user context
+
+Components and application services consume current-user authorisation through
+the `ICurrentUserContext` abstraction.
+
+The abstraction delegates policy evaluation to ASP.NET Core's
+`IAuthorizationService`. This prevents components and services from directly
+querying claims or duplicating System Role lookup logic.
+
+The current implementation caches the policy result for the lifetime of the
+scoped interactive session. A changed System Role assignment therefore applies
+to newly established scopes or sessions.
+
+The abstraction is expected to grow as delegated client administration is
+introduced, for example with client-specific administration checks.
+
+## Enforcement boundary
+
+UI visibility is used to avoid presenting actions that the current user cannot
+perform, but it is not an authorisation boundary.
+
+Privileged operations must also enforce authorisation within the application
+service. This protects operations from requests that bypass component
+visibility or directly invoke service methods.
+
+The initial protected operations are:
+
+- creating a client application;
+- adding or removing a Soteria Administrator assignment.
+
+Non-System-Role operations within the same workflow remain independently
+available when appropriate. For example, hiding the Soteria Administrator
+switch does not prevent an otherwise permitted account unlock.
+
+## Token isolation
+
+System Roles are internal Soteria administration concepts.
+
+They are not:
+
+- issued as ID-token claims;
+- issued as access-token claims;
+- interpreted as Application Roles;
+- used by consuming applications or Resource APIs;
+- evidence that a user has a Client Membership.
+
+Application Roles remain client-scoped claims issued through the authenticated
+user's Client Membership for the requesting application.

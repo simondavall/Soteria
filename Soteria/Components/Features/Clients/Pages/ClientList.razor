@@ -39,12 +39,16 @@
                     </MudStack>
                 </MudStack>
 
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Add"
-                           OnClick="CreateClientAsync">
-                    Create client
-                </MudButton>
+                @if (CanCreateClient)
+                {
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="CreateClientAsync">
+                        Create Client
+                    </MudButton>
+                }
+                
             </MudStack>
         </header>
 
