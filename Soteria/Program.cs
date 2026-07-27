@@ -16,6 +16,7 @@ using Soteria.Components.Features.Shared;
 using Soteria.Components.Features.Users;
 using Soteria.Components.Features.Users.Queries;
 using Soteria.Data;
+using Soteria.Data.Authorization;
 using Soteria.Data.OpenIddict;
 
 namespace Soteria;
@@ -137,11 +138,12 @@ public class Program
                     options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
                 }
             });
-
+        
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
         builder.Services.AddScoped<OpenIddictInitializer>();
-
+        builder.Services.AddScoped<SoteriaAdministratorInitializer>();
+        
         builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
         builder.Services.AddScoped<ClientService>();
         builder.Services.AddTransient<CreateClientValidator>();
@@ -172,13 +174,16 @@ public class Program
         builder.Services.AddTransient<IMudValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());
         
         var app = builder.Build();
-
+        
         await using (var scope = app.Services.CreateAsyncScope())
         {
-            var initializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
-            await initializer.InitializeAsync();
-        }
+            var openIddictInitializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
+            await openIddictInitializer.InitializeAsync();
 
+            var soteriaAdminInitializer = scope.ServiceProvider.GetRequiredService<SoteriaAdministratorInitializer>();
+            await soteriaAdminInitializer.InitializeAsync();
+        }
+        
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {

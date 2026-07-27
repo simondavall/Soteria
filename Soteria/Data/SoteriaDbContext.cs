@@ -9,10 +9,6 @@ namespace Soteria.Data;
 public class SoteriaDbContext(DbContextOptions<SoteriaDbContext> options)
     : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
-    // todo: need a discussion about this hard coded guid.
-    private static readonly Guid SoteriaAdministratorRoleId =
-        Guid.Parse("6f8ad0a0-72c2-4b82-bcc1-12a0e40b3508");
-
     public DbSet<SystemRole> SystemRoles => Set<SystemRole>();
 
     public DbSet<UserSystemRole> UserSystemRoles => Set<UserSystemRole>();
@@ -76,7 +72,7 @@ public class SoteriaDbContext(DbContextOptions<SoteriaDbContext> options)
 
             role.HasData(new SystemRole
             {
-                Id = SoteriaAdministratorRoleId,
+                Id = SystemRoleIds.SoteriaAdministrator,
                 Name = "SoteriaAdministrator",
                 DisplayName = "Soteria Administrator",
                 Description = "Provides global administrative authority within Soteria."
