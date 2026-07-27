@@ -13,18 +13,16 @@ where development should continue.
 
 # Current task
 
-Issue Application Role claims.
-- Issue Application Role names as standard role claims.
-- Issue only roles assigned through the Client Membership for the requesting client.
-- Preserve existing identity-oriented claims.
-- Configure claim destinations for ID and access tokens.
+Configure named authorisation policies in the reference applications.
+- Define named policies that map to Application Role names.
+- Configure the reference web application to use policy-based authorisation.
+- Demonstrate UI authorisation using issued role claims.
+- Configure the Reference API to use the same named policies.
+- Verify end-to-end authorisation using Application Role claims.
 
 # Remaining milestone tasks
 
-- Configure named authorisation policies in the reference applications.
-- Verify ID token claims.
-- Verify access token claims.
-- Verify roles belonging to other clients are never issued.
+- None
 
 # Completed
 
@@ -288,3 +286,10 @@ Issue Application Role claims.
 - Removed associated Application Role assignments through configured cascade behaviour.
 - Refreshed the Permissions card immediately after successful Client Membership removal.
 - Preserved cancellation without deleting the Client Membership.
+- Issued Application Role names as standard OpenID Connect role claims.
+- Issued only Application Roles assigned through the authenticated user's Client Membership for the requesting client application.
+- Issued Application Role claims to both the ID token and access token.
+- Preserved existing scope-sensitive identity claim behaviour.
+- Preserved existing authorisation scope and resource resolution.
+- Verified client-isolated Application Role claim issuance.
+- Verified users without matching Client Memberships receive no Application Role claims.

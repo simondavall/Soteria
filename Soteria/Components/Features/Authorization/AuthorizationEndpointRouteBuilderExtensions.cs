@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using Soteria.Data;
@@ -26,7 +27,8 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         HttpContext context,
         UserManager<ApplicationUser> userManager,
         IOpenIddictApplicationManager applicationManager,
-        IOpenIddictScopeManager scopeManager)
+        IOpenIddictScopeManager scopeManager,
+        SoteriaDbContext dbContext)
     {
         var authenticationResult = await context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
         if (!authenticationResult.Succeeded)
@@ -60,6 +62,12 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
             throw new InvalidOperationException("The OpenIddict client application is unavailable.");
         }
 
+        var applicationIdValue = await applicationManager.GetIdAsync(application, context.RequestAborted);
+        if (!Guid.TryParse(applicationIdValue, out var applicationId))
+        {
+            throw new InvalidOperationException("The OpenIddict client application identifier is invalid.");
+        }
+
         var consentType = await applicationManager.GetConsentTypeAsync(application, context.RequestAborted);
         // Soteria supports only administrator-managed clients, which use implicit consent.
         // Other consent types require workflows that are not currently supported.
@@ -84,6 +92,17 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         var email = await userManager.GetEmailAsync(user)
             ?? throw new InvalidOperationException("The authenticated user does not have an email address.");
 
+        var applicationRoleNames = await dbContext.ClientMemberships
+            .AsNoTracking()
+            .Where(membership =>
+                membership.UserId == user.Id
+                && membership.ApplicationId == applicationId)
+            .SelectMany(membership => membership.ApplicationRoleAssignments)
+            .Select(assignment => assignment.ApplicationRole.Name)
+            .Distinct()
+            .OrderBy(roleName => roleName)
+            .ToListAsync(context.RequestAborted);
+
         var identity = new ClaimsIdentity(
             authenticationType: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
             nameType: OpenIddictConstants.Claims.Name,
@@ -92,6 +111,11 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         identity.AddClaim(OpenIddictConstants.Claims.Subject, user.Id.ToString());
         identity.AddClaim(OpenIddictConstants.Claims.Name, userName);
         identity.AddClaim(OpenIddictConstants.Claims.Email, email);
+
+        foreach (var applicationRoleName in applicationRoleNames)
+        {
+            identity.AddClaim(OpenIddictConstants.Claims.Role, applicationRoleName);
+        }
 
         var principal = new ClaimsPrincipal(identity);
         principal.SetScopes(request.GetScopes());
@@ -125,6 +149,12 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
                     OpenIddictConstants.Destinations.IdentityToken,
                     OpenIddictConstants.Destinations.AccessToken
                 ],
+
+            OpenIddictConstants.Claims.Role =>
+            [
+                OpenIddictConstants.Destinations.IdentityToken,
+                OpenIddictConstants.Destinations.AccessToken
+            ],
 
             _ => []
         });
