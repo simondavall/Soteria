@@ -17,6 +17,33 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddCascadingAuthenticationState();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Editor", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Editor");
+    });
+
+    options.AddPolicy("Auditor", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Auditor");
+    });
+
+    options.AddPolicy("EditorOrReviewer", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Editor", "Reviewer");
+    });
+
+    options.AddPolicy("DevelopmentClaims", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(context => builder.Environment.IsDevelopment());
+    });
+});
+
 var openIdConnectAuthority = builder.Configuration["Authentication:OpenIdConnect:Authority"]
                              ?? throw new InvalidOperationException(
                                  "The Authentication:OpenIdConnect:Authority configuration value is required.");
@@ -43,9 +70,7 @@ builder.Services.AddAuthentication(options =>
         {
             if (context.Request.Path.StartsWithSegments("/internal"))
             {
-                context.Response.StatusCode =
-                    StatusCodes.Status401Unauthorized;
-
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return Task.CompletedTask;
             }
 
@@ -57,9 +82,7 @@ builder.Services.AddAuthentication(options =>
         {
             if (context.Request.Path.StartsWithSegments("/internal"))
             {
-                context.Response.StatusCode =
-                    StatusCodes.Status403Forbidden;
-
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 return Task.CompletedTask;
             }
 
@@ -76,7 +99,7 @@ builder.Services.AddAuthentication(options =>
         options.UsePkce = true;
         options.SaveTokens = true;
         options.MapInboundClaims = false;
-        
+
         options.SignedOutCallbackPath = "/signout-callback-oidc";
         options.SignedOutRedirectUri = "/";
 
@@ -89,14 +112,11 @@ builder.Services.AddAuthentication(options =>
 
         options.TokenValidationParameters.NameClaimType = "name";
         options.TokenValidationParameters.RoleClaimType = "role";
-        
+
         options.Events.OnRemoteFailure = context =>
         {
             var error = context.Request.Query["error"].ToString();
-            var reason = string.Equals(
-                error,
-                "unauthorized_client",
-                StringComparison.Ordinal)
+            var reason = string.Equals(error, "unauthorized_client", StringComparison.Ordinal)
                 ? "disabled"
                 : "unauthorized";
 

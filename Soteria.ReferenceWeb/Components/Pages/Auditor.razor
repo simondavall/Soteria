@@ -1,0 +1,27 @@
+﻿@page "/auditor"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Policy = "Auditor")]
+
+<PageTitle>Auditor</PageTitle>
+
+<h1>Auditor</h1>
+
+<div class="alert alert-success" role="status">
+    <h2 class="h4">Auditor policy satisfied</h2>
+
+    <p class="mb-0">
+        You can access this page because the authenticated user has the
+        <strong>Auditor</strong> Application Role.
+    </p>
+</div>
+
+<AuthorizeView>
+    <Authorized>
+        <p>
+            Authenticated user:
+            <strong>@context.User.Identity?.Name</strong>
+        </p>
+    </Authorized>
+</AuthorizeView>
