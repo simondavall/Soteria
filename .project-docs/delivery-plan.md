@@ -507,32 +507,31 @@ reference resource API.
   - ✓ Verify repeated startups do not create duplicate assignments.
   - ✓ Verify bootstrap is skipped once a System Administrator exists.
 
-- Display System Roles on User Details.
-  - Add a System Roles section to the User Details Permissions card.
-  - Retrieve System Role assignments for the selected user.
-  - Display assigned System Role names and display names.
-  - Display an appropriate empty state when no System Roles are assigned.
-  - Keep System Roles visually separate from Client Memberships.
-  - Preserve graceful handling when the selected user does not exist.
-  - Verify System Roles belonging to other users are not displayed.
-  - Verify the bootstrapped System Administrator is displayed correctly.
+- ✓ Display Soteria Administrator status on User Details.
+  - ✓ Determine whether the selected user has the `SoteriaAdministrator` System Role.
+  - ✓ Add administrator status to the User Details model.
+  - ✓ Display a `Soteria Admin` status chip in the User Details card header.
+  - ✓ Display no administrator indicator for users without the assignment.
+  - ✓ Preserve the existing Client Membership permissions display.
+  - ✓ Preserve graceful handling when the selected user does not exist.
+  - ✓ Verify the bootstrapped System Administrator is displayed correctly.
 
-- Manage System Role assignments.
-  - Add a Manage System Roles action to User Details.
-  - Create the System Role assignment dialog.
-  - Retrieve available System Roles.
-  - Display current System Role assignments.
-  - Allow System Roles to be assigned and removed.
-  - Retrieve System Roles through the application service.
-  - Persist System Role assignments through the application service.
-  - Prevent duplicate System Role assignments.
+- Manage Soteria Administrator status.
+  - Add a Soteria Administrator switch to the Edit User dialog.
+  - Retrieve the current Soteria Administrator assignment.
+  - Initialise the switch from the persisted assignment.
+  - Allow Soteria Administrator status to be enabled and disabled.
+  - Persist Soteria Administrator assignments through the User service.
+  - Preserve existing account unlock behaviour.
+  - Save lockout and Soteria Administrator changes together.
+  - Prevent duplicate Soteria Administrator assignments.
   - Verify the selected user exists before saving.
   - Display validation and persistence errors without closing the dialog.
-  - Refresh the Permissions card after successful changes.
-  - Verify System Role assignments are persisted.
-  - Verify System Role removals are persisted.
-  - Verify duplicate assignments are rejected.
-  - Verify cancelling leaves assignments unchanged.
+  - Refresh the User Details page after successful changes.
+  - Verify Soteria Administrator assignments are persisted.
+  - Verify Soteria Administrator assignments can be removed.
+  - Verify duplicate assignments are prevented.
+  - Verify cancelling leaves Soteria Administrator status unchanged.
 
 - Enforce System Role authorisation.
   - Add the `SoteriaAdministrator` authorisation policy.

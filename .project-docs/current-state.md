@@ -13,19 +13,25 @@ where development should continue.
 
 # Current task
 
-- Display System Roles on User Details.
-  - Add a System Roles section to the User Details Permissions card.
-  - Retrieve System Role assignments for the selected user.
-  - Display assigned System Role names and display names.
-  - Display an appropriate empty state when no System Roles are assigned.
-  - Keep System Roles visually separate from Client Memberships.
-  - Preserve graceful handling when the selected user does not exist.
-  - Verify System Roles belonging to other users are not displayed.
-  - Verify the bootstrapped System Administrator is displayed correctly.
+- Manage Soteria Administrator status.
+  - Add a Soteria Administrator switch to the Edit User dialog.
+  - Retrieve the current Soteria Administrator assignment.
+  - Initialise the switch from the persisted assignment.
+  - Allow Soteria Administrator status to be enabled and disabled.
+  - Persist Soteria Administrator assignments through the User service.
+  - Preserve existing account unlock behaviour.
+  - Save lockout and Soteria Administrator changes together.
+  - Prevent duplicate Soteria Administrator assignments.
+  - Verify the selected user exists before saving.
+  - Display validation and persistence errors without closing the dialog.
+  - Refresh the User Details page after successful changes.
+  - Verify Soteria Administrator assignments are persisted.
+  - Verify Soteria Administrator assignments can be removed.
+  - Verify duplicate assignments are prevented.
+  - Verify cancelling leaves Soteria Administrator status unchanged.
 
 # Remaining milestone tasks
 
-- Manage System Role assignments.
 - Enforce System Role authorisation.
 - Protect the final System Administrator.
 - Verify System Role isolation.
@@ -320,3 +326,8 @@ where development should continue.
 - Failed application startup with a clear error when the configured bootstrap user could not be found.
 - Verified initial System Administrator bootstrap.
 - Verified idempotent startup behaviour.
+- Added Soteria Administrator status to the User Details query.
+- Displayed a Soteria Admin status chip on the User Details card.
+- Displayed the administrator indicator only for users assigned the SoteriaAdministrator System Role.
+- Preserved the existing Client Membership permissions display.
+- Verified the bootstrapped Soteria Administrator status is displayed correctly.
