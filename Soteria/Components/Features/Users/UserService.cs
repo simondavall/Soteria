@@ -95,7 +95,7 @@ public sealed class UserService
                 && user.LockoutEnd.Value > now))
             .ToListAsync(cancellationToken);
     }
-
+    
     public async Task<UserDetailsModel?> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
@@ -111,7 +111,10 @@ public sealed class UserService
                 user.EmailConfirmed,
                 user.LockoutEnd.HasValue
                 && user.LockoutEnd.Value > now,
-                user.LockoutEnd))
+                user.LockoutEnd,
+                _dbContext.UserSystemRoles.Any(assignment =>
+                        assignment.UserId == user.Id
+                        && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator)))
             .SingleOrDefaultAsync(cancellationToken);
     }
 
@@ -552,7 +555,8 @@ public sealed record UserDetailsModel(
     string Email,
     bool EmailConfirmed,
     bool IsLockedOut,
-    DateTimeOffset? LockoutEnd);
+    DateTimeOffset? LockoutEnd,
+    bool IsSoteriaAdministrator);
 
 public sealed record ClientMembershipDetailsModel(
     Guid ClientMembershipId,
