@@ -155,20 +155,29 @@ public class Program
 
         builder.Services.AddScoped<IUserLookup, UserLookup>();
         builder.Services.AddScoped<UserService>();
+        
         builder.Services.AddScoped<CreateUserValidator>();
         builder.Services.AddScoped<IValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
         builder.Services.AddScoped<IMudValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
+        
+        builder.Services.AddScoped<EditUserValidator>();
+        builder.Services.AddScoped<IValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
+        builder.Services.AddScoped<IMudValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
+        
         builder.Services.AddScoped<CreateClientMembershipValidator>();
         builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider => provider.GetRequiredService<CreateClientMembershipValidator>());
         builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider => provider.GetRequiredService<CreateClientMembershipValidator>());
+        
         builder.Services.AddScoped<EditClientMembershipValidator>();
         builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider => provider.GetRequiredService<EditClientMembershipValidator>());
         builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider => provider.GetRequiredService<EditClientMembershipValidator>());
         
         builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
+        
         builder.Services.AddTransient<CreateApplicationRoleValidator>();
         builder.Services.AddTransient<IValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
         builder.Services.AddTransient<IMudValidator<CreateApplicationRoleRequest>>(provider => provider.GetRequiredService<CreateApplicationRoleValidator>());
+        
         builder.Services.AddTransient<EditApplicationRoleValidator>();
         builder.Services.AddTransient<IValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());
         builder.Services.AddTransient<IMudValidator<EditApplicationRoleRequest>>(provider => provider.GetRequiredService<EditApplicationRoleValidator>());

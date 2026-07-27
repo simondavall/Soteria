@@ -20,6 +20,7 @@ public sealed class UserService
     private readonly IEmailSender<ApplicationUser> _emailSender;
     private readonly NavigationManager _navigationManager;
     private readonly IValidator<CreateUserRequest> _createUserValidator;
+    private readonly IValidator<EditUserRequest> _editUserValidator;
     private readonly IValidator<CreateClientMembershipRequest> _createClientMembershipValidator;
     private readonly IValidator<EditClientMembershipRequest> _editClientMembershipValidator;
 
@@ -30,6 +31,7 @@ public sealed class UserService
         IEmailSender<ApplicationUser> emailSender,
         NavigationManager navigationManager,
         IValidator<CreateUserRequest> createUserValidator,
+        IValidator<EditUserRequest> editUserValidator,
         IValidator<CreateClientMembershipRequest> createClientMembershipValidator,
         IValidator<EditClientMembershipRequest> editClientMembershipValidator)
     {
@@ -39,6 +41,7 @@ public sealed class UserService
         _emailSender = emailSender;
         _navigationManager = navigationManager;
         _createUserValidator = createUserValidator;
+        _editUserValidator = editUserValidator;
         _createClientMembershipValidator = createClientMembershipValidator;
         _editClientMembershipValidator = editClientMembershipValidator;
     }
@@ -95,7 +98,7 @@ public sealed class UserService
                 && user.LockoutEnd.Value > now))
             .ToListAsync(cancellationToken);
     }
-    
+
     public async Task<UserDetailsModel?> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
@@ -113,8 +116,8 @@ public sealed class UserService
                 && user.LockoutEnd.Value > now,
                 user.LockoutEnd,
                 _dbContext.UserSystemRoles.Any(assignment =>
-                        assignment.UserId == user.Id
-                        && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator)))
+                    assignment.UserId == user.Id
+                    && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator)))
             .SingleOrDefaultAsync(cancellationToken);
     }
 
@@ -175,7 +178,8 @@ public sealed class UserService
             .ToList();
     }
 
-    public async Task<EditClientMembershipRequest?> GetClientMembershipForEditAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
+    public async Task<EditClientMembershipRequest?> GetClientMembershipForEditAsync(Guid userId,
+        Guid clientMembershipId, CancellationToken cancellationToken = default)
     {
         var membership = await _dbContext.ClientMemberships
             .AsNoTracking()
@@ -225,8 +229,9 @@ public sealed class UserService
             SelectedApplicationRoleIds = selectedRoleIds
         };
     }
-    
-    public async Task<IReadOnlyList<ClientMembershipApplicationRoleItem>> GetClientMembershipApplicationRolesAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
+
+    public async Task<IReadOnlyList<ClientMembershipApplicationRoleItem>> GetClientMembershipApplicationRolesAsync(
+        Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
     {
         var membership = await _dbContext.ClientMemberships
             .AsNoTracking()
@@ -255,7 +260,7 @@ public sealed class UserService
                 role.Description))
             .ToListAsync(cancellationToken);
     }
-    
+
     public async Task UpdateClientMembershipAsync(EditClientMembershipRequest request, CancellationToken cancellationToken = default)
     {
         var validationResult = await _editClientMembershipValidator.ValidateAsync(request, cancellationToken);
@@ -356,8 +361,8 @@ public sealed class UserService
             ]);
         }
     }
-    
-    public async Task CreateClientMembershipAsync(CreateClientMembershipRequest request, CancellationToken cancellationToken = default) 
+
+    public async Task CreateClientMembershipAsync(CreateClientMembershipRequest request, CancellationToken cancellationToken = default)
     {
         var validationResult = await _createClientMembershipValidator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
@@ -449,7 +454,7 @@ public sealed class UserService
                 "The user already belongs to this client application.")
         ]);
     }
-    
+
     public async Task<EditUserRequest?> GetUserForEditAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await GetUserAsync(userId, cancellationToken);
@@ -466,30 +471,106 @@ public sealed class UserService
             Email = user.Email,
             EmailConfirmed = user.EmailConfirmed,
             IsLockedOut = user.IsLockedOut,
-            LockoutEnd = user.LockoutEnd
+            LockoutEnd = user.LockoutEnd,
+            IsSoteriaAdministrator = user.IsSoteriaAdministrator
         };
     }
 
-    public async Task UpdateUserAsync(EditUserRequest request)
+    public async Task UpdateUserAsync(EditUserRequest request, CancellationToken cancellationToken = default)
     {
+        var validationResult = await _editUserValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            throw new EditUserValidationException(validationResult.Errors);
+        }
+
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        
         var user = await _userManager.FindByIdAsync(request.UserId.ToString());
         if (user is null)
         {
-            throw new InvalidOperationException($"The user '{request.UserId}' could not be found.");
+            throw new InvalidOperationException(
+                $"The user '{request.UserId}' could not be found.");
         }
 
-        if (!request.UnlockRequested)
+        var administratorAssignment =
+            await _dbContext.UserSystemRoles
+                .SingleOrDefaultAsync(
+                    assignment =>
+                        assignment.UserId == request.UserId
+                        && assignment.SystemRoleId
+                        == SystemRoleIds.SoteriaAdministrator,
+                    cancellationToken);
+
+        var currentlyIsAdministrator = administratorAssignment is not null;
+
+        if (currentlyIsAdministrator && !request.IsSoteriaAdministrator)
         {
-            return;
+            var anotherAdministratorExists =
+                await _dbContext.UserSystemRoles
+                    .AsNoTracking()
+                    .AnyAsync(
+                        assignment =>
+                            assignment.UserId != request.UserId
+                            && assignment.SystemRoleId
+                            == SystemRoleIds.SoteriaAdministrator,
+                        cancellationToken);
+
+            if (!anotherAdministratorExists)
+            {
+                throw CreateFinalSoteriaAdministratorException();
+            }
+
+            _dbContext.UserSystemRoles.Remove(administratorAssignment!);
+        }
+        else if (!currentlyIsAdministrator && request.IsSoteriaAdministrator)
+        {
+            _dbContext.UserSystemRoles.Add(
+                new UserSystemRole
+                {
+                    UserId = request.UserId,
+                    SystemRoleId = SystemRoleIds.SoteriaAdministrator
+                });
         }
 
-        var result = await _userManager.SetLockoutEndDateAsync(user, null);
-        if (!result.Succeeded)
+        if (request.UnlockRequested)
         {
-            throw new EditUserIdentityException(result.Errors);
+            var identityResult = await _userManager.SetLockoutEndDateAsync(user, null);
+            if (!identityResult.Succeeded)
+            {
+                throw new EditUserIdentityException(identityResult.Errors);
+            }
+        }
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new EditUserValidationException(
+            [
+                new ValidationFailure(
+                    nameof(EditUserRequest.IsSoteriaAdministrator),
+                    "The Soteria Administrator assignment could not be updated. " +
+                    "Reload the user and try again.")
+            ]);
         }
     }
-
+    
+    private static EditUserValidationException CreateFinalSoteriaAdministratorException()
+    {
+        return new EditUserValidationException(
+        [
+            new ValidationFailure(
+                nameof(EditUserRequest.IsSoteriaAdministrator),
+                "The final Soteria Administrator cannot be removed. " +
+                "Assign another Soteria Administrator before removing this assignment.")
+        ]);
+    }
+    
     public async Task RemoveClientMembershipAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
     {
         var membership = await _dbContext.ClientMemberships
@@ -504,7 +585,7 @@ public sealed class UserService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     private async Task SendConfirmationEmailAsync(ApplicationUser user)
     {
         var userId = await _userManager.GetUserIdAsync(user);
@@ -603,3 +684,9 @@ public sealed class EditClientMembershipValidationException(IReadOnlyList<Valida
 
 public sealed class ClientMembershipNotFoundException(Guid userId, Guid clientMembershipId)
     : Exception($"Client Membership '{clientMembershipId}' could not be found for user '{userId}'.");
+
+public sealed class EditUserValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("User validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}

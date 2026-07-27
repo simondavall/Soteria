@@ -1,51 +1,72 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudStack Spacing="4">
-            @if (ErrorMessages.Count > 0)
-            {
-                <MudAlert Severity="Severity.Error"
-                          Variant="Variant.Outlined">
+        <MudForm @ref="Form"
+                 Model="@Request"
+                 Validation="@(EditUserValidator.ValidateValueAsync)">
 
-                    <MudList T="string"
-                             Dense="true">
+            <MudStack Spacing="4">
+                @if (ErrorMessages.Count > 0)
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
 
-                        @foreach (var message in ErrorMessages)
-                        {
-                            <MudListItem T="string">
-                                @message
-                            </MudListItem>
-                        }
-                    </MudList>
-                </MudAlert>
-            }
+                        <MudList T="string"
+                                 Dense="true">
 
-            <MudPaper Outlined="true"
-                      Class="pa-4">
+                            @foreach (var message in ErrorMessages)
+                            {
+                                <MudListItem T="string">
+                                    @message
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudAlert>
+                }
 
-                <MudStack Spacing="3">
-                    <MudText Typo="Typo.h6">
-                        User Details
-                    </MudText>
+                <MudPaper Outlined="true"
+                          Class="pa-4">
 
-                    <MudGrid Spacing="3">
-                        <MudItem xs="12" md="6">
-                            <MudTextField Value="@Request.UserId.ToString()"
-                                          Label="User ID"
-                                          ReadOnly="true"/>
-                        </MudItem>
+                    <MudStack Spacing="3">
+                        <MudStack Row="true">
+                            <MudText Typo="Typo.h6">
+                                User Details
+                            </MudText>
+                            <MudSpacer/>
+                            @if (Request.IsLockedOut)
+                            {
+                                <MudButton Variant="Variant.Outlined"
+                                           Color="Color.Warning"
+                                           StartIcon="@Icons.Material.Filled.LockOpen"
+                                           OnClick="@Unlock"
+                                           Disabled="IsSaving">
+                                    Unlock
+                                </MudButton>
+                            }
+                        </MudStack>
 
-                        <MudItem xs="12" md="6">
-                            <MudTextField Value="@Request.UserName"
-                                          Label="Username"
-                                          ReadOnly="true"/>
-                        </MudItem>
+                        <MudGrid Spacing="3">
+                            <MudItem xs="12"
+                                     md="6">
 
-                        <MudItem xs="12" md="6">
+                                <MudTextField Value="@Request.UserId.ToString()"
+                                              Label="User ID"
+                                              ReadOnly="true"/>
+                            </MudItem>
 
-                            <MudStack Spacing="3">
+                            <MudItem xs="12"
+                                     md="6">
+
+                                <MudTextField Value="@Request.UserName"
+                                              Label="Username"
+                                              ReadOnly="true"/>
+                            </MudItem>
+
+                            <MudItem xs="12"
+                                     md="6">
+
                                 <MudStack Row="true"
-                                          AlignItems="AlignItems.End"
-                                          Spacing="2">
+                                          AlignItems="AlignItems.Center"
+                                          Spacing="3">
 
                                     <MudText Typo="Typo.overline"
                                              Color="Color.Default">
@@ -53,40 +74,36 @@
                                     </MudText>
 
                                     <MudChip T="bool"
-                                             Color="@(Request.IsLockedOut ? Color.Error : Color.Success)"
+                                             Color="@(Request.IsLockedOut
+                                                        ? Color.Error
+                                                        : Color.Success)"
                                              Variant="Variant.Filled">
                                         @Request.IsLockedOut
                                     </MudChip>
                                     @if (Request.IsLockedOut)
                                     {
-                                        <MudButton Variant="Variant.Outlined"
-                                                   Color="Color.Warning"
-                                                   StartIcon="@Icons.Material.Filled.LockOpen"
-                                                   OnClick="@Unlock"
-                                                   Disabled="IsSaving">
-                                            Unlock
-                                        </MudButton>
+                                        <MudTextField Value="@FormatLockoutEnd(Request.LockoutEnd)"
+                                                      Label="Lockout End"
+                                                      ReadOnly="true"/>
                                     }
-
                                 </MudStack>
-
-
-                            </MudStack>
-                        </MudItem>
-                        
-                        @if (Request.IsLockedOut)
-                        {
-                            <MudItem xs="12" md="6">
-                                <MudTextField Value="@FormatLockoutEnd(Request.LockoutEnd)"
-                                              Label="Lockout End"
-                                              ReadOnly="true"/>
                             </MudItem>
-                        }
 
-                    </MudGrid>
-                </MudStack>
-            </MudPaper>
-        </MudStack>
+                            <MudItem xs="12"
+                                     md="6">
+
+                                <MudSwitch T="bool"
+                                           @bind-Value="Request.IsSoteriaAdministrator"
+                                           For="@(() => Request.IsSoteriaAdministrator)"
+                                           Color="Color.Primary"
+                                           Label="Soteria Admin"
+                                           Disabled="IsSaving"/>
+                            </MudItem>
+                        </MudGrid>
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        </MudForm>
     </DialogContent>
 
     <DialogActions>

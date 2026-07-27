@@ -516,22 +516,21 @@ reference resource API.
   - ✓ Preserve graceful handling when the selected user does not exist.
   - ✓ Verify the bootstrapped System Administrator is displayed correctly.
 
-- Manage Soteria Administrator status.
-  - Add a Soteria Administrator switch to the Edit User dialog.
-  - Retrieve the current Soteria Administrator assignment.
-  - Initialise the switch from the persisted assignment.
-  - Allow Soteria Administrator status to be enabled and disabled.
-  - Persist Soteria Administrator assignments through the User service.
-  - Preserve existing account unlock behaviour.
-  - Save lockout and Soteria Administrator changes together.
-  - Prevent duplicate Soteria Administrator assignments.
-  - Verify the selected user exists before saving.
-  - Display validation and persistence errors without closing the dialog.
-  - Refresh the User Details page after successful changes.
-  - Verify Soteria Administrator assignments are persisted.
-  - Verify Soteria Administrator assignments can be removed.
-  - Verify duplicate assignments are prevented.
-  - Verify cancelling leaves Soteria Administrator status unchanged.
+  - ✓ Add a Soteria Administrator switch to the Edit User dialog.
+  - ✓ Retrieve the current Soteria Administrator assignment.
+  - ✓ Initialise the switch from the persisted assignment.
+  - ✓ Allow Soteria Administrator status to be enabled and disabled.
+  - ✓ Persist Soteria Administrator assignments through the User service.
+  - ✓ Preserve existing account unlock behaviour.
+  - ✓ Save lockout and Soteria Administrator changes together.
+  - ✓ Prevent duplicate Soteria Administrator assignments.
+  - ✓ Verify the selected user exists before saving.
+  - ✓ Display validation and persistence errors without closing the dialog.
+  - ✓ Refresh the User Details page after successful changes.
+  - ✓ Verify Soteria Administrator assignments are persisted.
+  - ✓ Verify Soteria Administrator assignments can be removed.
+  - ✓ Verify duplicate assignments are prevented.
+  - ✓ Verify cancelling leaves Soteria Administrator status unchanged.
 
 - Enforce System Role authorisation.
   - Add the `SoteriaAdministrator` authorisation policy.
@@ -544,16 +543,6 @@ reference resource API.
   - Verify non-administrators are denied access.
   - Verify direct navigation is denied.
   - Verify direct service operations are denied.
-
-- Protect the final System Administrator.
-  - Detect the number of assigned System Administrators.
-  - Prevent removal of the final System Administrator assignment.
-  - Display a clear validation message when removal is blocked.
-  - Allow removal when another System Administrator exists.
-  - Enforce the rule within the application service.
-  - Verify the final System Administrator cannot be removed.
-  - Verify another System Administrator can be assigned.
-  - Verify an administrator can be removed once another exists.
 
 - Verify System Role isolation.
   - Verify System Roles do not create Client Memberships.

@@ -10,4 +10,5 @@ public sealed class EditUserRequest
     public bool IsLockedOut { get; set; }
     public DateTimeOffset? LockoutEnd { get; set; }
     public bool UnlockRequested { get; set; }
+    public bool IsSoteriaAdministrator { get; set; }
 }
