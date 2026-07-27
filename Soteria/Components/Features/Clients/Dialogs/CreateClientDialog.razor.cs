@@ -43,6 +43,10 @@ public partial class CreateClientDialog
         {
             ErrorMessages = exception.Failures.Select(e => e.ErrorMessage).ToList();
         }
+        catch (UnauthorizedAccessException exception)
+        {
+            ErrorMessages.Add(exception.Message);
+        }
         catch (Exception)
         {
             ErrorMessages.Add("The client application could not be created. Review the entered values and try again.");

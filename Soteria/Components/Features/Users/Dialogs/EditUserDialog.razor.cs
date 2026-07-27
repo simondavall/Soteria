@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Soteria.Components.Features.Authorization;
 using Soteria.Components.Features.Shared;
 
 // ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
@@ -11,6 +12,8 @@ public partial class EditUserDialog
     [Inject]
     private UserService UserService { get; set; } = default!;
     [Inject]
+    private ICurrentUserContext CurrentUserContext { get; set; } = default!;
+    [Inject]
     private IMudValidator<EditUserRequest> EditUserValidator { get; set; } = default!;
     
     [Parameter]
@@ -21,7 +24,13 @@ public partial class EditUserDialog
     private List<string> ErrorMessages { get; set; } = [];
     private bool IsSaving { get; set; }
     private MudForm Form { get; set; } = default!;
+    private bool CanManageSoteriaAdministrators { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        CanManageSoteriaAdministrators = await CurrentUserContext.IsSoteriaAdministratorAsync();
+    }
+    
     private void Unlock()
     {
         Request.IsLockedOut = false;
@@ -54,6 +63,10 @@ public partial class EditUserDialog
         catch (EditUserIdentityException exception)
         {
             ErrorMessages = exception.Errors.Select(error => error.Description).ToList();
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            ErrorMessages.Add(exception.Message);
         }
         catch (Exception)
         {
