@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Soteria.Components.Features.Shared;
 
 // ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
@@ -7,17 +8,19 @@ namespace Soteria.Components.Features.Users.Dialogs;
 
 public partial class EditUserDialog
 {
-    [Parameter]
-    public EditUserRequest Request { get; set; } = default!;
-
     [Inject]
     private UserService UserService { get; set; } = default!;
-
+    [Inject]
+    private IMudValidator<EditUserRequest> EditUserValidator { get; set; } = default!;
+    
+    [Parameter]
+    public EditUserRequest Request { get; set; } = default!;
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
 
     private List<string> ErrorMessages { get; set; } = [];
     private bool IsSaving { get; set; }
+    private MudForm Form { get; set; } = default!;
 
     private void Unlock()
     {
@@ -29,6 +32,14 @@ public partial class EditUserDialog
     private async Task SaveAsync()
     {
         ErrorMessages.Clear();
+
+        await Form.ValidateAsync();
+
+        if (!Form.IsValid)
+        {
+            return;
+        }
+
         IsSaving = true;
 
         try
@@ -36,16 +47,17 @@ public partial class EditUserDialog
             await UserService.UpdateUserAsync(Request);
             MudDialog.Close(DialogResult.Ok(true));
         }
+        catch (EditUserValidationException exception)
+        {
+            ErrorMessages = exception.Failures.Select(error => error.ErrorMessage).Distinct().ToList();
+        }
         catch (EditUserIdentityException exception)
         {
-            ErrorMessages = exception.Errors
-                .Select(error => error.Description)
-                .ToList();
+            ErrorMessages = exception.Errors.Select(error => error.Description).ToList();
         }
         catch (Exception)
         {
-            ErrorMessages.Add(
-                "The user could not be updated. Review the account and try again.");
+            ErrorMessages.Add("The user could not be updated. Review the account and try again.");
         }
         finally
         {

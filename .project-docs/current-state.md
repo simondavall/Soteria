@@ -13,26 +13,20 @@ where development should continue.
 
 # Current task
 
-- Manage Soteria Administrator status.
-  - Add a Soteria Administrator switch to the Edit User dialog.
-  - Retrieve the current Soteria Administrator assignment.
-  - Initialise the switch from the persisted assignment.
-  - Allow Soteria Administrator status to be enabled and disabled.
-  - Persist Soteria Administrator assignments through the User service.
-  - Preserve existing account unlock behaviour.
-  - Save lockout and Soteria Administrator changes together.
-  - Prevent duplicate Soteria Administrator assignments.
-  - Verify the selected user exists before saving.
-  - Display validation and persistence errors without closing the dialog.
-  - Refresh the User Details page after successful changes.
-  - Verify Soteria Administrator assignments are persisted.
-  - Verify Soteria Administrator assignments can be removed.
-  - Verify duplicate assignments are prevented.
-  - Verify cancelling leaves Soteria Administrator status unchanged.
+- Enforce System Role authorisation.
+  - Add the SoteriaAdministrator authorisation policy.
+  - Resolve System Role authorisation from persisted assignments.
+  - Restrict global administration to Soteria Administrators.
+  - Protect administration pages independently of navigation visibility.
+  - Protect System Role management operations.
+  - Prevent unauthorised System Role assignment requests.
+  - Verify Soteria Administrators can access global administration.
+  - Verify non-administrators are denied access.
+  - Verify direct navigation is denied.
+  - Verify direct service operations are denied.
 
 # Remaining milestone tasks
 
-- Enforce System Role authorisation.
 - Protect the final System Administrator.
 - Verify System Role isolation.
 
@@ -331,3 +325,17 @@ where development should continue.
 - Displayed the administrator indicator only for users assigned the SoteriaAdministrator System Role.
 - Preserved the existing Client Membership permissions display.
 - Verified the bootstrapped Soteria Administrator status is displayed correctly.
+- Added Soteria Administrator management to the Edit User dialog.
+- Displayed the current Soteria Administrator assignment using a dedicated switch.
+- Initialised the switch from the persisted System Role assignment.
+- Allowed Soteria Administrator assignments to be added and removed.
+- Persisted System Role assignment changes through the User service.
+- Preserved the existing account unlock workflow.
+- Persisted unlock and Soteria Administrator changes within a single save operation.
+- Prevented duplicate Soteria Administrator assignments.
+- Prevented removal of the final Soteria Administrator.
+- Added dedicated FluentValidation support for Edit User.
+- Added client-side MudBlazor validation for Soteria Administrator changes.
+- Introduced UserLookup queries for Soteria Administrator validation.
+- Preserved transactional validation during persistence to protect the final Soteria Administrator.
+- Verified Soteria Administrator assignment management.
