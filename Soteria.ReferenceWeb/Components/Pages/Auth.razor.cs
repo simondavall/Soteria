@@ -1,32 +1,42 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Soteria.ReferenceWeb.Components.Reference;
 
 namespace Soteria.ReferenceWeb.Components.Pages;
 
-public partial class Auth(IJSRuntime jsRuntime, NavigationManager navigationManager) : IAsyncDisposable
+public partial class Auth(
+    IJSRuntime jsRuntime,
+    NavigationManager navigationManager)
+    : IAsyncDisposable
 {
-    private IJSObjectReference? module;
-    private bool isLoading;
-    private string? responseMessage;
-    private string? errorMessage;
+    private readonly ApiCallState referenceApiState = new();
+    private readonly ApiCallState editorApiState = new();
+    private readonly ApiCallState auditorApiState = new();
+    private readonly ApiCallState reviewApiState = new();
 
-    private async Task CallReferenceApiAsync()
+    private IJSObjectReference? module;
+
+    private async Task CallReferenceApiAsync(
+        ApiCallState state,
+        string endpoint)
     {
-        isLoading = true;
-        responseMessage = null;
-        errorMessage = null;
+        state.Begin();
 
         try
         {
-            module ??= await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "import",
-                "./js/reference-api.js");
+            module ??=
+                await jsRuntime.InvokeAsync<IJSObjectReference>(
+                    "import",
+                    "./js/reference-api.js");
 
             var result =
-                await module.InvokeAsync<ReferenceApiResult>(
-                    "callReferenceApi");
+                await module.InvokeAsync<
+                    ReferenceApiResult<ReferenceResponse>>(
+                    "callReferenceApi",
+                    endpoint);
 
-            if (result.Status == StatusCodes.Status401Unauthorized)
+            if (result.Status ==
+                StatusCodes.Status401Unauthorized)
             {
                 navigationManager.NavigateTo(
                     "/Account/Login?returnUrl=/auth",
@@ -35,29 +45,37 @@ public partial class Auth(IJSRuntime jsRuntime, NavigationManager navigationMana
                 return;
             }
 
+            if (result.Status ==
+                StatusCodes.Status403Forbidden)
+            {
+                state.IsAccessDenied = true;
+                return;
+            }
+
             if (!result.Ok)
             {
-                errorMessage =
-                    result.Message ??
-                    $"The Reference API request failed with status " +
-                    $"{result.Status}.";
+                state.ErrorMessage =
+                    result.Message
+                    ?? $"The Reference API request failed with " +
+                    $"status {result.Status}.";
 
                 return;
             }
 
-            responseMessage =
-                result.Message ??
-                "The Reference API returned an empty response.";
+            state.SuccessMessage =
+                result.Data?.Message
+                ?? result.Message
+                ?? "The Reference API request succeeded.";
         }
         catch (JSException exception)
         {
-            errorMessage =
+            state.ErrorMessage =
                 $"The Reference API request could not be completed: " +
                 exception.Message;
         }
         finally
         {
-            isLoading = false;
+            state.Complete();
         }
     }
 
@@ -75,9 +93,4 @@ public partial class Auth(IJSRuntime jsRuntime, NavigationManager navigationMana
             }
         }
     }
-
-    private sealed record ReferenceApiResult(
-        bool Ok,
-        int Status,
-        string? Message);
 }

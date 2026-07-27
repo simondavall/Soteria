@@ -1,0 +1,31 @@
+﻿@if (!string.IsNullOrWhiteSpace(State.SuccessMessage))
+{
+    <div class="alert alert-success mt-3 mb-0"
+         role="status">
+        <strong>Success.</strong>
+        @State.SuccessMessage
+    </div>
+}
+
+@if (State.IsAccessDenied)
+{
+    <div class="alert alert-danger mt-3 mb-0"
+         role="alert">
+        <strong>Access denied.</strong>
+        The authenticated user does not have the Application Role
+        required by this API endpoint.
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(State.ErrorMessage))
+{
+    <div class="alert alert-danger mt-3 mb-0"
+         role="alert">
+        <strong>Request failed.</strong>
+        @State.ErrorMessage
+    </div>
+}
+
+@code {
+    [Parameter]
+    public ApiCallState State { get; set; } = null!;
+}

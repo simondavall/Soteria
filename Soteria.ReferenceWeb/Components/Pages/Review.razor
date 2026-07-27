@@ -4,6 +4,8 @@
 
 @attribute [Authorize(Policy = "EditorOrReviewer")]
 
+@inherits ReferencePolicyPageBase
+
 <PageTitle>Review</PageTitle>
 
 <h1>Review</h1>
@@ -25,3 +27,33 @@
         </p>
     </Authorized>
 </AuthorizeView>
+
+<button class="btn btn-primary"
+        disabled="@IsLoading"
+        @onclick="CallReferenceApiAsync">
+    @(IsLoading
+        ? "Calling API..."
+        : "Call Review API")
+</button>
+
+@if (!string.IsNullOrWhiteSpace(ResponseMessage))
+{
+    <div class="alert alert-success mt-3"
+         role="status">
+        @ResponseMessage
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <div class="alert alert-danger mt-3"
+         role="alert">
+        @ErrorMessage
+    </div>
+}
+
+@code {
+    protected override string ApiEndpoint => "review";
+
+    protected override string ReturnUrl => "/review";
+}

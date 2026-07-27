@@ -9,25 +9,80 @@
 <h1>You are authenticated</h1>
 
 <AuthorizeView>
-    Hello @context.User.Identity?.Name!
+    <p>
+        Hello <strong>@context.User.Identity?.Name</strong>!
+    </p>
 </AuthorizeView>
 
-<button class="btn btn-primary"
-        disabled="@isLoading"
-        @onclick="CallReferenceApiAsync">
-    @(isLoading ? "Calling API..." : "Call Reference API")
-</button>
+<section class="mb-5">
+    <h2 class="h4">Authenticated API</h2>
 
-@if (!string.IsNullOrWhiteSpace(responseMessage))
-{
-    <p class="mt-3" role="status">
-        @responseMessage
-    </p>
-}
+    <button class="btn btn-primary"
+            disabled="@referenceApiState.IsLoading"
+            @onclick='() => CallReferenceApiAsync(referenceApiState, "reference")'>
+        @(referenceApiState.IsLoading ? "Calling API..." : "Call Reference API")
+    </button>
 
-@if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-    <p class="mt-3 text-danger" role="alert">
-        @errorMessage
-    </p>
-}
+    <ApiResult State="@referenceApiState" />
+</section>
+
+<section>
+    <h2 class="h4">Protected APIs</h2>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-4">
+            <div class="border rounded p-3 h-100">
+                <h3 class="h5">Editor</h3>
+
+                <p>
+                    Requires the <strong>Editor</strong> Application Role.
+                </p>
+
+                <button class="btn btn-outline-primary"
+                        disabled="@editorApiState.IsLoading"
+                        @onclick='() => CallReferenceApiAsync(editorApiState, "editor")'>
+                    @(editorApiState.IsLoading ? "Calling Editor API..." : "Call Editor API")
+                </button>
+
+                <ApiResult State="@editorApiState" />
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="border rounded p-3 h-100">
+                <h3 class="h5">Auditor</h3>
+
+                <p>
+                    Requires the <strong>Auditor</strong> Application Role.
+                </p>
+
+                <button class="btn btn-outline-primary"
+                        disabled="@auditorApiState.IsLoading"
+                        @onclick='() => CallReferenceApiAsync(auditorApiState, "auditor")'>
+                    @(auditorApiState.IsLoading ? "Calling Auditor API..." : "Call Auditor API")
+                </button>
+
+                <ApiResult State="@auditorApiState" />
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="border rounded p-3 h-100">
+                <h3 class="h5">Review</h3>
+
+                <p>
+                    Requires either the <strong>Editor</strong> or
+                    <strong>Reviewer</strong> Application Role.
+                </p>
+
+                <button class="btn btn-outline-primary"
+                        disabled="@reviewApiState.IsLoading"
+                        @onclick='() => CallReferenceApiAsync(reviewApiState, "review")'>
+                    @(reviewApiState.IsLoading ? "Calling Review API..." : "Call Review API")
+                </button>
+
+                <ApiResult State="@reviewApiState" />
+            </div>
+        </div>
+    </div>
+</section>

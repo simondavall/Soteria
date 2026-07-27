@@ -9,16 +9,16 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 5.4 – Claim Issuance
+## Milestone 5.5 – System Administration Bootstrap
 
 # Current task
 
-Configure named authorisation policies in the reference applications.
-- Define named policies that map to Application Role names.
-- Configure the reference web application to use policy-based authorisation.
-- Demonstrate UI authorisation using issued role claims.
-- Configure the Reference API to use the same named policies.
-- Verify end-to-end authorisation using Application Role claims.
+Implement System Role assignment services.
+- Retrieve System Roles.
+- Retrieve System Role assignments for a user.
+- Assign System Roles.
+- Remove System Role assignments.
+- Prevent duplicate assignments.
 
 # Remaining milestone tasks
 
@@ -293,3 +293,14 @@ Configure named authorisation policies in the reference applications.
 - Preserved existing authorisation scope and resource resolution.
 - Verified client-isolated Application Role claim issuance.
 - Verified users without matching Client Memberships receive no Application Role claims.
+- Configured named authorisation policies in the Reference Web application.
+- Configured named authorisation policies in the Reference API.
+- Demonstrated page-level policy-based authorisation in the Reference Web application.
+- Demonstrated Minimal API policy-based authorisation in the Reference API.
+- Added development-only authenticated claims diagnostics to the Reference Web application.
+- Added development-only authenticated claims diagnostics to the Reference API.
+- Generalised the authenticated Reference API proxy to support multiple protected endpoints.
+- Generalised the authenticated JavaScript API helper for reusable endpoint invocation.
+- Added protected Editor, Auditor and Review demonstration endpoints.
+- Added authenticated API demonstrations to the Reference Web application.
+- Verified end-to-end Application Role authorisation using issued role claims.
