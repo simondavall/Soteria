@@ -13,16 +13,22 @@ where development should continue.
 
 # Current task
 
-Implement System Role assignment services.
-- Retrieve System Roles.
-- Retrieve System Role assignments for a user.
-- Assign System Roles.
-- Remove System Role assignments.
-- Prevent duplicate assignments.
+- Display System Roles on User Details.
+  - Add a System Roles section to the User Details Permissions card.
+  - Retrieve System Role assignments for the selected user.
+  - Display assigned System Role names and display names.
+  - Display an appropriate empty state when no System Roles are assigned.
+  - Keep System Roles visually separate from Client Memberships.
+  - Preserve graceful handling when the selected user does not exist.
+  - Verify System Roles belonging to other users are not displayed.
+  - Verify the bootstrapped System Administrator is displayed correctly.
 
 # Remaining milestone tasks
 
-- None
+- Manage System Role assignments.
+- Enforce System Role authorisation.
+- Protect the final System Administrator.
+- Verify System Role isolation.
 
 # Completed
 
@@ -304,3 +310,13 @@ Implement System Role assignment services.
 - Added protected Editor, Auditor and Review demonstration endpoints.
 - Added authenticated API demonstrations to the Reference Web application.
 - Verified end-to-end Application Role authorisation using issued role claims.
+- Defined a shared stable System Role identifier.
+- Reused the shared System Role identifier for database seeding.
+- Added configuration-driven bootstrap of the initial Soteria Administrator.
+- Added an idempotent Soteria Administrator startup initializer.
+- Assigned the Soteria Administrator System Role to an existing Identity user.
+- Preserved bootstrap credentials outside committed configuration using local environment configuration.
+- Prevented duplicate System Administrator assignments across repeated application startups.
+- Failed application startup with a clear error when the configured bootstrap user could not be found.
+- Verified initial System Administrator bootstrap.
+- Verified idempotent startup behaviour.

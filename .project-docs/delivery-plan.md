@@ -493,31 +493,77 @@ reference resource API.
 
 ## Milestone 5.5 – System Administration Bootstrap
 
-- Implement System Role assignment services.
-  - Retrieve System Roles.
-  - Retrieve System Role assignments for a user.
-  - Assign System Roles.
-  - Remove System Role assignments.
-  - Prevent duplicate assignments.
+- ✓ Bootstrap the initial Soteria Administrator.
+  - ✓ Define the stable `SoteriaAdministrator` System Role identifier.
+  - ✓ Continue seeding the `SoteriaAdministrator` System Role.
+  - ✓ Add configuration for the initial administrator email address.
+  - ✓ Create an idempotent startup initializer.
+  - ✓ Resolve an existing Identity user by configured email address.
+  - ✓ Assign `SoteriaAdministrator` through `UserSystemRole`.
+  - ✓ Skip bootstrap when a System Administrator already exists.
+  - ✓ Fail clearly when the configured bootstrap user cannot be found.
+  - ✓ Keep passwords and user credentials outside migrations and source control.
+  - ✓ Verify the initial administrator assignment is created.
+  - ✓ Verify repeated startups do not create duplicate assignments.
+  - ✓ Verify bootstrap is skipped once a System Administrator exists.
 
-- Bootstrap the initial Soteria Administrator.
-  - Define the bootstrap process.
-  - Detect the first application administrator.
-  - Assign the initial `SoteriaAdministrator` System Role.
-  - Prevent automatic assignment after initial bootstrap.
+- Display System Roles on User Details.
+  - Add a System Roles section to the User Details Permissions card.
+  - Retrieve System Role assignments for the selected user.
+  - Display assigned System Role names and display names.
+  - Display an appropriate empty state when no System Roles are assigned.
+  - Keep System Roles visually separate from Client Memberships.
+  - Preserve graceful handling when the selected user does not exist.
+  - Verify System Roles belonging to other users are not displayed.
+  - Verify the bootstrapped System Administrator is displayed correctly.
+
+- Manage System Role assignments.
+  - Add a Manage System Roles action to User Details.
+  - Create the System Role assignment dialog.
+  - Retrieve available System Roles.
+  - Display current System Role assignments.
+  - Allow System Roles to be assigned and removed.
+  - Retrieve System Roles through the application service.
+  - Persist System Role assignments through the application service.
+  - Prevent duplicate System Role assignments.
+  - Verify the selected user exists before saving.
+  - Display validation and persistence errors without closing the dialog.
+  - Refresh the Permissions card after successful changes.
+  - Verify System Role assignments are persisted.
+  - Verify System Role removals are persisted.
+  - Verify duplicate assignments are rejected.
+  - Verify cancelling leaves assignments unchanged.
 
 - Enforce System Role authorisation.
-  - Authorise global Soteria administration using System Roles.
+  - Add the `SoteriaAdministrator` authorisation policy.
+  - Resolve System Role authorisation from persisted assignments.
   - Restrict global administration to `SoteriaAdministrator`.
-  - Ensure System Roles do not grant Client Membership.
-  - Ensure System Roles are never issued to consuming applications.
+  - Protect administration pages independently of navigation visibility.
+  - Protect System Role management operations.
+  - Prevent unauthorised System Role assignment requests.
+  - Verify System Administrators can access global administration.
+  - Verify non-administrators are denied access.
+  - Verify direct navigation is denied.
+  - Verify direct service operations are denied.
 
-- Verify System Role behaviour.
-  - Verify initial bootstrap.
-  - Verify System Role assignment.
-  - Verify duplicate assignments are rejected.
-  - Verify non-administrators cannot access global administration.
-  - Verify System Roles are not included in issued tokens.
+- Protect the final System Administrator.
+  - Detect the number of assigned System Administrators.
+  - Prevent removal of the final System Administrator assignment.
+  - Display a clear validation message when removal is blocked.
+  - Allow removal when another System Administrator exists.
+  - Enforce the rule within the application service.
+  - Verify the final System Administrator cannot be removed.
+  - Verify another System Administrator can be assigned.
+  - Verify an administrator can be removed once another exists.
+
+- Verify System Role isolation.
+  - Verify System Roles do not create Client Memberships.
+  - Verify System Roles do not grant consuming-application access.
+  - Verify System Roles are not included in ID tokens.
+  - Verify System Roles are not included in access tokens.
+  - Verify Application Role claim issuance remains unchanged.
+  - Verify removing a System Role does not alter Client Memberships.
+  - Verify removing a Client Membership does not alter System Role assignments.
 
 ---
 
