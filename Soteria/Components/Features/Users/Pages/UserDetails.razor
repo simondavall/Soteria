@@ -1,8 +1,9 @@
 ﻿@page "/users/{UserId:guid}"
 
 @using Microsoft.AspNetCore.Authorization
+@using Soteria.Components.Features.Authorization
 
-@attribute [Authorize]
+@attribute [Authorize(Policy = SoteriaAuthorizationPolicies.Administration)]
 
 <PageTitle>User Details</PageTitle>
 
