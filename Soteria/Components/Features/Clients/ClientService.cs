@@ -45,7 +45,7 @@ public sealed class ClientService
             throw new UnauthorizedAccessException(
                 "Only Soteria Administrators can create client applications.");
         }
-        
+
         request.ClientId = request.ClientId.Trim();
         request.DisplayName = request.DisplayName.Trim();
         request.ClientHost = request.ClientHost.Trim().TrimEnd('/');
@@ -72,8 +72,7 @@ public sealed class ClientService
         await _applicationManager.CreateAsync(descriptor, cancellationToken);
     }
 
-    public async Task<EditClientRequest?> GetClientForEditAsync(string clientId,
-        CancellationToken cancellationToken = default)
+    public async Task<EditClientRequest?> GetClientForEditAsync(string clientId, CancellationToken cancellationToken = default)
     {
         var application = await GetClientAsync(clientId, cancellationToken);
         if (application is null)
@@ -92,12 +91,27 @@ public sealed class ClientService
 
     public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+
+        var query = _dbContext
             .Set<SoteriaApplication>()
             .AsNoTracking()
-            .Where(application => application.ClientId != null)
-            .OrderBy(application =>
-                application.DisplayName ?? application.ClientId)
+            .Where(application => application.ClientId != null);
+
+        if (!administrationScope.IsSoteriaAdministrator)
+        {
+            var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
+            if (administeredClientIds.Length == 0)
+            {
+                return [];
+            }
+
+            query = query.Where(application => administeredClientIds.Contains(application.Id));
+        }
+
+        return await query
+            .OrderBy(application => application.DisplayName ?? application.ClientId)
+            .ThenBy(application => application.ClientId)
             .Select(application => new ClientSummary(
                 application.ClientId!,
                 application.DisplayName ?? application.ClientId!,
@@ -107,13 +121,27 @@ public sealed class ClientService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<ClientApplicationDetails?> GetClientAsync(string clientId,
-        CancellationToken cancellationToken = default)
+    public async Task<ClientApplicationDetails?> GetClientAsync(string clientId, CancellationToken cancellationToken = default)
     {
-        var application = await _dbContext
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+
+        var query = _dbContext
             .Set<SoteriaApplication>()
             .AsNoTracking()
-            .Where(application => application.ClientId == clientId)
+            .Where(application => application.ClientId == clientId);
+
+        if (!administrationScope.IsSoteriaAdministrator)
+        {
+            var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
+            if (administeredClientIds.Length == 0)
+            {
+                return null;
+            }
+
+            query = query.Where(application => administeredClientIds.Contains(application.Id));
+        }
+
+        var application = await query
             .Select(application => new
             {
                 application.ClientId,
@@ -152,8 +180,14 @@ public sealed class ClientService
                 .ToList());
     }
 
-    public async Task<IReadOnlyList<ApplicationRoleSummary>> GetApplicationRolesAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ApplicationRoleSummary>> GetApplicationRolesAsync(string clientId,
+        CancellationToken cancellationToken = default)
     {
+        if (!await CanAdministerClientAsync(clientId, cancellationToken))
+        {
+            return [];
+        }
+
         return await _dbContext.ApplicationRoles
             .AsNoTracking()
             .Where(role => role.Application.ClientId == clientId)
@@ -166,13 +200,17 @@ public sealed class ClientService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<EditApplicationRoleRequest?> GetApplicationRoleForEditAsync(string clientId, string name, CancellationToken cancellationToken = default)
+    public async Task<EditApplicationRoleRequest?> GetApplicationRoleForEditAsync(string clientId, string name,
+        CancellationToken cancellationToken = default)
     {
+        if (!await CanAdministerClientAsync(clientId, cancellationToken))
+        {
+            return null;
+        }
+
         return await _dbContext.ApplicationRoles
             .AsNoTracking()
-            .Where(role =>
-                role.Application.ClientId == clientId &&
-                role.Name == name)
+            .Where(role => role.Application.ClientId == clientId && role.Name == name)
             .Select(role => new EditApplicationRoleRequest
             {
                 ClientId = clientId,
@@ -182,14 +220,18 @@ public sealed class ClientService
             })
             .SingleOrDefaultAsync(cancellationToken);
     }
-    
-    public async Task<DeleteApplicationRoleRequest?> GetApplicationRoleForRemovalAsync(string clientId, string name, CancellationToken cancellationToken = default)
+
+    public async Task<DeleteApplicationRoleRequest?> GetApplicationRoleForRemovalAsync(string clientId, string name,
+        CancellationToken cancellationToken = default)
     {
+        if (!await CanAdministerClientAsync(clientId, cancellationToken))
+        {
+            return null;
+        }
+
         return await _dbContext.ApplicationRoles
             .AsNoTracking()
-            .Where(role =>
-                role.Application.ClientId == clientId &&
-                role.Name == name)
+            .Where(role => role.Application.ClientId == clientId && role.Name == name)
             .Select(role => new DeleteApplicationRoleRequest
             {
                 ClientId = clientId,
@@ -198,50 +240,46 @@ public sealed class ClientService
             })
             .SingleOrDefaultAsync(cancellationToken);
     }
-    
-    public async Task RemoveApplicationRoleAsync(string clientId, string name, CancellationToken cancellationToken = default)
-    {
-        var role = await _dbContext.ApplicationRoles
-            .SingleOrDefaultAsync(
-                role =>
-                    role.Application.ClientId == clientId &&
-                    role.Name == name,
-                cancellationToken);
 
+    public async Task RemoveApplicationRoleAsync(string clientId, string name,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureCanAdministerClientAsync(clientId, cancellationToken);
+
+        var role = await _dbContext.ApplicationRoles
+            .SingleOrDefaultAsync(role => role.Application.ClientId == clientId && role.Name == name, cancellationToken);
         if (role is null)
         {
             throw new ApplicationRoleNotFoundException(clientId, name);
         }
 
         _dbContext.ApplicationRoles.Remove(role);
-        
+
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     public async Task UpdateApplicationRoleAsync(EditApplicationRoleRequest request, CancellationToken cancellationToken = default)
     {
+        await EnsureCanAdministerClientAsync(request.ClientId, cancellationToken);
+
         request.DisplayName = request.DisplayName.Trim();
         request.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
 
         var validationResult = await _editApplicationRoleValidator.ValidateAsync(request, cancellationToken);
-
         if (!validationResult.IsValid)
         {
-            throw new EditApplicationRoleValidationException(validationResult.Errors);
+            throw new EditApplicationRoleValidationException(
+                validationResult.Errors);
         }
 
         var role = await _dbContext.ApplicationRoles
             .Include(item => item.Application)
-            .SingleOrDefaultAsync(
-                item =>
-                    item.Application.ClientId == request.ClientId &&
-                    item.Name == request.Name,
-                cancellationToken);
-
+            .SingleOrDefaultAsync(item => item.Application.ClientId == request.ClientId && item.Name == request.Name, cancellationToken);
         if (role is null)
         {
             throw new InvalidOperationException(
-                $"The application role '{request.Name}' could not be found for client application '{request.ClientId}'.");
+                $"The application role '{request.Name}' could not be found " +
+                $"for client application '{request.ClientId}'.");
         }
 
         role.DisplayName = request.DisplayName;
@@ -249,14 +287,16 @@ public sealed class ClientService
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     public async Task CreateApplicationRoleAsync(CreateApplicationRoleRequest request, CancellationToken cancellationToken = default)
     {
+        await EnsureCanAdministerClientAsync(request.ClientId, cancellationToken);
+
+        request.Name = request.Name.Trim();
         request.DisplayName = request.DisplayName.Trim();
         request.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
 
         var validationResult = await _createApplicationRoleValidator.ValidateAsync(request, cancellationToken);
-
         if (!validationResult.IsValid)
         {
             throw new CreateApplicationRoleValidationException(validationResult.Errors);
@@ -264,9 +304,7 @@ public sealed class ClientService
 
         var application = await _dbContext
             .Set<SoteriaApplication>()
-            .SingleOrDefaultAsync(
-                item => item.ClientId == request.ClientId,
-                cancellationToken);
+            .SingleOrDefaultAsync(item => item.ClientId == request.ClientId, cancellationToken);
 
         if (application is null)
         {
@@ -294,11 +332,7 @@ public sealed class ClientService
             var duplicateExists =
                 await _dbContext.ApplicationRoles
                     .AsNoTracking()
-                    .AnyAsync(
-                        item =>
-                            item.ApplicationId == application.Id &&
-                            item.Name == request.Name,
-                        cancellationToken);
+                    .AnyAsync(item => item.ApplicationId == application.Id && item.Name == request.Name, cancellationToken);
 
             if (!duplicateExists)
             {
@@ -309,18 +343,20 @@ public sealed class ClientService
             [
                 new ValidationFailure(
                     nameof(CreateApplicationRoleRequest.Name),
-                    "An application role with this name already exists for this client application.")
+                    "An application role with this name already exists " +
+                    "for this client application.")
             ]);
         }
     }
 
     public async Task UpdateClientAsync(EditClientRequest request, CancellationToken cancellationToken = default)
     {
+        await EnsureCanAdministerClientAsync(request.ClientId, cancellationToken);
+
         request.DisplayName = request.DisplayName.Trim();
         request.ClientHost = request.ClientHost.Trim().TrimEnd('/');
 
         var validationResult = await _editClientValidator.ValidateAsync(request, cancellationToken);
-
         if (!validationResult.IsValid)
         {
             throw new EditClientValidationException(validationResult.Errors);
@@ -340,11 +376,11 @@ public sealed class ClientService
         if (application is not SoteriaApplication soteriaApplication)
         {
             throw new InvalidOperationException(
-                "The OpenIddict application is not using the Soteria application entity.");
+                "The OpenIddict application is not using the " +
+                "Soteria application entity.");
         }
 
         soteriaApplication.IsEnabled = request.IsEnabled;
-
         descriptor.DisplayName = request.DisplayName;
 
         descriptor.RedirectUris.Clear();
@@ -488,6 +524,36 @@ public sealed class ClientService
             .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         return string.Join(" ", words.Select(word => char.ToUpperInvariant(word[0]) + word[1..]));
+    }
+    
+    private async Task<bool> CanAdministerClientAsync(string clientId, CancellationToken cancellationToken)
+    {
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+        if (administrationScope.IsSoteriaAdministrator)
+        {
+            return true;
+        }
+
+        var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
+        if (administeredClientIds.Length == 0)
+        {
+            return false;
+        }
+
+        return await _dbContext
+            .Set<SoteriaApplication>()
+            .AsNoTracking()
+            .AnyAsync(application => application.ClientId == clientId && administeredClientIds.Contains(application.Id), cancellationToken);
+    }
+
+    private async Task EnsureCanAdministerClientAsync(string clientId, CancellationToken cancellationToken)
+    {
+        if (await CanAdministerClientAsync(clientId, cancellationToken))
+        {
+            return;
+        }
+
+        throw new UnauthorizedAccessException("You are not authorised to administer this client application.");
     }
 }
 
