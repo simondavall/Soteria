@@ -13,21 +13,21 @@ where development should continue.
 
 # Current task
 
-- Scope client administration.
-  - Display only administered client applications in the client listing.
-  - Prevent access to client applications outside the administrator's scope.
-  - Permit editing administered client applications.
-  - Permit enabling and disabling administered client applications.
-  - Permit Application Role management for administered client applications.
-  - Permit Membership Level changes for administered client applications.
-  - Permit appointment and revocation of Client Administrators through Membership Level.
-  - Prevent removal of the last Client Administrator from an active client application.
-  - Preserve Create Client as a Soteria Administrator-only action.
-  - Verify delegated client administration is limited to administered client applications.
+- Scope user administration.
+  - Display only users associated with administered client applications.
+  - Prevent access to users outside the administrator's scope.
+  - Display only Client Memberships belonging to administered client applications.
+  - Restrict Client Membership creation, editing and removal to administered client applications.
+  - Restrict Application Role assignment to administered client applications.
+  - Preserve Soteria Administrator assignment as a Soteria Administrator-only action.
+  - Preserve user self-service account management for all authenticated users.
+  - Permit delegated Membership Level changes.
+  - Permit appointment and revocation of Client Administrators.
+  - Prevent removal or demotion of the final Client Administrator from an active client application.
+  - Verify delegated administrators cannot modify unrelated client memberships.
 
 # Remaining milestone tasks
 
-- Scope user administration.
 - Enforce delegated administration within application services.
 
 # Completed
@@ -370,3 +370,13 @@ where development should continue.
 - Prevented Client Users from directly accessing administration pages.
 - Preserved Create Client as a Soteria Administrator-only action.
 - Preserved unrestricted Soteria Administrator access.
+- Scoped client administration to administered client applications.
+- Filtered the Client Applications list using the current user's delegated administration scope.
+- Prevented delegated administrators from viewing client applications outside their administration scope.
+- Prevented delegated administrators from directly accessing unrelated client applications.
+- Permitted delegated editing of administered client applications.
+- Permitted delegated enabling and disabling of administered client applications.
+- Permitted delegated Application Role creation, editing and removal for administered client applications.
+- Enforced delegated client authorisation consistently within ClientService.
+- Preserved Create Client as a Soteria Administrator-only operation.
+- Prevented unauthorised client and Application Role operations that bypass UI visibility.
