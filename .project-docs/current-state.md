@@ -9,18 +9,20 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 5.5 – System Administration Bootstrap
+## Milestone 5.7 – Delegated Client Administration
 
 # Current task
 
-- Verify System Role isolation.
-  - Verify System Roles do not create Client Memberships.
-  - Verify System Roles do not grant consuming-application access.
-  - Verify System Roles are not included in ID tokens.
-  - Verify System Roles are not included in access tokens.
-  - Verify Application Role claim issuance remains unchanged.
-  - Verify removing a System Role does not alter Client Memberships.
-  - Verify removing a Client Membership does not alter System Role assignments.
+- Implement first-run Soteria setup.
+  - Allow startup when no Identity users or Soteria Administrators exist.
+  - Add a protected first-run setup workflow.
+  - Require a deployment-supplied bootstrap secret.
+  - Create the initial Identity user and Soteria Administrator assignment.
+  - Disable setup after the first administrator is established.
+  - Preserve configuration-driven bootstrap for development.
+  - Protect against concurrent setup attempts.
+  - Verify a clean database can be initialised.
+  - Verify setup cannot be repeated.
 
 # Remaining milestone tasks
 
