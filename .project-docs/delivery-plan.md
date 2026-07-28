@@ -546,18 +546,20 @@ reference resource API.
   - ✓ Verify Soteria Administrators can use the protected actions.
   - ✓ Verify non-administrators cannot use the protected actions.
 
-- Verify System Role isolation.
-  - Verify System Roles do not create Client Memberships.
-  - Verify System Roles do not grant consuming-application access.
-  - Verify System Roles are not included in ID tokens.
-  - Verify System Roles are not included in access tokens.
-  - Verify Application Role claim issuance remains unchanged.
-  - Verify removing a System Role does not alter Client Memberships.
-  - Verify removing a Client Membership does not alter System Role assignments.
+- ✓ Implement first-run Soteria setup.
+  - ✓ Allow startup when no Identity users or Soteria Administrators exist.
+  - ✓ Preserve optional configuration-driven bootstrap for development.
+  - ✓ Display a one-time "Register Soteria Admin" navigation option when bootstrap registration is required.
+  - ✓ Restrict bootstrap registration to the first Soteria Administrator.
+  - ✓ Automatically assign the first registered user the persisted `SoteriaAdministrator` System Role.
+  - ✓ Disable bootstrap registration once a Soteria Administrator exists.
+  - ✓ Protect against concurrent bootstrap registration attempts.
+  - ✓ Verify a clean database can be initialised.
+  - ✓ Verify bootstrap registration cannot be repeated.
 
 ---
 
-## Milestone 5.7 – Delegated Client Administration
+## Milestone 5.6 – Delegated Client Administration
 
 - Implement delegated administration rules.
 
@@ -573,11 +575,9 @@ reference resource API.
 
 - Enforce client scope within application services.
 
-- Verify delegated administration.
-
 ---
 
-## Milestone 5.8 – Authorisation Enforcement
+## Milestone 5.7 – Authorisation Enforcement
 
 - Enforce client status during OpenID Connect requests.
 

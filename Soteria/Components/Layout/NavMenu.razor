@@ -73,11 +73,14 @@
         <NotAuthorized>
             <MudDivider Class="my-2"/>
 
-            <MudNavLink Href="/Account/Register"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.PersonAdd">
-                Register
-            </MudNavLink>
+            @if (BootstrapRegistrationRequired)
+            {
+                <MudNavLink Href="/Account/Register"
+                            Match="NavLinkMatch.Prefix"
+                            Icon="@Icons.Material.Filled.PersonAdd">
+                    Register Soteria Admin
+                </MudNavLink>
+            }
 
             <MudNavLink Href="/Account/Login"
                         Match="NavLinkMatch.Prefix"

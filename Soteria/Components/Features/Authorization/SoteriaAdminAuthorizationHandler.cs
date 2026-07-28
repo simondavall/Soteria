@@ -25,10 +25,9 @@ public sealed class SoteriaAdminAuthorizationHandler(SoteriaDbContext dbContext)
         var assignmentExists =
             await dbContext.UserSystemRoles
                 .AsNoTracking()
-                .AnyAsync(assignment =>
-                    assignment.UserId == userId
-                    && assignment.SystemRoleId
-                    == SystemRoleIds.SoteriaAdministrator);
+                .AnyAsync(assignment => 
+                    assignment.UserId == userId && 
+                    assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator);
 
         if (assignmentExists)
         {
