@@ -1,4 +1,5 @@
-﻿<MudNavMenu Class="pa-2">
+﻿@using Soteria.Components.Features.Authorization
+<MudNavMenu Class="pa-2">
     <MudNavLink Href="/"
                 Match="NavLinkMatch.All"
                 Icon="@Icons.Material.Filled.Home">
@@ -25,26 +26,30 @@
 
     <AuthorizeView>
         <Authorized Context="authContext">
-            <MudDivider Class="my-2"/>
-
-            <MudText Typo="Typo.overline"
-                     Color="Color.Secondary"
-                     Class="px-4 pt-2 pb-1">
-                Administration
-            </MudText>
-
-            <MudNavLink Href="/clients"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.Apps">
-                Client Applications
-            </MudNavLink>
-
-            <MudNavLink Href="/users"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.ManageAccounts">
-                Users
-            </MudNavLink>
             
+            <AuthorizeView Policy="@SoteriaAuthorizationPolicies.Administration">
+                <Authorized>
+                    <MudDivider Class="my-2"/>
+
+                    <MudText Typo="Typo.overline"
+                             Class="px-4 pt-4 pb-1">
+                        Administration
+                    </MudText>
+
+                    <MudNavLink Href="clients"
+                                Match="NavLinkMatch.Prefix"
+                                Icon="@Icons.Material.Filled.Apps">
+                        Client Applications
+                    </MudNavLink>
+
+                    <MudNavLink Href="users"
+                                Match="NavLinkMatch.Prefix"
+                                Icon="@Icons.Material.Filled.People">
+                        Users
+                    </MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+
             <MudDivider Class="my-2"/>
 
             <MudNavLink Href="/Account/Manage"

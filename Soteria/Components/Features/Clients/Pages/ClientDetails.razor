@@ -1,8 +1,9 @@
 ﻿@page "/clients/{ClientId}"
 
 @using Microsoft.AspNetCore.Authorization
+@using Soteria.Components.Features.Authorization
 
-@attribute [Authorize]
+@attribute [Authorize(Policy = SoteriaAuthorizationPolicies.Administration)]
 
 <PageTitle>Client Application Details</PageTitle>
 

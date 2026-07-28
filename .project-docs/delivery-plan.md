@@ -561,19 +561,44 @@ reference resource API.
 
 ## Milestone 5.6 – Delegated Client Administration
 
-- Implement delegated administration rules.
+- ✓ Establish delegated administration scope.
+  - ✓ Determine whether the current user is a Client Administrator.
+  - ✓ Resolve the client applications administered by the current user.
+  - ✓ Extend the current-user authorisation context with delegated administration information.
+  - ✓ Add a reusable delegated administration authorisation policy.
+  - ✓ Display the Administration navigation for Soteria Administrators and Client Administrators.
+  - ✓ Restrict Administration pages from direct access by Client Users.
+  - ✓ Add an Administration authorisation policy permitting Soteria Administrators and users with at least one Administrator-level Client Membership, and apply it to the Client Applications and Users pages.
+  - ✓ Verify Soteria Administrators retain unrestricted administration access.
+  - ✓ Verify Client Users cannot access administration features.
 
-  - Restrict Client Administrators to client applications they administer.
-  - Restrict user visibility to relevant client memberships.
-  - Prevent access to unrelated client information.
-  - Permit Client Administrators to register users for administered clients.
-  - Permit Client Administrators to manage membership for administered clients.
-  - Permit Client Administrators to appoint additional Client Administrators.
-  - Permit Client Administrators to revoke Client Administrator privileges.
+- Scope client administration.
+  - Display only administered client applications in the client listing.
+  - Prevent access to client applications outside the administrator's scope.
+  - Permit editing administered client applications.
+  - Permit enabling and disabling administered client applications.
+  - Permit Application Role management for administered client applications.
+  - Permit Membership Level changes for administered client applications.
+  - Permit appointment and revocation of Client Administrators through Membership Level.
+  - Prevent removal of the last Client Administrator from an active client application.
+  - Preserve Create Client as a Soteria Administrator-only action.
+  - Verify delegated client administration is limited to administered client applications.
 
-- Ensure each active client application retains at least one Client Administrator.
+- Scope user administration.
+  - Display only users associated with administered client applications.
+  - Prevent access to users outside the administrator's scope.
+  - Display only Client Memberships belonging to administered client applications.
+  - Restrict Client Membership creation, editing and removal to administered client applications.
+  - Restrict Application Role assignment to administered client applications.
+  - Preserve Soteria Administrator assignment as a Soteria Administrator-only action.
+  - Preserve user self-service account management for all authenticated users.
+  - Verify delegated administrators cannot modify unrelated client memberships.
 
-- Enforce client scope within application services.
+- Enforce delegated administration within application services.
+  - Apply delegated administration authorisation to client operations.
+  - Apply delegated administration authorisation to user and membership operations.
+  - Prevent unauthorised requests that bypass UI visibility.
+  - Verify delegated administration rules are enforced consistently by application services.
 
 ---
 
