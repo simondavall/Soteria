@@ -1,6 +1,4 @@
 ﻿using OpenIddict.Abstractions;
-using Permissions =
-    OpenIddict.Abstractions.OpenIddictConstants.Permissions;
 
 namespace Soteria.Data;
 

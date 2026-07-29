@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace Soteria.Components.Features.Users.Dialogs;
+namespace Soteria.Components.Features.ClientMemberships.Dialogs;
 
 public partial class DeleteClientMembershipDialog
 {

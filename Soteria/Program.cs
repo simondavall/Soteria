@@ -12,6 +12,8 @@ using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Account.Email;
 using Soteria.Components.Features.Authorization;
+using Soteria.Components.Features.ClientMemberships;
+using Soteria.Components.Features.ClientMemberships.Queries;
 using Soteria.Components.Features.Clients;
 using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
@@ -180,17 +182,20 @@ public class Program
         builder.Services.AddScoped<EditUserValidator>();
         builder.Services.AddScoped<IValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
         builder.Services.AddScoped<IMudValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
-
+        
+        builder.Services.AddScoped<IClientMembershipLookup, ClientMembershipLookup>();
+        builder.Services.AddScoped<IClientMembershipService, ClientMembershipService>();
+        
         builder.Services.AddScoped<CreateClientMembershipValidator>();
-        builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider =>
+        builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider => 
             provider.GetRequiredService<CreateClientMembershipValidator>());
-        builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider =>
+        builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider => 
             provider.GetRequiredService<CreateClientMembershipValidator>());
 
         builder.Services.AddScoped<EditClientMembershipValidator>();
-        builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider =>
+        builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider => 
             provider.GetRequiredService<EditClientMembershipValidator>());
-        builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider =>
+        builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider => 
             provider.GetRequiredService<EditClientMembershipValidator>());
 
         builder.Services.AddScoped<RemoveClientMembershipValidator>();

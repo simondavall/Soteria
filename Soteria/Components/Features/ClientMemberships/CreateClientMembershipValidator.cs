@@ -2,7 +2,7 @@
 using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.Shared;
 
-namespace Soteria.Components.Features.Users;
+namespace Soteria.Components.Features.ClientMemberships;
 
 public sealed class CreateClientMembershipValidator : AbstractValidator<CreateClientMembershipRequest>, IMudValidator<CreateClientMembershipRequest>
 {
@@ -20,8 +20,7 @@ public sealed class CreateClientMembershipValidator : AbstractValidator<CreateCl
             .NotEmpty()
             .WithMessage("Select a client application.")
             .MustAsync(ClientExistsAsync)
-            .WithMessage(
-                "The selected client application could not be found.");
+            .WithMessage("The selected client application could not be found.");
 
         RuleFor(request => request.MembershipLevel)
             .IsInEnum();
@@ -36,11 +35,8 @@ public sealed class CreateClientMembershipValidator : AbstractValidator<CreateCl
 
     private async Task<IEnumerable<string>> ValidatePropertyAsync(object model, string propertyName)
     {
-        var context =
-            ValidationContext<CreateClientMembershipRequest>
-                .CreateWithOptions(
-                    (CreateClientMembershipRequest)model,
-                    options => options.IncludeProperties(propertyName));
+        var context = ValidationContext<CreateClientMembershipRequest>
+            .CreateWithOptions((CreateClientMembershipRequest)model, options => options.IncludeProperties(propertyName));
 
         var result = await ValidateAsync(context);
 

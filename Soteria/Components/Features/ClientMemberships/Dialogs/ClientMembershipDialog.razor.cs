@@ -6,12 +6,12 @@ using Soteria.Data.Authorization;
 
 // ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
-namespace Soteria.Components.Features.Users.Dialogs;
+namespace Soteria.Components.Features.ClientMemberships.Dialogs;
 
 public partial class ClientMembershipDialog
 {
     [Inject]
-    private UserService UserService { get; set; } = default!;
+    private IClientMembershipService ClientMembershipService { get; set; } = default!;
     [Inject]
     private IClientApplicationLookup ClientApplicationLookup { get; set; } = default!;
     [Inject]
@@ -20,14 +20,14 @@ public partial class ClientMembershipDialog
     private IMudValidator<CreateClientMembershipRequest> CreateClientMembershipValidator { get; set; } = default!;
     [Inject]
     private IMudValidator<EditClientMembershipRequest> EditClientMembershipValidator { get; set; } = default!;
-
+    
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter]
     public Guid UserId { get; set; }
     [Parameter]
     public Guid? ClientMembershipId { get; set; }
-    
+
     private MudForm Form { get; set; } = default!;
     private CreateClientMembershipRequest CreateRequest { get; } = new();
     private EditClientMembershipRequest? EditRequest { get; set; }
@@ -37,7 +37,7 @@ public partial class ClientMembershipDialog
     private List<string> ErrorMessages { get; set; } = [];
     private bool IsLoading { get; set; }
     private bool IsSaving { get; set; }
-
+    
     private bool IsEditMode => ClientMembershipId.HasValue;
 
     private bool SaveDisabled =>
@@ -45,7 +45,7 @@ public partial class ClientMembershipDialog
         || IsSaving
         || (!IsEditMode && AvailableClients.Count == 0)
         || (IsEditMode && EditRequest is null);
-    
+
     protected override async Task OnParametersSetAsync()
     {
         ErrorMessages.Clear();
@@ -55,19 +55,15 @@ public partial class ClientMembershipDialog
         {
             if (IsEditMode)
             {
-                EditRequest = await UserService.GetClientMembershipForEditAsync(UserId, ClientMembershipId!.Value);
+                EditRequest = await ClientMembershipService.GetForEditAsync(UserId, ClientMembershipId!.Value);
                 if (EditRequest is null)
                 {
                     ApplicationRoles = [];
                     return;
                 }
 
-                ApplicationRoles = await UserService.GetClientMembershipApplicationRolesAsync(UserId, EditRequest.ClientMembershipId);
-
-                EditRequest.AvailableApplicationRoleIds =
-                    ApplicationRoles
-                        .Select(role => role.ApplicationRoleId)
-                        .ToList();
+                ApplicationRoles = await ClientMembershipService.GetApplicationRolesAsync(UserId, EditRequest.ClientMembershipId);
+                EditRequest.AvailableApplicationRoleIds = ApplicationRoles.Select(role => role.ApplicationRoleId).ToList();
             }
             else
             {
@@ -105,11 +101,11 @@ public partial class ClientMembershipDialog
         {
             if (IsEditMode)
             {
-                await UserService.UpdateClientMembershipAsync(EditRequest!);
+                await ClientMembershipService.UpdateAsync(EditRequest!);
             }
             else
             {
-                await UserService.CreateClientMembershipAsync(CreateRequest);
+                await ClientMembershipService.CreateAsync(CreateRequest);
             }
 
             MudDialog.Close(DialogResult.Ok(true));
@@ -132,8 +128,7 @@ public partial class ClientMembershipDialog
         }
         catch (Exception)
         {
-            ErrorMessages.Add(
-                IsEditMode
+            ErrorMessages.Add(IsEditMode
                     ? "The Client Membership could not be updated. Review the selected values and try again."
                     : "The Client Membership could not be created. Review the selected values and try again.");
         }
@@ -159,16 +154,16 @@ public partial class ClientMembershipDialog
                 }
             };
 
-        var options = new DialogOptions
-        {
-            CloseButton = true,
-            MaxWidth = MaxWidth.ExtraSmall,
-            FullWidth = true,
-            BackdropClick = false
-        };
+        var options =
+            new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.ExtraSmall,
+                FullWidth = true,
+                BackdropClick = false
+            };
 
         var dialog = await DialogService.ShowAsync<DeleteClientMembershipDialog>("Remove Client Membership", parameters, options);
-
         var result = await dialog.Result;
         if (result is null || result.Canceled)
         {
@@ -177,12 +172,14 @@ public partial class ClientMembershipDialog
 
         try
         {
-            await UserService.RemoveClientMembershipAsync(
+            await ClientMembershipService.RemoveAsync(
                 new RemoveClientMembershipRequest
                 {
                     UserId = EditRequest.UserId,
-                    ClientMembershipId = EditRequest.ClientMembershipId
+                    ClientMembershipId =
+                        EditRequest.ClientMembershipId
                 });
+
             MudDialog.Close(DialogResult.Ok(true));
         }
         catch (ClientMembershipNotFoundException)
@@ -202,7 +199,7 @@ public partial class ClientMembershipDialog
             ErrorMessages = ["The Client Membership could not be removed."];
         }
     }
-    
+
     private bool IsRoleSelected(Guid applicationRoleId)
     {
         return EditRequest?.SelectedApplicationRoleIds.Contains(applicationRoleId) == true;
