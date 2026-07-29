@@ -60,7 +60,8 @@ public class Program
         builder.Services.AddScoped<IAuthorizationHandler, SoteriaAdminAuthorizationHandler>();
         builder.Services.AddScoped<IAuthorizationHandler, AdministrationAuthorizationHandler>();
         builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
-        builder.Services.AddScoped<IOpenIdConnectAuthorizationContext, OpenIdConnectAuthorizationContext>();
+        builder.Services.AddScoped<IOpenIdAuthorizationContext, OpenIdAuthorizationContext>();
+        builder.Services.AddScoped<IOpenIdPrincipalFactory, OpenIdPrincipalFactory>();
         
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
