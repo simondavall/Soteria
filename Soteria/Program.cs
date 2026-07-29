@@ -135,7 +135,7 @@ public class Program
 
                 options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
                     .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
-
+                
                 //options.DisableAccessTokenEncryption();
 
                 options.RegisterScopes(

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using Soteria.Components.Features.OpenIdConnect;
-
 // ReSharper disable CheckNamespace
 
 namespace Microsoft.AspNetCore.Routing;

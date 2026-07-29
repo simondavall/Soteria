@@ -33,7 +33,7 @@ public sealed class AccessTokenManager(IOptionsMonitor<OpenIdConnectOptions> ope
         var accessToken = properties.GetTokenValue("access_token");
         var refreshToken = properties.GetTokenValue("refresh_token");
         var expiresAtValue = properties.GetTokenValue("expires_at");
-
+        
         if (string.IsNullOrWhiteSpace(accessToken))
         {
             throw new AccessTokenRenewalException(

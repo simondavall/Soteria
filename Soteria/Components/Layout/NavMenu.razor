@@ -58,21 +58,11 @@
                 @authContext.User.Identity?.Name
             </MudNavLink>
 
-            <form action="/Account/Logout" method="post">
-                <AntiforgeryToken/>
-                <input type="hidden"
-                       name="ReturnUrl"
-                       value="@CurrentRelativeUrl"/>
-
-                <MudButton ButtonType="ButtonType.Submit"
-                           Variant="Variant.Text"
-                           Color="Color.Inherit"
-                           StartIcon="@Icons.Material.Filled.Logout"
-                           FullWidth="true"
-                           Class="justify-start">
-                    Log out
-                </MudButton>
-            </form>
+            <MudNavLink Href="/Account/Logout"
+                        Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.Logout">
+                Log out
+            </MudNavLink>
         </Authorized>
 
         <NotAuthorized>
