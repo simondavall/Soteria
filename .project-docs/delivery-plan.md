@@ -609,44 +609,44 @@ reference resource API.
 
 ## Milestone 5.7 – OpenID Connect Authorisation Enforcement
 
-- ✓ Create reusable OpenID Connect authorisation context.
-  - ✓ Create a reusable `IOpenIdConnectAuthorizationContext` service.
+- ✓ Create reusable OpenId authorisation context.
+  - ✓ Create a reusable `IOpenIdAuthorizationContext` service.
   - ✓ Resolve the requesting client application.
   - ✓ Resolve the authenticated Identity user.
   - ✓ Resolve the user's `ClientMembership` for the requesting client.
   - ✓ Resolve assigned `ApplicationRole` names.
-  - ✓ Return a single immutable OpenID Connect authorisation context.
+  - ✓ Return a single immutable OpenId authorisation context.
   - ✓ Cache the resolved context for the lifetime of the request.
   - ✓ Define consistent resolution failure states.
   - ✓ Verify only roles belonging to the resolved `ClientMembership` are returned.
 
-- Extract OpenID Connect principal creation
-  - Create a reusable OpenID Connect principal factory.
-  - Build principals from the resolved authorisation context.
-  - Preserve existing identity claim issuance.
-  - Preserve existing Application Role claim issuance.
-  - Preserve existing scope-sensitive claim destinations.
-  - Preserve existing resource resolution.
-  - Replace inline principal construction within the authorisation endpoint.
+- ✓ Extract OpenId principal creation.
+  - ✓ Create a reusable `IOpenIdPrincipalFactory`.
+  - ✓ Build principals from the resolved authorisation context.
+  - ✓ Preserve existing identity claim issuance.
+  - ✓ Preserve existing Application Role claim issuance.
+  - ✓ Preserve existing scope-sensitive claim destinations.
+  - ✓ Preserve existing resource resolution.
+  - ✓ Replace inline principal construction within the authorisation endpoint.
 
-- Enforce Client Membership during authorisation requests
-  - Consume the shared OpenID Connect authorisation context.
-  - Reject requests when the client cannot be resolved.
-  - Reject requests when the authenticated user cannot be resolved.
-  - Reject requests when no matching ClientMembership exists.
-  - Preserve existing consent behaviour.
-  - Preserve existing token lifetime behaviour.
-  - Verify successful authorisation for valid client memberships.
+- ✓ Enforce Client Membership during authorisation requests.
+  - ✓ Consume the shared OpenId authorisation context.
+  - ✓ Reject requests when the client cannot be resolved.
+  - ✓ Reject requests when the authenticated user cannot be resolved.
+  - ✓ Reject requests when no matching `ClientMembership` exists.
+  - ✓ Preserve existing consent behaviour.
+  - ✓ Preserve existing token lifetime behaviour.
+  - ✓ Verify successful authorisation for valid client memberships.
 
-- Enforce Client Membership during token redemption
-  - Consume the shared OpenID Connect authorisation context during authorisation-code redemption.
-  - Consume the shared OpenID Connect authorisation context during refresh-token redemption.
+- Enforce Client Membership during token redemption.
+  - Consume the shared OpenId authorisation context during authorisation-code redemption.
+  - Consume the shared OpenId authorisation context during refresh-token redemption.
   - Reject redemption when the client or membership is no longer valid.
   - Preserve rolling refresh-token behaviour.
   - Preserve existing token lifetime behaviour.
   - Verify revoked memberships immediately prevent further token issuance.
 
-- Verify end-to-end application authorisation
+- Verify end-to-end application authorisation.
   - Verify existing Soteria administration behaviour remains unchanged.
   - Verify successful authorisation for valid client memberships.
   - Verify failed authorisation for missing client memberships.

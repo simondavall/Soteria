@@ -17,11 +17,16 @@ var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
                     ?? throw new InvalidOperationException(
                         "The OpenIddict:EncryptionKey configuration value is required.");
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-});
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "ReferenceApi.Authentication";
+    });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -91,7 +96,8 @@ app.MapGet("/api/auditor", (ClaimsPrincipal user) => Results.Ok(new { Message = 
     .RequireAuthorization("Auditor")
     .WithName("GetAuditor");
 
-app.MapGet("/api/review", (ClaimsPrincipal user) => Results.Ok(new { Message = $"Reference API Editor or Reviewer policy satisfied for {DisplayName(user)}." }))
+app.MapGet("/api/review",
+        (ClaimsPrincipal user) => Results.Ok(new { Message = $"Reference API Editor or Reviewer policy satisfied for {DisplayName(user)}." }))
     .RequireAuthorization("EditorOrReviewer")
     .WithName("GetReview");
 
