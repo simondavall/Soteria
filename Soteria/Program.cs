@@ -73,11 +73,9 @@ public class Program
         });
 
         var connectionString = builder.Configuration.GetConnectionString("SoteriaDb")
-                               ?? throw new InvalidOperationException(
-                                   "Connection string 'SoteriaDb' not found.");
+                               ?? throw new InvalidOperationException("Connection string 'SoteriaDb' not found.");
 
-        builder.Services.AddDbContext<SoteriaDbContext>(options =>
-            options.UseSqlite(connectionString));
+        builder.Services.AddDbContext<SoteriaDbContext>(options => options.UseSqlite(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
         builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -94,20 +92,17 @@ public class Program
         var accessTokenLifetimeMinutes = tokenConfiguration.GetValue<int>("AccessTokenLifetimeMinutes");
         if (accessTokenLifetimeMinutes <= 0)
         {
-            throw new InvalidOperationException(
-                "OpenIddict:Tokens:AccessTokenLifetimeMinutes must be greater than zero.");
+            throw new InvalidOperationException("OpenIddict:Tokens:AccessTokenLifetimeMinutes must be greater than zero.");
         }
 
         var refreshTokenLifetimeDays = tokenConfiguration.GetValue<int>("RefreshTokenLifetimeDays");
         if (refreshTokenLifetimeDays <= 0)
         {
-            throw new InvalidOperationException(
-                "OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
+            throw new InvalidOperationException("OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
         }
 
         var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
-                            ?? throw new InvalidOperationException(
-                                "The OpenIddict:EncryptionKey configuration value is required.");
+                            ?? throw new InvalidOperationException("The OpenIddict:EncryptionKey configuration value is required.");
 
         builder.Services.AddOpenIddict()
             .AddCore(options =>
@@ -198,6 +193,10 @@ public class Program
         builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider =>
             provider.GetRequiredService<EditClientMembershipValidator>());
 
+        builder.Services.AddScoped<RemoveClientMembershipValidator>();
+        builder.Services.AddScoped<IValidator<RemoveClientMembershipRequest>>(provider => 
+            provider.GetRequiredService<RemoveClientMembershipValidator>());
+        
         builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
 
         builder.Services.AddTransient<CreateApplicationRoleValidator>();

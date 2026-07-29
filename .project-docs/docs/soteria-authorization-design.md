@@ -363,3 +363,11 @@ Implements:
 - Administrative authority does not imply application access.
 - Every authorisation decision begins with Client Membership.
 - Only roles belonging to the requesting client are issued.
+
+---
+
+# Additional notes:
+
+Client Administrators may view the basic Identity details of a known user so that an existing account can be added to an administered client application. User discovery remains scoped through the User List. Client Memberships, Membership Levels and Application Roles are visible and manageable only for client applications administered by the current user.
+
+Client Administrators may see whether a user is a Soteria Administrator, but they may not modify that assignment.
