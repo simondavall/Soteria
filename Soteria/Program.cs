@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using OpenIddict.Abstractions;
+using OpenIddict.Server;
 using static OpenIddict.Server.OpenIddictServerEvents;
 using Soteria.Components;
 using Soteria.Components.Account;
@@ -60,6 +61,8 @@ public class Program
         builder.Services.AddScoped<IAuthorizationHandler, SoteriaAdminAuthorizationHandler>();
         builder.Services.AddScoped<IAuthorizationHandler, AdministrationAuthorizationHandler>();
         builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+        
+        builder.Services.AddScoped<IOpenIdClientMembershipResolver, OpenIdClientMembershipResolver>();
         builder.Services.AddScoped<IOpenIdAuthorizationContext, OpenIdAuthorizationContext>();
         builder.Services.AddScoped<IOpenIdPrincipalFactory, OpenIdPrincipalFactory>();
         
@@ -132,7 +135,7 @@ public class Program
 
                 options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
                     .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
-
+                
                 //options.DisableAccessTokenEncryption();
 
                 options.RegisterScopes(
@@ -152,6 +155,12 @@ public class Program
                     .UseScopedHandler<ValidateClientIsEnabled>()
                     .SetOrder(int.MaxValue - 100_000));
 
+                options.AddEventHandler<HandleTokenRequestContext>(b => b
+                    .UseScopedHandler<ValidateClientMembership>()
+                    .SetOrder(
+                        OpenIddictServerHandlers.Exchange.AttachPrincipal.Descriptor.Order +
+                        1_000));
+                
                 options.UseAspNetCore()
                     .EnableAuthorizationEndpointPassthrough()
                     .EnableEndSessionEndpointPassthrough()

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using Soteria.Data;
 using Soteria.Data.Authorization;
@@ -29,8 +28,7 @@ public sealed record OpenIdAuthorizationResolution(ResolvedOpenIdAuthorizationCo
         return new OpenIdAuthorizationResolution(context, OpenIdAuthorizationResolutionFailure.None);
     }
 
-    public static OpenIdAuthorizationResolution Failed(OpenIdAuthorizationResolutionFailure failure,
-        ResolvedOpenIdAuthorizationContext? context = null)
+    public static OpenIdAuthorizationResolution Failed(OpenIdAuthorizationResolutionFailure failure, ResolvedOpenIdAuthorizationContext? context = null)
     {
         return new OpenIdAuthorizationResolution(context, failure);
     }
@@ -51,8 +49,7 @@ public enum OpenIdAuthorizationResolutionFailure
 public sealed class OpenIdAuthorizationContext(
     IHttpContextAccessor httpContextAccessor,
     UserManager<ApplicationUser> userManager,
-    IOpenIddictApplicationManager applicationManager,
-    SoteriaDbContext dbContext)
+    IOpenIdClientMembershipResolver clientMembershipResolver)
     : IOpenIdAuthorizationContext
 {
     private OpenIdAuthorizationResolution? _resolution;
@@ -67,8 +64,9 @@ public sealed class OpenIdAuthorizationContext(
         }
 
         var httpContext = httpContextAccessor.HttpContext
-                          ?? throw new InvalidOperationException("The current HTTP context is unavailable.");
-
+                          ?? throw new InvalidOperationException(
+                              "The current HTTP context is unavailable.");
+        
         var authenticationResult = await httpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -88,64 +86,15 @@ public sealed class OpenIdAuthorizationContext(
         }
 
         var request = httpContext.GetOpenIddictServerRequest();
+
         if (request is null)
         {
             return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.AuthorizationRequestUnavailable));
         }
 
-        if (string.IsNullOrWhiteSpace(request.ClientId))
-        {
-            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientIdentifierUnavailable));
-        }
+        var resolution = await clientMembershipResolver.ResolveAsync(request.ClientId, user.Id.ToString(), cancellationToken);
 
-        var application = await applicationManager.FindByClientIdAsync(request.ClientId, cancellationToken);
-        if (application is not SoteriaApplication soteriaApplication)
-        {
-            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientApplicationNotFound));
-        }
-
-        var applicationIdValue = await applicationManager.GetIdAsync(application, cancellationToken);
-        if (!Guid.TryParse(applicationIdValue, out var applicationId))
-        {
-            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientApplicationIdentifierInvalid));
-        }
-
-        var clientMembership =
-            await dbContext.ClientMemberships
-                .AsNoTracking()
-                .Include(membership => membership.ApplicationRoleAssignments)
-                .ThenInclude(assignment => assignment.ApplicationRole)
-                .SingleOrDefaultAsync(membership =>
-                        membership.UserId == user.Id &&
-                        membership.ApplicationId == applicationId,
-                    cancellationToken);
-
-        if (clientMembership is null)
-        {
-            var context =
-                new ResolvedOpenIdAuthorizationContext(
-                    soteriaApplication,
-                    user,
-                    ClientMembership: null,
-                    ApplicationRoleNames: []);
-
-            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientMembershipNotFound, context));
-        }
-
-        var applicationRoleNames =
-            clientMembership.ApplicationRoleAssignments
-                .Where(assignment => assignment.ApplicationId == applicationId && assignment.ApplicationRole.ApplicationId == applicationId)
-                .Select(assignment => assignment.ApplicationRole.Name)
-                .Distinct(StringComparer.Ordinal)
-                .OrderBy(roleName => roleName, StringComparer.Ordinal)
-                .ToList();
-
-        return Cache(OpenIdAuthorizationResolution.Success(
-            new ResolvedOpenIdAuthorizationContext(
-                soteriaApplication,
-                user,
-                clientMembership,
-                applicationRoleNames)));
+        return Cache(resolution);
     }
 
     private OpenIdAuthorizationResolution Cache(OpenIdAuthorizationResolution resolution)

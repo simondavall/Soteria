@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Server.AspNetCore;
-
 // ReSharper disable CheckNamespace
 
 namespace Microsoft.AspNetCore.Routing;
