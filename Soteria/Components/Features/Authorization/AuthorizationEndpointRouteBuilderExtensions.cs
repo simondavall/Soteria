@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
-using Soteria.Data;
+using Soteria.Components.Features.OpenIdConnect;
+
 // ReSharper disable CheckNamespace
 
 namespace Microsoft.AspNetCore.Routing;
@@ -17,102 +17,74 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
-        return endpoints.MapMethods(
-            "/connect/authorize",
-            [HttpMethods.Get, HttpMethods.Post],
-            HandleAuthorizationAsync);
+        return endpoints.MapMethods("/connect/authorize", [HttpMethods.Get, HttpMethods.Post], HandleAuthorizationAsync);
     }
 
     private static async Task<IResult> HandleAuthorizationAsync(
         HttpContext context,
-        UserManager<ApplicationUser> userManager,
+        IOpenIdConnectAuthorizationContext authorizationContext,
         IOpenIddictApplicationManager applicationManager,
-        IOpenIddictScopeManager scopeManager,
-        SoteriaDbContext dbContext)
+        IOpenIddictScopeManager scopeManager)
     {
-        var authenticationResult = await context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
-        if (!authenticationResult.Succeeded)
+        var resolution = await authorizationContext.GetAsync(context.RequestAborted);
+
+        if (resolution.Failure == OpenIdConnectAuthorizationResolutionFailure.NotAuthenticated)
         {
-            var returnUrl = context.Request.GetEncodedPathAndQuery();
-            var loginUrl = QueryHelpers.AddQueryString("/Account/Login", "ReturnUrl", returnUrl);
-            context.Response.Redirect(loginUrl);
-            return Results.Empty;
+            return RedirectToLogin(context);
         }
 
-        var request = context.GetOpenIddictServerRequest()
-            ?? throw new InvalidOperationException(
-                "The OpenIddict authorization request is unavailable.");
-
-        var user = await userManager.GetUserAsync(authenticationResult.Principal);
-        if (user is null)
+        if (resolution.Failure == OpenIdConnectAuthorizationResolutionFailure.IdentityUserNotFound)
         {
             await context.SignOutAsync(IdentityConstants.ApplicationScheme);
+
             context.Response.Redirect("/Account/Login");
             return Results.Empty;
         }
 
-        var application = await applicationManager.FindByClientIdAsync(
-            request.ClientId
-            ?? throw new InvalidOperationException(
-                "The OpenIddict client identifier is unavailable."),
-            context.RequestAborted);
+        ThrowForUnresolvableRequest(resolution);
 
-        if (application is null)
-        {
-            throw new InvalidOperationException("The OpenIddict client application is unavailable.");
-        }
+        var resolvedContext = resolution.Context
+                              ?? throw new InvalidOperationException(
+                                  "The OpenID Connect authorisation context is unavailable.");
 
-        var applicationIdValue = await applicationManager.GetIdAsync(application, context.RequestAborted);
-        if (!Guid.TryParse(applicationIdValue, out var applicationId))
-        {
-            throw new InvalidOperationException("The OpenIddict client application identifier is invalid.");
-        }
+        var request = context.GetOpenIddictServerRequest()
+                      ?? throw new InvalidOperationException(
+                          "The OpenIddict authorization request is unavailable.");
 
-        var consentType = await applicationManager.GetConsentTypeAsync(application, context.RequestAborted);
-        // Soteria supports only administrator-managed clients, which use implicit consent.
-        // Other consent types require workflows that are not currently supported.
+        var consentType = await applicationManager.GetConsentTypeAsync(resolvedContext.Application, context.RequestAborted);
+
+        // Soteria supports only administrator-managed clients, which use
+        // implicit consent. Other consent types require workflows that are
+        // not currently supported.
         if (!string.Equals(consentType, OpenIddictConstants.ConsentTypes.Implicit, StringComparison.Ordinal))
         {
-            var properties = new AuthenticationProperties(
-                new Dictionary<string, string?>
-                {
-                    [OpenIddictServerAspNetCoreConstants.Properties.Error] =
-                        OpenIddictConstants.Errors.ConsentRequired,
-
-                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
-                        "The client application requires user consent."
-                });
+            var properties =
+                new AuthenticationProperties(
+                    new Dictionary<string, string?>
+                    {
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] =
+                            OpenIddictConstants.Errors.ConsentRequired,
+                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+                            "The client application requires user consent."
+                    });
 
             return Results.Forbid(properties, [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
         }
 
-        var userName = await userManager.GetUserNameAsync(user)
-            ?? throw new InvalidOperationException("The authenticated user does not have a user name.");
+        var userName = GetRequiredUserNameAsync(resolvedContext.User, context.RequestAborted);
+        var email = GetRequiredEmailAsync(resolvedContext.User, context.RequestAborted);
 
-        var email = await userManager.GetEmailAsync(user)
-            ?? throw new InvalidOperationException("The authenticated user does not have an email address.");
+        var identity =
+            new ClaimsIdentity(
+                authenticationType: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                nameType: OpenIddictConstants.Claims.Name,
+                roleType: OpenIddictConstants.Claims.Role);
 
-        var applicationRoleNames = await dbContext.ClientMemberships
-            .AsNoTracking()
-            .Where(membership =>
-                membership.UserId == user.Id
-                && membership.ApplicationId == applicationId)
-            .SelectMany(membership => membership.ApplicationRoleAssignments)
-            .Select(assignment => assignment.ApplicationRole.Name)
-            .Distinct()
-            .OrderBy(roleName => roleName)
-            .ToListAsync(context.RequestAborted);
-
-        var identity = new ClaimsIdentity(
-            authenticationType: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-            nameType: OpenIddictConstants.Claims.Name,
-            roleType: OpenIddictConstants.Claims.Role);
-
-        identity.AddClaim(OpenIddictConstants.Claims.Subject, user.Id.ToString());
+        identity.AddClaim(OpenIddictConstants.Claims.Subject, resolvedContext.User.Id.ToString());
         identity.AddClaim(OpenIddictConstants.Claims.Name, userName);
         identity.AddClaim(OpenIddictConstants.Claims.Email, email);
 
-        foreach (var applicationRoleName in applicationRoleNames)
+        foreach (var applicationRoleName in resolvedContext.ApplicationRoleNames)
         {
             identity.AddClaim(OpenIddictConstants.Claims.Role, applicationRoleName);
         }
@@ -121,6 +93,7 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         principal.SetScopes(request.GetScopes());
 
         var resources = new List<string>();
+
         await foreach (var resource in scopeManager.ListResourcesAsync(principal.GetScopes(), context.RequestAborted))
         {
             resources.Add(resource);
@@ -160,5 +133,63 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         });
 
         return Results.SignIn(principal, authenticationScheme: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
+
+    private static IResult RedirectToLogin(HttpContext context)
+    {
+        var returnUrl = context.Request.GetEncodedPathAndQuery();
+        var loginUrl = QueryHelpers.AddQueryString("/Account/Login", "ReturnUrl", returnUrl);
+        context.Response.Redirect(loginUrl);
+
+        return Results.Empty;
+    }
+
+    private static void ThrowForUnresolvableRequest(OpenIdConnectAuthorizationResolution resolution)
+    {
+        switch (resolution.Failure)
+        {
+            case OpenIdConnectAuthorizationResolutionFailure.None:
+            case OpenIdConnectAuthorizationResolutionFailure.ClientMembershipNotFound:
+                return;
+
+            case OpenIdConnectAuthorizationResolutionFailure.AuthorizationRequestUnavailable:
+                throw new InvalidOperationException(
+                    "The OpenIddict authorization request is unavailable.");
+
+            case OpenIdConnectAuthorizationResolutionFailure.ClientIdentifierUnavailable:
+                throw new InvalidOperationException(
+                    "The OpenIddict client identifier is unavailable.");
+
+            case OpenIdConnectAuthorizationResolutionFailure.ClientApplicationNotFound:
+                throw new InvalidOperationException(
+                    "The OpenIddict client application is unavailable.");
+
+            case OpenIdConnectAuthorizationResolutionFailure.ClientApplicationIdentifierInvalid:
+                throw new InvalidOperationException(
+                    "The OpenIddict client application identifier is invalid.");
+
+            case OpenIdConnectAuthorizationResolutionFailure.NotAuthenticated:
+            case OpenIdConnectAuthorizationResolutionFailure.IdentityUserNotFound:
+                throw new InvalidOperationException(
+                    "The Identity user resolution failure was not handled.");
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(resolution.Failure), resolution.Failure,
+                    "The OpenID Connect authorisation resolution failure is unknown.");
+        }
+    }
+
+    private static string GetRequiredUserNameAsync(Soteria.Data.ApplicationUser user, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return user.UserName ?? throw new InvalidOperationException("The authenticated user does not have a user name.");
+    }
+
+    private static string GetRequiredEmailAsync(Soteria.Data.ApplicationUser user, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return user.Email ?? throw new InvalidOperationException("The authenticated user does not have an email address.");
     }
 }
