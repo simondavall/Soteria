@@ -16,6 +16,7 @@ using Soteria.Components.Features.ClientMemberships;
 using Soteria.Components.Features.ClientMemberships.Queries;
 using Soteria.Components.Features.Clients;
 using Soteria.Components.Features.Clients.Queries;
+using Soteria.Components.Features.OpenIdConnect;
 using Soteria.Components.Features.Shared;
 using Soteria.Components.Features.Users;
 using Soteria.Components.Features.Users.Queries;
@@ -54,10 +55,13 @@ public class Program
             });
         });
 
+        builder.Services.AddHttpContextAccessor();
+
         builder.Services.AddScoped<IAuthorizationHandler, SoteriaAdminAuthorizationHandler>();
         builder.Services.AddScoped<IAuthorizationHandler, AdministrationAuthorizationHandler>();
         builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
-
+        builder.Services.AddScoped<IOpenIdConnectAuthorizationContext, OpenIdConnectAuthorizationContext>();
+        
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 

@@ -9,26 +9,24 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 5.6 – Delegated Client Administration
+## Milestone 5.7 – OpenID Connect Authorisation Enforcement
 
 # Current task
 
-- Scope user administration.
-  - Display only users associated with administered client applications.
-  - Prevent access to users outside the administrator's scope.
-  - Display only Client Memberships belonging to administered client applications.
-  - Restrict Client Membership creation, editing and removal to administered client applications.
-  - Restrict Application Role assignment to administered client applications.
-  - Preserve Soteria Administrator assignment as a Soteria Administrator-only action.
-  - Preserve user self-service account management for all authenticated users.
-  - Permit delegated Membership Level changes.
-  - Permit appointment and revocation of Client Administrators.
-  - Prevent removal or demotion of the final Client Administrator from an active client application.
-  - Verify delegated administrators cannot modify unrelated client memberships.
+- Extract OpenID Connect principal creation.
+  - Create a reusable OpenID Connect principal factory.
+  - Build principals from the resolved authorisation context.
+  - Preserve existing identity claim issuance.
+  - Preserve existing Application Role claim issuance.
+  - Preserve existing scope-sensitive claim destinations.
+  - Preserve existing resource resolution.
+  - Replace inline principal construction within the authorisation endpoint.
 
 # Remaining milestone tasks
 
-- Enforce delegated administration within application services.
+- Enforce Client Membership during authorisation requests
+- Enforce Client Membership during token redemption
+- Verify end-to-end application authorisation
 
 # Completed
 
@@ -380,3 +378,30 @@ where development should continue.
 - Enforced delegated client authorisation consistently within ClientService.
 - Preserved Create Client as a Soteria Administrator-only operation.
 - Prevented unauthorised client and Application Role operations that bypass UI visibility.
+- Added delegated administration support to the user administration feature.
+- Filtered the User Administration list to users associated with administered client applications.
+- Relaxed User Details access to permit delegated administration of known users.
+- Scoped displayed Client Memberships to administered client applications.
+- Restricted Client Membership creation to administered client applications.
+- Restricted Client Membership editing and removal to administered client applications.
+- Restricted Application Role assignment to administered client applications.
+- Permitted delegated Membership Level changes.
+- Permitted delegated appointment and revocation of Client Administrators.
+- Prevented removal or demotion of the final Client Administrator from a client application.
+- Enforced delegated authorisation consistently within UserService.
+- Enforced delegated authorisation consistently within ClientMembershipService.
+- Protected user and Client Membership operations from requests that bypass UI visibility.
+- Introduced a dedicated Client Membership feature.
+- Extracted Client Membership operations into its own ClientMembership feature.
+- Introduced a reusable OpenID Connect authorisation context.
+- Added a dedicated request-scoped OpenID Connect authorisation context service.
+- Resolved the requesting client application for OpenID Connect processing.
+- Resolved the authenticated Identity user for OpenID Connect processing.
+- Resolved the user's Client Membership for the requesting client application.
+- Resolved Application Role assignments from the current Client Membership.
+- Returned a single immutable OpenID Connect authorisation context.
+- Cached the resolved OpenID Connect authorisation context for the lifetime of the request.
+- Defined consistent OpenID Connect authorisation resolution failure states.
+- Replaced inline OpenID Connect authorisation resolution within the authorisation endpoint.
+- Preserved existing OpenID Connect authorisation behaviour pending Client Membership enforcement.
+- Verified only Application Roles belonging to the resolved Client Membership are returned.

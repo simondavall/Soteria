@@ -583,77 +583,76 @@ reference resource API.
   - ✓ Prevent unauthorised client and Application Role operations that bypass UI visibility.
   - ✓ Verify delegated client administration is limited to administered client applications.
 
-- Scope user administration.
-  - Display only users associated with administered client applications.
-  - Prevent access to users outside the administrator's scope.
-  - Display only Client Memberships belonging to administered client applications.
-  - Restrict Client Membership creation, editing and removal to administered client applications.
-  - Restrict Application Role assignment to administered client applications.
-  - Preserve Soteria Administrator assignment as a Soteria Administrator-only action.
-  - Preserve user self-service account management for all authenticated users.
-  - Restrict Client Membership operations to administered clients.
-  - Permit delegated Membership Level changes.
-  - Permit appointment and revocation of Client Administrators.
-  - Prevent removal or demotion of the final Client Administrator from an active client application.
-  - Verify delegated administrators cannot modify unrelated client memberships.
+- ✓ Scope user administration.
+  - ✓ Display only users associated with administered client applications.
+  - ✓ Restrict user discovery to users associated with administered client applications.
+  - ✓ Permit access to the basic User Details of a known user.
+  - ✓ Prevent disclosure of Client Memberships belonging to unrelated client applications.
+  - ✓ Display only Client Memberships belonging to administered client applications.
+  - ✓ Restrict Client Membership creation, editing and removal to administered client applications.
+  - ✓ Restrict Application Role assignment to administered client applications.
+  - ✓ Preserve Soteria Administrator assignment as a Soteria Administrator-only action.
+  - ✓ Preserve user self-service account management for all authenticated users.
+  - ✓ Restrict Client Membership operations to administered clients.
+  - ✓ Permit delegated Membership Level changes.
+  - ✓ Permit appointment and revocation of Client Administrators.
+  - ✓ Prevent removal or demotion of the final Client Administrator from an active client application.
+  - ✓ Verify delegated administrators cannot modify unrelated client memberships.
 
-- Enforce delegated administration within application services.
+- ✓ Enforce delegated administration within application services.
   - ✓ Apply delegated administration authorisation to client operations.
-  - Apply delegated administration authorisation to user and membership operations.
-  - Prevent unauthorised requests that bypass UI visibility.
-  - Verify delegated administration rules are enforced consistently by application services.
+  - ✓ Apply delegated administration authorisation to user and membership operations.
+  - ✓ Prevent unauthorised requests that bypass UI visibility.
+  - ✓ Verify delegated administration rules are enforced consistently by application services.
 
 ---
 
-## Milestone 5.7 – Authorisation Enforcement
+## Milestone 5.7 – OpenID Connect Authorisation Enforcement
 
-- Enforce client status during OpenID Connect requests.
+- ✓ Create reusable OpenID Connect authorisation context.
+  - ✓ Create a reusable `IOpenIdConnectAuthorizationContext` service.
+  - ✓ Resolve the requesting client application.
+  - ✓ Resolve the authenticated Identity user.
+  - ✓ Resolve the user's `ClientMembership` for the requesting client.
+  - ✓ Resolve assigned `ApplicationRole` names.
+  - ✓ Return a single immutable OpenID Connect authorisation context.
+  - ✓ Cache the resolved context for the lifetime of the request.
+  - ✓ Define consistent resolution failure states.
+  - ✓ Verify only roles belonging to the resolved `ClientMembership` are returned.
 
-  - Preserve the existing enabled-client validation.
-  - Preserve the existing user-friendly browser error handling.
+- Extract OpenID Connect principal creation
+  - Create a reusable OpenID Connect principal factory.
+  - Build principals from the resolved authorisation context.
+  - Preserve existing identity claim issuance.
+  - Preserve existing Application Role claim issuance.
+  - Preserve existing scope-sensitive claim destinations.
+  - Preserve existing resource resolution.
+  - Replace inline principal construction within the authorisation endpoint.
 
-- Enforce Client Membership during authorisation.
+- Enforce Client Membership during authorisation requests
+  - Consume the shared OpenID Connect authorisation context.
+  - Reject requests when the client cannot be resolved.
+  - Reject requests when the authenticated user cannot be resolved.
+  - Reject requests when no matching ClientMembership exists.
+  - Preserve existing consent behaviour.
+  - Preserve existing token lifetime behaviour.
+  - Verify successful authorisation for valid client memberships.
 
-  - Resolve the requesting client application.
-  - Load the authenticated user's Client Membership.
-  - Reject the authorisation request when membership does not exist.
-  - Prevent authorisation-code and token issuance.
+- Enforce Client Membership during token redemption
+  - Consume the shared OpenID Connect authorisation context during authorisation-code redemption.
+  - Consume the shared OpenID Connect authorisation context during refresh-token redemption.
+  - Reject redemption when the client or membership is no longer valid.
+  - Preserve rolling refresh-token behaviour.
+  - Preserve existing token lifetime behaviour.
+  - Verify revoked memberships immediately prevent further token issuance.
 
-- Enforce Client Membership during authorisation-code redemption.
-
-  - Revalidate the client application.
-  - Revalidate Client Membership.
-  - Reload current Application Roles.
-  - Reject redemption when membership no longer exists.
-
-- Enforce Client Membership during refresh-token redemption.
-
-  - Revalidate the user.
-  - Revalidate the client application.
-  - Revalidate Client Membership.
-  - Reload current Application Roles.
-  - Reject refresh when membership no longer exists.
-  - Issue updated claims when role assignments have changed.
-
-- Restrict Soteria administration pages.
-
-  - Authorise global administration using System Roles.
-  - Authorise delegated administration using Membership Level.
-  - Protect user, client, membership and role-management pages.
-
-- Enforce authorisation within application services.
-
-  - Do not rely solely on page or component visibility.
-  - Apply client scoping to all delegated administration operations.
-
-- Verify end-to-end authorisation.
-
-  - Verify users without Client Membership cannot authenticate to the client.
-  - Verify membership removal prevents future token issuance.
-  - Verify role changes appear in newly issued tokens.
-  - Verify existing access tokens remain valid until expiry.
-  - Verify consuming applications enforce Application Role policies.
-  - Verify Soteria administration access follows System Role and Membership Level rules.
+- Verify end-to-end application authorisation
+  - Verify existing Soteria administration behaviour remains unchanged.
+  - Verify successful authorisation for valid client memberships.
+  - Verify failed authorisation for missing client memberships.
+  - Verify failed authorisation following membership removal.
+  - Verify failed refresh-token redemption following membership removal.
+  - Verify end-to-end Application Role claim issuance remains correct.
 
 ---
 
