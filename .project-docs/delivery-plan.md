@@ -629,14 +629,14 @@ reference resource API.
   - ✓ Preserve existing resource resolution.
   - ✓ Replace inline principal construction within the authorisation endpoint.
 
-- Enforce Client Membership during authorisation requests.
-  - Consume the shared OpenId authorisation context.
-  - Reject requests when the client cannot be resolved.
-  - Reject requests when the authenticated user cannot be resolved.
-  - Reject requests when no matching `ClientMembership` exists.
-  - Preserve existing consent behaviour.
-  - Preserve existing token lifetime behaviour.
-  - Verify successful authorisation for valid client memberships.
+- ✓ Enforce Client Membership during authorisation requests.
+  - ✓ Consume the shared OpenId authorisation context.
+  - ✓ Reject requests when the client cannot be resolved.
+  - ✓ Reject requests when the authenticated user cannot be resolved.
+  - ✓ Reject requests when no matching `ClientMembership` exists.
+  - ✓ Preserve existing consent behaviour.
+  - ✓ Preserve existing token lifetime behaviour.
+  - ✓ Verify successful authorisation for valid client memberships.
 
 - Enforce Client Membership during token redemption.
   - Consume the shared OpenId authorisation context during authorisation-code redemption.

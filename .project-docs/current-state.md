@@ -13,18 +13,16 @@ where development should continue.
 
 # Current task
 
-- Enforce Client Membership during authorisation requests.
-  - Consume the shared OpenId authorisation context.
-  - Reject requests when the client cannot be resolved.
-  - Reject requests when the authenticated user cannot be resolved.
-  - Reject requests when no matching ClientMembership exists.
-  - Preserve existing consent behaviour.
+- Enforce Client Membership during token redemption.
+  - Consume the shared OpenId authorisation context during authorisation-code redemption.
+  - Consume the shared OpenId authorisation context during refresh-token redemption.
+  - Reject redemption when the client or membership is no longer valid.
+  - Preserve rolling refresh-token behaviour.
   - Preserve existing token lifetime behaviour.
-  - Verify successful authorisation for valid client memberships.
+  - Verify revoked memberships immediately prevent further token issuance.
 
 # Remaining milestone tasks
 
-- Enforce Client Membership during token redemption
 - Verify end-to-end application authorisation
 
 # Completed
@@ -414,3 +412,14 @@ where development should continue.
 - Reduced the OpenId authorisation endpoint to request flow, consent validation and principal issuance.
 - Preserved existing OpenID Connect claims, scopes, resources and token contents.
 - Verified principal creation behaviour remains unchanged following the refactoring.
+- Enforced Client Membership during OpenID Connect authorisation requests.
+- Rejected authorisation requests for users without a Client Membership for the requesting client application.
+- Returned `access_denied` for unauthorised client membership requests.
+- Added a dedicated friendly authentication error for missing Client Memberships.
+- Preserved existing implicit consent behaviour.
+- Preserved existing OpenID Connect principal creation.
+- Preserved existing OpenID Connect claims, scopes, resources and token contents.
+- Added support for interactive account switching using `prompt=login`.
+- Preserved Soteria single sign-on while allowing authentication as a different user.
+- Verified successful authorisation for valid Client Memberships.
+- Verified users without a Client Membership cannot obtain an authorisation code.
