@@ -63,7 +63,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddCookie(options =>
     {
-        options.Cookie.Name = "ReferenceApi.Authentication";
+        options.Cookie.Name = "ReferenceWeb.Authentication";
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
 
@@ -155,15 +155,20 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
-app.MapGet("/Account/Login", (string? returnUrl) =>
+app.MapGet("/Account/Login", (string? returnUrl, bool switchAccount = false) =>
 {
     var redirectUri = IsLocalReturnUrl(returnUrl) ? returnUrl! : "/";
-    return Results.Challenge(
-        new AuthenticationProperties
-        {
-            RedirectUri = redirectUri
-        },
-        [OpenIdConnectDefaults.AuthenticationScheme]);
+    var properties = new OpenIdConnectChallengeProperties
+    {
+        RedirectUri = redirectUri
+    };
+
+    if (switchAccount)
+    {
+        properties.Prompt = OpenIdConnectPrompt.Login;
+    }
+
+    return Results.Challenge(properties, [OpenIdConnectDefaults.AuthenticationScheme]);
 });
 
 app.MapPost("/Account/Logout", () => Results.SignOut(

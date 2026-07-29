@@ -25,7 +25,7 @@ builder.Services
     })
     .AddCookie(options =>
     {
-        options.Cookie.Name = "ReferenceWeb.Authentication";
+        options.Cookie.Name = "ReferenceApi.Authentication";
     });
 
 builder.Services.AddAuthorization(options =>

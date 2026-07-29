@@ -27,6 +27,17 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         IOpenIdPrincipalFactory principalFactory,
         IOpenIddictApplicationManager applicationManager)
     {
+        OpenIddictRequest? request = context.GetOpenIddictServerRequest()
+                      ?? throw new InvalidOperationException(
+                          "The OpenIddict authorization request is unavailable.");
+
+        if (request.HasPromptValue(OpenIddictConstants.PromptValues.Login))
+        {
+            return RedirectToLogin(
+                context,
+                removeLoginPrompt: true);
+        }
+
         var resolution = await authorizationContext.GetAsync(context.RequestAborted);
 
         if (resolution.Failure == OpenIdAuthorizationResolutionFailure.NotAuthenticated)
@@ -52,10 +63,6 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         var resolvedContext = resolution.Context
                               ?? throw new InvalidOperationException(
                                   "The OpenID authorisation context is unavailable.");
-
-        var request = context.GetOpenIddictServerRequest()
-                      ?? throw new InvalidOperationException(
-                          "The OpenIddict authorization request is unavailable.");
 
         var consentType = await applicationManager.GetConsentTypeAsync(resolvedContext.Application, context.RequestAborted);
 
@@ -99,15 +106,53 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         return Results.Forbid(properties, [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
     }
 
-    private static IResult RedirectToLogin(HttpContext context)
+    private static IResult RedirectToLogin(HttpContext context, bool removeLoginPrompt = false)
     {
-        var returnUrl = context.Request.GetEncodedPathAndQuery();
+        var returnUrl = removeLoginPrompt
+                ? CreateReturnUrlWithoutLoginPrompt(context)
+                : context.Request.GetEncodedPathAndQuery();
+
         var loginUrl = QueryHelpers.AddQueryString("/Account/Login", "ReturnUrl", returnUrl);
         context.Response.Redirect(loginUrl);
 
         return Results.Empty;
     }
 
+    private static string CreateReturnUrlWithoutLoginPrompt(HttpContext context)
+    {
+        var queryBuilder = new QueryBuilder();
+
+        foreach (var parameter in context.Request.Query)
+        {
+            if (!string.Equals(parameter.Key, OpenIddictConstants.Parameters.Prompt, StringComparison.Ordinal))
+            {
+                foreach (var value in parameter.Value)
+                {
+                    queryBuilder.Add(parameter.Key, value ?? string.Empty);
+                }
+
+                continue;
+            }
+
+            foreach (var remainingPrompts in parameter.Value
+                         .Select(GetRemainingPrompts)
+                         .Where(remainingPrompts => remainingPrompts.Length > 0))
+            {
+                queryBuilder.Add(parameter.Key, string.Join(' ', remainingPrompts));
+            }
+        }
+
+        return $"{context.Request.PathBase}{context.Request.Path}{queryBuilder.ToQueryString()}";
+    }
+
+    private static string[] GetRemainingPrompts(string? value)
+    {
+        return value?
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(prompt => !string.Equals(prompt, OpenIddictConstants.PromptValues.Login, StringComparison.Ordinal))
+            .ToArray() ?? [];
+    }
+    
     private static void ThrowForUnresolvableRequest(OpenIdAuthorizationResolution resolution)
     {
         switch (resolution.Failure)
