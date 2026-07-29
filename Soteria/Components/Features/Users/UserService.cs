@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Soteria.Components.Features.Authorization;
+using Soteria.Components.Features.Clients.Queries;
 using Soteria.Data;
 using Soteria.Data.Authorization;
 using Soteria.Data.OpenIddict;
@@ -24,6 +25,7 @@ public sealed class UserService
     private readonly IValidator<EditUserRequest> _editUserValidator;
     private readonly IValidator<CreateClientMembershipRequest> _createClientMembershipValidator;
     private readonly IValidator<EditClientMembershipRequest> _editClientMembershipValidator;
+    private readonly IValidator<RemoveClientMembershipRequest> _removeClientMembershipValidator;
     private readonly ICurrentUserContext _currentUserContext;
 
     public UserService(
@@ -36,6 +38,7 @@ public sealed class UserService
         IValidator<EditUserRequest> editUserValidator,
         IValidator<CreateClientMembershipRequest> createClientMembershipValidator,
         IValidator<EditClientMembershipRequest> editClientMembershipValidator,
+        IValidator<RemoveClientMembershipRequest> removeClientMembershipValidator,
         ICurrentUserContext currentUserContext)
     {
         _dbContext = dbContext;
@@ -47,6 +50,7 @@ public sealed class UserService
         _editUserValidator = editUserValidator;
         _createClientMembershipValidator = createClientMembershipValidator;
         _editClientMembershipValidator = editClientMembershipValidator;
+        _removeClientMembershipValidator = removeClientMembershipValidator;
         _currentUserContext = currentUserContext;
     }
 
@@ -86,61 +90,92 @@ public sealed class UserService
 
     public async Task<IReadOnlyList<UserSummary>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
-        var now = DateTimeOffset.UtcNow;
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
 
-        return await _dbContext.Users
-            .AsNoTracking()
+        if (administrationScope is { IsSoteriaAdministrator: false, AdministeredClientIds.Count: 0 })
+        {
+            return [];
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        var query = _dbContext.Users
+            .AsNoTracking();
+
+        if (!administrationScope.IsSoteriaAdministrator)
+        {
+            query = query.WhereUserAdministered(administrationScope);
+        }
+
+        return await query
             .OrderBy(user => user.UserName)
             .ThenBy(user => user.Id)
-            .Select(user => new UserSummary(
-                user.Id,
-                user.UserName ?? string.Empty,
-                user.DisplayName,
-                user.Email ?? string.Empty,
-                user.EmailConfirmed,
-                user.LockoutEnd.HasValue
-                && user.LockoutEnd.Value > now))
+            .Select(user =>
+                new UserSummary(
+                    user.Id,
+                    user.UserName ?? string.Empty,
+                    user.DisplayName,
+                    user.Email ?? string.Empty,
+                    user.EmailConfirmed,
+                    user.LockoutEnd.HasValue && user.LockoutEnd.Value > now))
             .ToListAsync(cancellationToken);
     }
 
     public async Task<UserDetailsModel?> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+        if (administrationScope is { IsSoteriaAdministrator: false, AdministeredClientIds.Count: 0 })
+        {
+            return null;
+        }
+
         var now = DateTimeOffset.UtcNow;
 
         return await _dbContext.Users
             .AsNoTracking()
             .Where(user => user.Id == userId)
-            .Select(user => new UserDetailsModel(
-                user.Id,
-                user.UserName ?? string.Empty,
-                user.DisplayName,
-                user.Email ?? string.Empty,
-                user.EmailConfirmed,
-                user.LockoutEnd.HasValue
-                && user.LockoutEnd.Value > now,
-                user.LockoutEnd,
-                _dbContext.UserSystemRoles.Any(assignment =>
-                    assignment.UserId == user.Id
-                    && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator)))
+            .Select(user =>
+                new UserDetailsModel(
+                    user.Id,
+                    user.UserName ?? string.Empty,
+                    user.DisplayName,
+                    user.Email ?? string.Empty,
+                    user.EmailConfirmed,
+                    user.LockoutEnd.HasValue
+                    && user.LockoutEnd.Value > now,
+                    user.LockoutEnd,
+                    administrationScope.IsSoteriaAdministrator))
             .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<ClientMembershipDetailsModel>> GetClientMembershipsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        var memberships = await _dbContext.ClientMemberships
-            .AsNoTracking()
-            .Where(membership => membership.UserId == userId)
-            .OrderBy(membership => membership.Application.DisplayName)
-            .ThenBy(membership => membership.Application.ClientId)
-            .ThenBy(membership => membership.Id)
-            .Select(membership => new ClientMembershipQueryResult(
-                membership.Id,
-                membership.Application.DisplayName
-                ?? membership.Application.ClientId
-                ?? string.Empty,
-                membership.MembershipLevel))
-            .ToListAsync(cancellationToken);
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+        if (administrationScope is { IsSoteriaAdministrator: false, AdministeredClientIds.Count: 0 })
+        {
+            return [];
+        }
+
+        var query =
+            _dbContext.ClientMemberships
+                .AsNoTracking()
+                .Where(membership => membership.UserId == userId);
+
+        if (!administrationScope.IsSoteriaAdministrator)
+        {
+            query = query.WhereClientMembershipAdministered(administrationScope);
+        }
+
+        var memberships =
+            await query
+                .OrderBy(membership => membership.Application.DisplayName)
+                .ThenBy(membership => membership.Application.ClientId)
+                .ThenBy(membership => membership.Id)
+                .Select(membership =>
+                    new ClientMembershipQueryResult(
+                        membership.Id,
+                        membership.Application.DisplayName ?? membership.Application.ClientId ?? string.Empty, membership.MembershipLevel))
+                .ToListAsync(cancellationToken);
 
         if (memberships.Count == 0)
         {
@@ -151,75 +186,88 @@ public sealed class UserService
             .Select(membership => membership.ClientMembershipId)
             .ToList();
 
-        var roleAssignments = await _dbContext.ClientMembershipApplicationRoles
-            .AsNoTracking()
-            .Where(assignment =>
-                membershipIds.Contains(assignment.ClientMembershipId)
-                && assignment.ClientMembership.UserId == userId)
-            .OrderBy(assignment => assignment.ApplicationRole.DisplayName)
-            .ThenBy(assignment => assignment.ApplicationRole.Name)
-            .ThenBy(assignment => assignment.ApplicationRole.Id)
-            .Select(assignment => new ClientMembershipRoleQueryResult(
-                assignment.ClientMembershipId,
-                assignment.ApplicationRole.DisplayName))
-            .ToListAsync(cancellationToken);
+        var roleAssignments =
+            await _dbContext.ClientMembershipApplicationRoles
+                .AsNoTracking()
+                .Where(assignment => membershipIds.Contains(assignment.ClientMembershipId) && assignment.ClientMembership.UserId == userId)
+                .OrderBy(assignment => assignment.ApplicationRole.DisplayName)
+                .ThenBy(assignment => assignment.ApplicationRole.Name)
+                .ThenBy(assignment => assignment.ApplicationRole.Id)
+                .Select(assignment =>
+                    new ClientMembershipRoleQueryResult(
+                        assignment.ClientMembershipId,
+                        assignment.ApplicationRole.DisplayName))
+                .ToListAsync(cancellationToken);
 
-        var rolesByMembership = roleAssignments
-            .GroupBy(assignment => assignment.ClientMembershipId)
-            .ToDictionary(
-                group => group.Key,
-                group => (IReadOnlyList<string>)group
-                    .Select(assignment => assignment.ApplicationRoleName)
-                    .ToList());
+        var rolesByMembership =
+            roleAssignments
+                .GroupBy(assignment => assignment.ClientMembershipId)
+                .ToDictionary(group => group.Key, group =>
+                    (IReadOnlyList<string>)group
+                        .Select(assignment => assignment.ApplicationRoleName)
+                        .ToList());
 
         return memberships
-            .Select(membership => new ClientMembershipDetailsModel(
-                membership.ClientMembershipId,
-                membership.ApplicationName,
-                membership.MembershipLevel.ToString(),
-                rolesByMembership.GetValueOrDefault(
+            .Select(membership =>
+                new ClientMembershipDetailsModel(
                     membership.ClientMembershipId,
-                    [])))
+                    membership.ApplicationName,
+                    membership.MembershipLevel.ToString(),
+                    rolesByMembership.GetValueOrDefault(membership.ClientMembershipId, [])))
             .ToList();
     }
 
     public async Task<EditClientMembershipRequest?> GetClientMembershipForEditAsync(Guid userId, Guid clientMembershipId,
         CancellationToken cancellationToken = default)
     {
-        var membership = await _dbContext.ClientMemberships
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+        if (administrationScope is { IsSoteriaAdministrator: false, AdministeredClientIds.Count: 0 })
+        {
+            return null;
+        }
+
+        var query = _dbContext.ClientMemberships
             .AsNoTracking()
-            .Where(item => item.Id == clientMembershipId && item.UserId == userId)
-            .Select(item => new
-            {
-                item.Id,
-                item.UserId,
-                item.ApplicationId,
-                item.Application.ClientId,
-                item.Application.DisplayName,
-                item.MembershipLevel
-            })
-            .SingleOrDefaultAsync(cancellationToken);
+            .Where(item => item.Id == clientMembershipId && item.UserId == userId);
+
+        if (!administrationScope.IsSoteriaAdministrator)
+        {
+            query = query.WhereClientMembershipAdministered(administrationScope);
+        }
+
+        var membership =
+            await query
+                .Select(item =>
+                    new
+                    {
+                        item.Id,
+                        item.UserId,
+                        item.ApplicationId,
+                        item.Application.ClientId,
+                        item.Application.DisplayName,
+                        item.MembershipLevel
+                    })
+                .SingleOrDefaultAsync(cancellationToken);
 
         if (membership is null)
         {
             return null;
         }
 
-        var applicationRoles = await _dbContext.ApplicationRoles
-            .AsNoTracking()
-            .Where(role => role.ApplicationId == membership.ApplicationId)
-            .OrderBy(role => role.DisplayName)
-            .ThenBy(role => role.Name)
-            .ThenBy(role => role.Id)
-            .Select(role => role.Id)
-            .ToListAsync(cancellationToken);
+        var applicationRoles =
+            await _dbContext.ApplicationRoles
+                .AsNoTracking()
+                .Where(role => role.ApplicationId == membership.ApplicationId)
+                .OrderBy(role => role.DisplayName)
+                .ThenBy(role => role.Name)
+                .ThenBy(role => role.Id)
+                .Select(role => role.Id)
+                .ToListAsync(cancellationToken);
 
         var selectedRoleIds =
             await _dbContext.ClientMembershipApplicationRoles
                 .AsNoTracking()
-                .Where(assignment =>
-                    assignment.ClientMembershipId == membership.Id
-                    && assignment.ClientMembership.UserId == userId)
+                .Where(assignment => assignment.ClientMembershipId == membership.Id && assignment.ClientMembership.UserId == userId)
                 .Select(assignment => assignment.ApplicationRoleId)
                 .ToHashSetAsync(cancellationToken);
 
@@ -235,17 +283,32 @@ public sealed class UserService
         };
     }
 
-    public async Task<IReadOnlyList<ClientMembershipApplicationRoleItem>> GetClientMembershipApplicationRolesAsync(Guid userId,
-        Guid clientMembershipId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ClientMembershipApplicationRoleItem>> GetClientMembershipApplicationRolesAsync(
+        Guid userId,
+        Guid clientMembershipId,
+        CancellationToken cancellationToken = default)
     {
-        var membership = await _dbContext.ClientMemberships
-            .AsNoTracking()
-            .Where(item => item.Id == clientMembershipId && item.UserId == userId)
-            .Select(item => new
-            {
-                item.ApplicationId
-            })
-            .SingleOrDefaultAsync(cancellationToken);
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+
+        if (administrationScope is { IsSoteriaAdministrator: false, AdministeredClientIds.Count: 0 })
+        {
+            return [];
+        }
+
+        var query =
+            _dbContext.ClientMemberships
+                .AsNoTracking()
+                .Where(item => item.Id == clientMembershipId && item.UserId == userId);
+
+        if (!administrationScope.IsSoteriaAdministrator)
+        {
+            query = query.WhereClientMembershipAdministered(administrationScope);
+        }
+
+        var membership =
+            await query
+                .Select(item => new { item.ApplicationId })
+                .SingleOrDefaultAsync(cancellationToken);
 
         if (membership is null)
         {
@@ -258,16 +321,19 @@ public sealed class UserService
             .OrderBy(role => role.DisplayName)
             .ThenBy(role => role.Name)
             .ThenBy(role => role.Id)
-            .Select(role => new ClientMembershipApplicationRoleItem(
-                role.Id,
-                role.Name,
-                role.DisplayName,
-                role.Description))
+            .Select(role =>
+                new ClientMembershipApplicationRoleItem(
+                    role.Id,
+                    role.Name,
+                    role.DisplayName,
+                    role.Description))
             .ToListAsync(cancellationToken);
     }
 
     public async Task UpdateClientMembershipAsync(EditClientMembershipRequest request, CancellationToken cancellationToken = default)
     {
+        await EnsureCanAdministerClientMembershipAsync(request.UserId, request.ClientMembershipId, cancellationToken);
+
         var validationResult = await _editClientMembershipValidator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
@@ -288,6 +354,9 @@ public sealed class UserService
         {
             throw new ClientMembershipNotFoundException(request.UserId, request.ClientMembershipId);
         }
+
+        await EnsureClientWillRetainAdministratorAsync(membership, request.MembershipLevel, membershipWillBeRemoved: false,
+            cancellationToken);
 
         if (!string.Equals(membership.Application.ClientId, request.ClientId, StringComparison.Ordinal))
         {
@@ -402,6 +471,8 @@ public sealed class UserService
             ]);
         }
 
+        await EnsureCanAdministerClientAsync(application.Id, cancellationToken);
+
         var duplicateExists = await _dbContext.ClientMemberships
             .AsNoTracking()
             .AnyAsync(
@@ -483,8 +554,9 @@ public sealed class UserService
 
     public async Task UpdateUserAsync(EditUserRequest request, CancellationToken cancellationToken = default)
     {
-        var validationResult = await _editUserValidator.ValidateAsync(request, cancellationToken);
+        await EnsureCanAdministerUserAsync(request.UserId, cancellationToken);
 
+        var validationResult = await _editUserValidator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
             throw new EditUserValidationException(validationResult.Errors);
@@ -501,14 +573,12 @@ public sealed class UserService
         var administratorAssignment =
             await _dbContext.UserSystemRoles
                 .SingleOrDefaultAsync(assignment =>
-                        assignment.UserId == request.UserId
-                        && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator,
+                        assignment.UserId == request.UserId &&
+                        assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator,
                     cancellationToken);
 
         var currentlyIsAdministrator = administratorAssignment is not null;
-
         var administratorStatusIsChanging = currentlyIsAdministrator != request.IsSoteriaAdministrator;
-
         if (administratorStatusIsChanging && !await _currentUserContext.IsSoteriaAdministratorAsync(cancellationToken))
         {
             throw new UnauthorizedAccessException("Only Soteria Administrators can change Soteria Administrator assignments.");
@@ -519,9 +589,8 @@ public sealed class UserService
             var anotherAdministratorExists =
                 await _dbContext.UserSystemRoles
                     .AsNoTracking()
-                    .AnyAsync(assignment =>
-                            assignment.UserId != request.UserId
-                            && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator,
+                    .AnyAsync(
+                        assignment => assignment.UserId != request.UserId && assignment.SystemRoleId == SystemRoleIds.SoteriaAdministrator,
                         cancellationToken);
 
             if (!anotherAdministratorExists)
@@ -559,8 +628,7 @@ public sealed class UserService
         {
             throw new EditUserValidationException(
             [
-                new ValidationFailure(
-                    nameof(EditUserRequest.IsSoteriaAdministrator),
+                new ValidationFailure(nameof(EditUserRequest.IsSoteriaAdministrator),
                     "The Soteria Administrator assignment could not be updated. Reload the user and try again.")
             ]);
         }
@@ -577,15 +645,27 @@ public sealed class UserService
         ]);
     }
 
-    public async Task RemoveClientMembershipAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default)
+    public async Task RemoveClientMembershipAsync(RemoveClientMembershipRequest request, CancellationToken cancellationToken = default)
     {
-        var membership = await _dbContext.ClientMemberships
-            .SingleOrDefaultAsync(item => item.Id == clientMembershipId && item.UserId == userId, cancellationToken);
+        await EnsureCanAdministerClientMembershipAsync(request.UserId, request.ClientMembershipId, cancellationToken);
+
+        var validationResult = await _removeClientMembershipValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new RemoveClientMembershipValidationException(validationResult.Errors);
+        }
+
+        var membership =
+            await _dbContext.ClientMemberships
+                .SingleOrDefaultAsync(item => item.Id == request.ClientMembershipId && item.UserId == request.UserId, cancellationToken);
 
         if (membership is null)
         {
-            throw new ClientMembershipNotFoundException(userId, clientMembershipId);
+            throw new ClientMembershipNotFoundException(request.UserId, request.ClientMembershipId);
         }
+
+        await EnsureClientWillRetainAdministratorAsync(membership, membership.MembershipLevel, membershipWillBeRemoved: true,
+            cancellationToken);
 
         _dbContext.ClientMemberships.Remove(membership);
 
@@ -620,6 +700,118 @@ public sealed class UserService
         }
 
         return (IUserEmailStore<ApplicationUser>)_userStore;
+    }
+
+    private async Task EnsureCanAdministerUserAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+        if (administrationScope.IsSoteriaAdministrator)
+        {
+            return;
+        }
+
+        var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
+
+        var canAdminister =
+            await _dbContext.ClientMemberships
+                .AsNoTracking()
+                .AnyAsync(membership => 
+                        membership.UserId == userId && 
+                        ((IEnumerable<Guid>)administeredClientIds).Contains(membership.ApplicationId),
+                    cancellationToken);
+
+        if (!canAdminister)
+        {
+            throw new UnauthorizedAccessException("You cannot administer this user.");
+        }
+    }
+
+    private async Task EnsureCanAdministerClientMembershipAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken)
+    {
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+        if (administrationScope.IsSoteriaAdministrator)
+        {
+            return;
+        }
+
+        var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
+        if (administeredClientIds.Length == 0)
+        {
+            throw new UnauthorizedAccessException("You cannot administer this Client Membership.");
+        }
+
+        var canAdminister =
+            await _dbContext.ClientMemberships
+                .AsNoTracking()
+                .AnyAsync(membership => membership.Id == clientMembershipId &&
+                                        membership.UserId == userId &&
+                                        ((IEnumerable<Guid>)administeredClientIds).Contains(membership.ApplicationId),
+                    cancellationToken);
+
+        if (!canAdminister)
+        {
+            throw new UnauthorizedAccessException("You cannot administer this Client Membership.");
+        }
+    }
+
+    private async Task EnsureCanAdministerClientAsync(Guid applicationId, CancellationToken cancellationToken)
+    {
+        var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
+
+        if (administrationScope.IsSoteriaAdministrator)
+        {
+            return;
+        }
+
+        if (!administrationScope.AdministeredClientIds.Contains(applicationId))
+        {
+            throw new UnauthorizedAccessException("You cannot administer this client application.");
+        }
+    }
+
+    private async Task EnsureClientWillRetainAdministratorAsync(ClientMembership membership, MembershipLevel requestedMembershipLevel,
+        bool membershipWillBeRemoved, CancellationToken cancellationToken)
+    {
+        if (membership.MembershipLevel != MembershipLevel.Administrator)
+        {
+            return;
+        }
+
+        if (!membershipWillBeRemoved && requestedMembershipLevel == MembershipLevel.Administrator)
+        {
+            return;
+        }
+
+        var anotherAdministratorExists =
+            await _dbContext.ClientMemberships
+                .AsNoTracking()
+                .AnyAsync(item => item.ApplicationId == membership.ApplicationId &&
+                                  item.Id != membership.Id &&
+                                  item.MembershipLevel == MembershipLevel.Administrator,
+                    cancellationToken);
+
+        if (anotherAdministratorExists)
+        {
+            return;
+        }
+
+        if (membershipWillBeRemoved)
+        {
+            throw new RemoveClientMembershipValidationException(
+            [
+                new ValidationFailure(
+                    nameof(RemoveClientMembershipRequest.ClientMembershipId),
+                    "The final Client Administrator cannot be removed. " +
+                    "Assign another Client Administrator before removing this membership.")
+            ]);
+        }
+
+        throw new EditClientMembershipValidationException(
+        [
+            new ValidationFailure(nameof(EditClientMembershipRequest.MembershipLevel),
+                "The final Client Administrator cannot be demoted. " +
+                "Assign another Client Administrator before changing this membership.")
+        ]);
     }
 }
 
@@ -693,6 +885,12 @@ public sealed class ClientMembershipNotFoundException(Guid userId, Guid clientMe
 
 public sealed class EditUserValidationException(IReadOnlyList<ValidationFailure> failures)
     : Exception("User validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class RemoveClientMembershipValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client Membership removal validation failed.")
 {
     public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
 }

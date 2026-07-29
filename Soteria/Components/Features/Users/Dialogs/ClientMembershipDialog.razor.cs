@@ -126,6 +126,10 @@ public partial class ClientMembershipDialog
         {
             ErrorMessages.Add("The selected Client Membership could not be found.");
         }
+        catch (UnauthorizedAccessException exception)
+        {
+            ErrorMessages.Add(exception.Message);
+        }
         catch (Exception)
         {
             ErrorMessages.Add(
@@ -173,12 +177,25 @@ public partial class ClientMembershipDialog
 
         try
         {
-            await UserService.RemoveClientMembershipAsync(EditRequest.UserId, EditRequest.ClientMembershipId);
+            await UserService.RemoveClientMembershipAsync(
+                new RemoveClientMembershipRequest
+                {
+                    UserId = EditRequest.UserId,
+                    ClientMembershipId = EditRequest.ClientMembershipId
+                });
             MudDialog.Close(DialogResult.Ok(true));
         }
         catch (ClientMembershipNotFoundException)
         {
             ErrorMessages = ["The selected Client Membership could not be found."];
+        }
+        catch (RemoveClientMembershipValidationException exception)
+        {
+            SetValidationErrors(exception.Failures);
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            ErrorMessages = [exception.Message];
         }
         catch (Exception)
         {

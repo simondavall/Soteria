@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 using Soteria.Components.Features.Authorization;
+using Soteria.Components.Features.Clients.Queries;
 using Soteria.Data;
 using Soteria.Data.Authorization;
 using Soteria.Data.OpenIddict;
@@ -88,7 +89,7 @@ public sealed class ClientService
             ClientHost = GetClientHost(application.RedirectUris)
         };
     }
-
+    
     public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
@@ -100,13 +101,7 @@ public sealed class ClientService
 
         if (!administrationScope.IsSoteriaAdministrator)
         {
-            var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
-            if (administeredClientIds.Length == 0)
-            {
-                return [];
-            }
-
-            query = query.Where(application => administeredClientIds.Contains(application.Id));
+            query = query.WhereClientsAdministered(administrationScope);
         }
 
         return await query
@@ -132,13 +127,7 @@ public sealed class ClientService
 
         if (!administrationScope.IsSoteriaAdministrator)
         {
-            var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
-            if (administeredClientIds.Length == 0)
-            {
-                return null;
-            }
-
-            query = query.Where(application => administeredClientIds.Contains(application.Id));
+            query = query.WhereClientsAdministered(administrationScope);
         }
 
         var application = await query
@@ -543,7 +532,9 @@ public sealed class ClientService
         return await _dbContext
             .Set<SoteriaApplication>()
             .AsNoTracking()
-            .AnyAsync(application => application.ClientId == clientId && administeredClientIds.Contains(application.Id), cancellationToken);
+            .AnyAsync(application => 
+                application.ClientId == clientId && 
+                ((IEnumerable<Guid>)administeredClientIds).Contains(application.Id), cancellationToken);
     }
 
     private async Task EnsureCanAdministerClientAsync(string clientId, CancellationToken cancellationToken)
