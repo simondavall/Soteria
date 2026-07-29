@@ -9,33 +9,34 @@ using Soteria.Data.OpenIddict;
 
 namespace Soteria.Components.Features.OpenIdConnect;
 
-public interface IOpenIdConnectAuthorizationContext
+public interface IOpenIdAuthorizationContext
 {
-    Task<OpenIdConnectAuthorizationResolution> GetAsync(CancellationToken cancellationToken = default);
+    Task<OpenIdAuthorizationResolution> GetAsync(CancellationToken cancellationToken = default);
 }
 
-public sealed record ResolvedOpenIdConnectAuthorizationContext(
+public sealed record ResolvedOpenIdAuthorizationContext(
     SoteriaApplication Application,
     ApplicationUser User,
     ClientMembership? ClientMembership,
     IReadOnlyList<string> ApplicationRoleNames);
 
-public sealed record OpenIdConnectAuthorizationResolution(ResolvedOpenIdConnectAuthorizationContext? Context, OpenIdConnectAuthorizationResolutionFailure Failure)
+public sealed record OpenIdAuthorizationResolution(ResolvedOpenIdAuthorizationContext? Context, OpenIdAuthorizationResolutionFailure Failure)
 {
-    public bool IsSuccessful => Failure == OpenIdConnectAuthorizationResolutionFailure.None;
+    public bool IsSuccessful => Failure == OpenIdAuthorizationResolutionFailure.None;
 
-    public static OpenIdConnectAuthorizationResolution Success(ResolvedOpenIdConnectAuthorizationContext context)
+    public static OpenIdAuthorizationResolution Success(ResolvedOpenIdAuthorizationContext context)
     {
-        return new OpenIdConnectAuthorizationResolution(context, OpenIdConnectAuthorizationResolutionFailure.None);
+        return new OpenIdAuthorizationResolution(context, OpenIdAuthorizationResolutionFailure.None);
     }
 
-    public static OpenIdConnectAuthorizationResolution Failed(OpenIdConnectAuthorizationResolutionFailure failure, ResolvedOpenIdConnectAuthorizationContext? context = null)
+    public static OpenIdAuthorizationResolution Failed(OpenIdAuthorizationResolutionFailure failure,
+        ResolvedOpenIdAuthorizationContext? context = null)
     {
-        return new OpenIdConnectAuthorizationResolution(context, failure);
+        return new OpenIdAuthorizationResolution(context, failure);
     }
 }
 
-public enum OpenIdConnectAuthorizationResolutionFailure
+public enum OpenIdAuthorizationResolutionFailure
 {
     None,
     NotAuthenticated,
@@ -47,16 +48,16 @@ public enum OpenIdConnectAuthorizationResolutionFailure
     ClientMembershipNotFound
 }
 
-public sealed class OpenIdConnectAuthorizationContext(
+public sealed class OpenIdAuthorizationContext(
     IHttpContextAccessor httpContextAccessor,
     UserManager<ApplicationUser> userManager,
     IOpenIddictApplicationManager applicationManager,
     SoteriaDbContext dbContext)
-    : IOpenIdConnectAuthorizationContext
+    : IOpenIdAuthorizationContext
 {
-    private OpenIdConnectAuthorizationResolution? _resolution;
+    private OpenIdAuthorizationResolution? _resolution;
 
-    public async Task<OpenIdConnectAuthorizationResolution> GetAsync(CancellationToken cancellationToken = default)
+    public async Task<OpenIdAuthorizationResolution> GetAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -66,7 +67,7 @@ public sealed class OpenIdConnectAuthorizationContext(
         }
 
         var httpContext = httpContextAccessor.HttpContext
-            ?? throw new InvalidOperationException("The current HTTP context is unavailable.");
+                          ?? throw new InvalidOperationException("The current HTTP context is unavailable.");
 
         var authenticationResult = await httpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
 
@@ -74,9 +75,7 @@ public sealed class OpenIdConnectAuthorizationContext(
 
         if (!authenticationResult.Succeeded || authenticationResult.Principal is null)
         {
-            return Cache(
-                OpenIdConnectAuthorizationResolution.Failed(
-                    OpenIdConnectAuthorizationResolutionFailure.NotAuthenticated));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.NotAuthenticated));
         }
 
         var user = await userManager.GetUserAsync(authenticationResult.Principal);
@@ -85,44 +84,30 @@ public sealed class OpenIdConnectAuthorizationContext(
 
         if (user is null)
         {
-            return Cache(
-                OpenIdConnectAuthorizationResolution.Failed(
-                    OpenIdConnectAuthorizationResolutionFailure.IdentityUserNotFound));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.IdentityUserNotFound));
         }
 
         var request = httpContext.GetOpenIddictServerRequest();
         if (request is null)
         {
-            return Cache(
-                OpenIdConnectAuthorizationResolution.Failed(
-                    OpenIdConnectAuthorizationResolutionFailure
-                        .AuthorizationRequestUnavailable));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.AuthorizationRequestUnavailable));
         }
 
         if (string.IsNullOrWhiteSpace(request.ClientId))
         {
-            return Cache(
-                OpenIdConnectAuthorizationResolution.Failed(
-                    OpenIdConnectAuthorizationResolutionFailure
-                        .ClientIdentifierUnavailable));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientIdentifierUnavailable));
         }
 
         var application = await applicationManager.FindByClientIdAsync(request.ClientId, cancellationToken);
         if (application is not SoteriaApplication soteriaApplication)
         {
-            return Cache(
-                OpenIdConnectAuthorizationResolution.Failed(
-                    OpenIdConnectAuthorizationResolutionFailure
-                        .ClientApplicationNotFound));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientApplicationNotFound));
         }
 
         var applicationIdValue = await applicationManager.GetIdAsync(application, cancellationToken);
         if (!Guid.TryParse(applicationIdValue, out var applicationId))
         {
-            return Cache(
-                OpenIdConnectAuthorizationResolution.Failed(
-                    OpenIdConnectAuthorizationResolutionFailure
-                        .ClientApplicationIdentifierInvalid));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientApplicationIdentifierInvalid));
         }
 
         var clientMembership =
@@ -130,21 +115,21 @@ public sealed class OpenIdConnectAuthorizationContext(
                 .AsNoTracking()
                 .Include(membership => membership.ApplicationRoleAssignments)
                 .ThenInclude(assignment => assignment.ApplicationRole)
-                .SingleOrDefaultAsync(membership => 
-                        membership.UserId == user.Id && 
+                .SingleOrDefaultAsync(membership =>
+                        membership.UserId == user.Id &&
                         membership.ApplicationId == applicationId,
                     cancellationToken);
 
         if (clientMembership is null)
         {
             var context =
-                new ResolvedOpenIdConnectAuthorizationContext(
+                new ResolvedOpenIdAuthorizationContext(
                     soteriaApplication,
                     user,
                     ClientMembership: null,
                     ApplicationRoleNames: []);
 
-            return Cache(OpenIdConnectAuthorizationResolution.Failed(OpenIdConnectAuthorizationResolutionFailure.ClientMembershipNotFound, context));
+            return Cache(OpenIdAuthorizationResolution.Failed(OpenIdAuthorizationResolutionFailure.ClientMembershipNotFound, context));
         }
 
         var applicationRoleNames =
@@ -155,15 +140,15 @@ public sealed class OpenIdConnectAuthorizationContext(
                 .OrderBy(roleName => roleName, StringComparer.Ordinal)
                 .ToList();
 
-        return Cache(OpenIdConnectAuthorizationResolution.Success(
-            new ResolvedOpenIdConnectAuthorizationContext(
+        return Cache(OpenIdAuthorizationResolution.Success(
+            new ResolvedOpenIdAuthorizationContext(
                 soteriaApplication,
                 user,
                 clientMembership,
                 applicationRoleNames)));
     }
 
-    private OpenIdConnectAuthorizationResolution Cache(OpenIdConnectAuthorizationResolution resolution)
+    private OpenIdAuthorizationResolution Cache(OpenIdAuthorizationResolution resolution)
     {
         _resolution = resolution;
         return resolution;
