@@ -12,6 +12,8 @@ namespace Microsoft.AspNetCore.Routing;
 
 internal static class AuthorizationEndpointRouteBuilderExtensions
 {
+    private const string ClientMembershipRequiredDescription = "The authenticated user does not have access to the client application.";
+
     public static IEndpointConventionBuilder MapSoteriaAuthorizationEndpoint(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
@@ -38,6 +40,11 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
             context.Response.Redirect("/Account/Login");
 
             return Results.Empty;
+        }
+
+        if (resolution.Failure == OpenIdAuthorizationResolutionFailure.ClientMembershipNotFound)
+        {
+            return RejectMissingClientMembership();
         }
 
         ThrowForUnresolvableRequest(resolution);
@@ -76,6 +83,22 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         return Results.SignIn(principal, authenticationScheme: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
 
+    private static IResult RejectMissingClientMembership()
+    {
+        var properties =
+            new AuthenticationProperties(
+                new Dictionary<string, string?>
+                {
+                    [OpenIddictServerAspNetCoreConstants.Properties.Error] =
+                        OpenIddictConstants.Errors.AccessDenied,
+
+                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+                        ClientMembershipRequiredDescription
+                });
+
+        return Results.Forbid(properties, [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
+    }
+
     private static IResult RedirectToLogin(HttpContext context)
     {
         var returnUrl = context.Request.GetEncodedPathAndQuery();
@@ -90,10 +113,6 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
         switch (resolution.Failure)
         {
             case OpenIdAuthorizationResolutionFailure.None:
-
-            // Membership enforcement belongs to the following milestone task.
-            // Preserve the current behaviour by issuing no role claims.
-            case OpenIdAuthorizationResolutionFailure.ClientMembershipNotFound:
                 return;
 
             case OpenIdAuthorizationResolutionFailure.AuthorizationRequestUnavailable:
@@ -108,12 +127,16 @@ internal static class AuthorizationEndpointRouteBuilderExtensions
                 throw new InvalidOperationException(
                     "The OpenIddict client application is unavailable.");
 
-            case OpenIdAuthorizationResolutionFailure.ClientApplicationIdentifierInvalid: throw new InvalidOperationException(
+            case OpenIdAuthorizationResolutionFailure.ClientApplicationIdentifierInvalid:
+                throw new InvalidOperationException(
                     "The OpenIddict client application identifier is invalid.");
 
             case OpenIdAuthorizationResolutionFailure.NotAuthenticated:
-            case OpenIdAuthorizationResolutionFailure.IdentityUserNotFound: throw new InvalidOperationException(
-                    "The Identity user resolution failure was not handled.");
+            case OpenIdAuthorizationResolutionFailure.IdentityUserNotFound:
+
+            case OpenIdAuthorizationResolutionFailure.ClientMembershipNotFound:
+                throw new InvalidOperationException(
+                    "The OpenID authorisation resolution failure was not handled.");
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(resolution.Failure), resolution.Failure,

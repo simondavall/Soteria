@@ -6,7 +6,11 @@ namespace Soteria.Components.Features.OpenIdConnect;
 
 public partial class Error
 {
-    private const string DisabledClientDescription = "The client application is disabled.";
+    private const string DisabledClientDescription =
+        "The client application is disabled.";
+
+    private const string ClientMembershipRequiredDescription =
+        "The authenticated user does not have access to the client application.";
 
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
@@ -15,11 +19,8 @@ public partial class Error
     private IWebHostEnvironment Environment { get; set; } = null!;
 
     private string? ErrorCode { get; set; }
-
     private string? ErrorDescription { get; set; }
-
     private string? ErrorUri { get; set; }
-
     private OpenIdConnectErrorViewModel Model { get; set; } = CreateFallbackModel();
 
     private bool ShowTechnicalDetails =>
@@ -68,6 +69,11 @@ public partial class Error
                     "Unsupported access request",
                     "The application requested access that is not available."),
 
+            (OpenIddictConstants.Errors.AccessDenied, ClientMembershipRequiredDescription) =>
+                new OpenIdConnectErrorViewModel(
+                    "Application access unavailable",
+                    "Your account has not been assigned access to this application."),
+
             (OpenIddictConstants.Errors.AccessDenied, _) =>
                 new OpenIdConnectErrorViewModel(
                     "Access denied",
@@ -94,5 +100,7 @@ public partial class Error
         return string.IsNullOrWhiteSpace(value) ? "Not provided" : value;
     }
 
-    private sealed record OpenIdConnectErrorViewModel(string Title, string Message);
+    private sealed record OpenIdConnectErrorViewModel(
+        string Title, 
+        string Message);
 }

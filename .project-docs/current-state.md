@@ -13,18 +13,17 @@ where development should continue.
 
 # Current task
 
-- Extract OpenID Connect principal creation.
-  - Create a reusable OpenID Connect principal factory.
-  - Build principals from the resolved authorisation context.
-  - Preserve existing identity claim issuance.
-  - Preserve existing Application Role claim issuance.
-  - Preserve existing scope-sensitive claim destinations.
-  - Preserve existing resource resolution.
-  - Replace inline principal construction within the authorisation endpoint.
+- Enforce Client Membership during authorisation requests.
+  - Consume the shared OpenId authorisation context.
+  - Reject requests when the client cannot be resolved.
+  - Reject requests when the authenticated user cannot be resolved.
+  - Reject requests when no matching ClientMembership exists.
+  - Preserve existing consent behaviour.
+  - Preserve existing token lifetime behaviour.
+  - Verify successful authorisation for valid client memberships.
 
 # Remaining milestone tasks
 
-- Enforce Client Membership during authorisation requests
 - Enforce Client Membership during token redemption
 - Verify end-to-end application authorisation
 
@@ -405,3 +404,13 @@ where development should continue.
 - Replaced inline OpenID Connect authorisation resolution within the authorisation endpoint.
 - Preserved existing OpenID Connect authorisation behaviour pending Client Membership enforcement.
 - Verified only Application Roles belonging to the resolved Client Membership are returned.
+- Introduced a reusable OpenId principal factory.
+- Built OpenId principals from the shared OpenId authorisation context.
+- Centralised Subject, Name and Email claim creation.
+- Centralised Application Role claim creation.
+- Centralised scope and resource resolution.
+- Centralised claim destination configuration.
+- Removed principal construction from the OpenId authorisation endpoint.
+- Reduced the OpenId authorisation endpoint to request flow, consent validation and principal issuance.
+- Preserved existing OpenID Connect claims, scopes, resources and token contents.
+- Verified principal creation behaviour remains unchanged following the refactoring.

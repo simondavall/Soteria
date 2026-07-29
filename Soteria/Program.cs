@@ -75,6 +75,7 @@ public class Program
 
         builder.Services.ConfigureApplicationCookie(options =>
         {
+            options.Cookie.Name = "Soteria.Identity";
             options.LoginPath = "/Account/Login";
             options.ReturnUrlParameter = "ReturnUrl";
         });

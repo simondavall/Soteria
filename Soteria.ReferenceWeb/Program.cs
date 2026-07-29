@@ -63,6 +63,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddCookie(options =>
     {
+        options.Cookie.Name = "ReferenceApi.Authentication";
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
 
