@@ -1,6 +1,6 @@
 ﻿using Soteria.Data.Authorization;
 
-namespace Soteria.Components.Features.Users;
+namespace Soteria.Components.Features.ClientMemberships;
 
 public sealed class EditClientMembershipRequest
 {

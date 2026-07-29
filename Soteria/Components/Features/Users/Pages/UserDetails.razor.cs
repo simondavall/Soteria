@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Soteria.Components.Features.ClientMemberships;
+using Soteria.Components.Features.ClientMemberships.Dialogs;
 using Soteria.Components.Features.Users.Dialogs;
 
 namespace Soteria.Components.Features.Users.Pages;
@@ -8,16 +10,20 @@ public partial class UserDetails
 {
     [Parameter]
     public Guid UserId { get; set; }
+
     [Inject]
     private UserService UserService { get; set; } = default!;
+    [Inject]
+    private IClientMembershipService ClientMembershipService { get; set; } = default!;
     [Inject]
     private IDialogService DialogService { get; set; } = default!;
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
-
+    
     private UserDetailsModel? User { get; set; }
     private IReadOnlyList<ClientMembershipDetailsModel> ClientMemberships { get; set; } = [];
     private bool IsLoading { get; set; }
+
 
     protected override async Task OnParametersSetAsync()
     {
@@ -34,7 +40,7 @@ public partial class UserDetails
             User = await UserService.GetUserAsync(UserId);
             if (User is not null)
             {
-                ClientMemberships = await UserService.GetClientMembershipsAsync(UserId);
+                ClientMemberships = await ClientMembershipService.GetForUserAsync(UserId);
             }
         }
         finally
