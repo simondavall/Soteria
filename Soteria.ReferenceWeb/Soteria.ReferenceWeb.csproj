@@ -7,6 +7,11 @@
     <UserSecretsId>aspnet-Soteria_ReferenceWeb-8700dfcc-434c-41e1-886d-ba36294cb547</UserSecretsId>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>0.0.1</Version>
+    <InformationalVersion>0.0.1</InformationalVersion>
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.2.0" />
