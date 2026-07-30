@@ -13,20 +13,16 @@ where development should continue.
 
 # Current task
 
-- Configure OpenIddict production credentials.
-  - Define the production signing credential strategy.
-  - Define the production encryption credential strategy.
-  - Register production signing credentials.
-  - Register production encryption credentials.
-  - Separate development and production credential registration.
-  - Prevent development credentials being used outside Development.
-  - Verify token signing.
-  - Verify token encryption.
-  - Verify application startup using production credentials.
+- Configure persistent Data Protection.
+  - Define the Data Protection persistence strategy.
+  - Define the Data Protection storage location.
+  - Configure persistent key storage.
+  - Configure key protection.
+  - Verify authentication cookies survive application restart.
+  - Document key recovery expectations.
 
 # Remaining milestone tasks
 
-- Configure persistent Data Protection.
 - Implement startup validation.
 
 # Completed
@@ -51,3 +47,26 @@ where development should continue.
 - Reviewed startup initialisation behaviour.
 - Produced the production-readiness action list.
 - Restructured the Phase 6 delivery plan to reflect the agreed deployment implementation sequence.
+- Defined the production signing certificate strategy.
+- Defined the production encryption certificate strategy.
+- Implemented environment-specific OpenIddict credential registration.
+- Preserved Development signing and encryption behaviour.
+- Prevented development credentials from being registered outside the Development environment.
+- Implemented production signing certificate registration.
+- Implemented production encryption certificate registration.
+- Implemented comprehensive production startup validation.
+- Validated certificate configuration values.
+- Validated certificate thumbprints and certificate existence.
+- Validated private-key availability.
+- Validated certificate validity periods.
+- Validated RSA certificate capability.
+- Prevented signing and encryption certificates from referencing the same certificate.
+- Produced clear deployment-focused startup diagnostics for certificate failures.
+- Verified Development credential registration.
+- Verified Production startup using production certificates.
+- Verified production token signing.
+- Verified production token encryption.
+- Produced the OpenIddict Production Certificate Deployment guide.
+- Documented certificate installation and IIS private-key configuration.
+- Documented production configuration requirements.
+- Produced the production deployment verification checklist.

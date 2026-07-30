@@ -675,16 +675,16 @@ reference resource API.
 
 ## Milestone 6.2 – Production Runtime
 
-- Configure OpenIddict production credentials.
-  - Define the production signing credential strategy.
-  - Define the production encryption credential strategy.
-  - Register production signing credentials.
-  - Register production encryption credentials.
-  - Separate development and production credential registration.
-  - Prevent development credentials being used outside Development.
-  - Verify token signing.
-  - Verify token encryption.
-  - Verify application startup using production credentials.
+- ✓ Configure OpenIddict production credentials.
+  - ✓ Define the production signing credential strategy.
+  - ✓ Define the production encryption credential strategy.
+  - ✓ Register production signing credentials.
+  - ✓ Register production encryption credentials.
+  - ✓ Separate development and production credential registration.
+  - ✓ Prevent development credentials being used outside Development.
+  - ✓ Verify token signing.
+  - ✓ Verify token encryption.
+  - ✓ Verify application startup using production credentials.
 
 - Configure persistent Data Protection.
   - Define the Data Protection persistence strategy.
@@ -695,12 +695,12 @@ reference resource API.
   - Document key recovery expectations.
 
 - Implement startup validation.
-  - Validate required application configuration.
-  - Validate deployment credentials.
+  - ✓ Validate required application configuration.
+  - ✓ Validate deployment credentials.
   - Validate deployment directories.
   - Validate required secrets.
-  - Produce clear startup failures.
-  - Verify invalid deployments fail with actionable diagnostics.
+  - ✓ Produce clear startup failures.
+  - ✓ Verify invalid deployments fail with actionable diagnostics
 
 ---
 

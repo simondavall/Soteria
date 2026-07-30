@@ -49,6 +49,12 @@ internal static class OpenIddictServerBuilderExtensions
         var signingCertificate = CertificateLoader.LoadSigningCertificate(options);
         var encryptionCertificate = CertificateLoader.LoadEncryptionCertificate(options);
 
+        if (string.Equals(signingCertificate.Thumbprint, encryptionCertificate.Thumbprint, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                "The OpenIddict signing and encryption certificates must be different certificates.");
+        }
+
         builder.AddSigningCertificate(signingCertificate);
         builder.AddEncryptionCertificate(encryptionCertificate);
     }
