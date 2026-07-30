@@ -1,0 +1,135 @@
+﻿.user-details-page {
+    width: 100%;
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.user-details-page__header {
+    padding-block: 0.5rem;
+}
+
+.user-details-page__header-content {
+    flex-wrap: wrap;
+}
+
+.user-details-page__content {
+    padding: 2rem;
+    border-radius: 0.75rem;
+}
+
+.user-details-page__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem;
+}
+
+.user-details-page__column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+}
+
+.user-details-page__field {
+    min-width: 0;
+}
+
+.user-details-page__field ::deep .mud-typography-body1 {
+    overflow-wrap: anywhere;
+}
+
+.user-details-page__status-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    margin-top: 1.5rem;
+}
+
+.user-details-page__status {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.user-details-page__status ::deep .mud-typography-overline {
+    flex-shrink: 0;
+}
+
+.user-details-page__state {
+    min-height: 18rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.user-details-page__table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.user-details-page__permissions-table {
+    min-width: 42rem;
+}
+
+.user-details-page__roles {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.user-details-page__empty-permissions {
+    min-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.user-details-page__permissions-header {
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.user-details-page__permissions-table
+::deep .user-details-page__membership-row {
+    cursor: pointer;
+}
+
+.user-details-page__permissions-table
+::deep .user-details-page__membership-row:focus-visible {
+    outline: 0.125rem solid currentColor;
+    outline-offset: -0.125rem;
+}
+
+@media (max-width: 59.99rem) {
+    .user-details-page__columns {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .user-details-page__status-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 37.49rem) {
+    .user-details-page__content {
+        padding: 1.25rem;
+    }
+
+    .user-details-page__status {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}

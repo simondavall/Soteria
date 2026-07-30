@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages;
 
@@ -17,12 +18,13 @@ public partial class LoginWith2fa
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = null!;
     [Inject] private ILogger<LoginWith2fa> Logger { get; set; } = null!;
 
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
     [SupplyParameterFromQuery] private bool RememberMe { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
 
         // Ensure the user has gone through the username & password screen first
@@ -32,7 +34,7 @@ public partial class LoginWith2fa
 
     private async Task OnValidSubmitAsync()
     {
-        var authenticatorCode = Input!.TwoFactorCode!.Replace(" ", string.Empty).Replace("-", string.Empty);
+        var authenticatorCode = Input.TwoFactorCode!.Replace(" ", string.Empty).Replace("-", string.Empty);
         var result = await SignInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, RememberMe, Input.RememberMachine);
         var userId = await UserManager.GetUserIdAsync(_user);
 

@@ -1,0 +1,421 @@
+﻿@page "/clients/{ClientId}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Soteria.Components.Features.Authorization
+
+@attribute [Authorize(Policy = SoteriaAuthorizationPolicies.Administration)]
+
+<PageTitle>Client Application Details</PageTitle>
+
+<div class="client-details-page">
+    <MudStack Spacing="4">
+        <header class="client-details-page__header">
+            <MudStack Row="true"
+                      AlignItems="AlignItems.Center"
+                      Justify="Justify.SpaceBetween"
+                      Spacing="3"
+                      Class="client-details-page__header-content">
+
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="2">
+
+                    <MudAvatar Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Size="Size.Large">
+                        <MudIcon Icon="@Icons.Material.Filled.Apps" />
+                    </MudAvatar>
+
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h4"
+                                 HtmlTag="h1">
+                            @(Client?.DisplayName ?? "Client Application")
+                        </MudText>
+
+                        <MudText Typo="Typo.body1"
+                                 Color="Color.Secondary">
+                            Review the selected client application's configuration.
+                        </MudText>
+                    </MudStack>
+                </MudStack>
+
+                <MudStack Row="true"
+                          Spacing="2">
+
+                    @if (Client is not null)
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Edit"
+                                   OnClick="EditClientAsync">
+                            Edit
+                        </MudButton>
+                    }
+
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.ArrowBack"
+                               OnClick="ReturnToClientList">
+                        Back to clients
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </header>
+
+        @if (IsLoading)
+        {
+            <MudPaper Class="client-details-page__content"
+                      Elevation="1">
+
+                <MudStack AlignItems="AlignItems.Center"
+                          Justify="Justify.Center"
+                          Spacing="2"
+                          Class="client-details-page__loading">
+
+                    <MudProgressCircular Indeterminate="true"
+                                         Color="Color.Primary" />
+
+                    <MudText Typo="Typo.body1">
+                        Loading client application...
+                    </MudText>
+                </MudStack>
+            </MudPaper>
+        }
+        else if (Client is null)
+        {
+            <MudAlert Severity="Severity.Error"
+                      Variant="Variant.Outlined">
+                The client application with identifier
+                <strong>@ClientId</strong> could not be found.
+            </MudAlert>
+        }
+        else
+        {
+            <MudStack Spacing="4">
+                <MudPaper Class="p-2 client-details-page__content"
+                          Elevation="1">
+
+                    <MudStack Spacing="3">
+                        <MudText Typo="Typo.h6"
+                                 HtmlTag="h2">
+                            Application
+                        </MudText>
+
+                        <div class="client-details-page__metadata-grid">
+                            <div>
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Display name
+                                </MudText>
+
+                                <MudText Typo="Typo.body1">
+                                    @Client.DisplayName
+                                </MudText>
+                            </div>
+
+                            <div>
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Client ID
+                                </MudText>
+
+                                <MudText Typo="Typo.body1">
+                                    @Client.ClientId
+                                </MudText>
+                            </div>
+
+                            <div>
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Client type
+                                </MudText>
+
+                                <MudText Typo="Typo.body1">
+                                    @FormatClientType(Client.ClientType)
+                                </MudText>
+                            </div>
+
+                            <div>
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Consent type
+                                </MudText>
+
+                                <MudText Typo="Typo.body1">
+                                    @FormatConsentType(Client.ConsentType)
+                                </MudText>
+                            </div>
+
+                            <div>
+                                <MudText Typo="Typo.overline"
+                                         Color="Color.Secondary">
+                                    Status
+                                </MudText>
+
+                                <MudChip T="string"
+                                         Color="@(Client.IsEnabled ? Color.Success : Color.Error)"
+                                         Variant="Variant.Filled">
+                                    @(Client.IsEnabled ? "Enabled" : "Disabled")
+                                </MudChip>
+                            </div>
+                        </div>
+                    </MudStack>
+                </MudPaper>
+
+                <MudPaper Class="p-2 client-details-page__content"
+                          Elevation="1">
+
+                    <MudStack Spacing="3">
+                        <MudStack Row="true"
+                                  AlignItems="AlignItems.Center"
+                                  Justify="Justify.SpaceBetween"
+                                  Spacing="2">
+
+                            <MudText Typo="Typo.h6"
+                                     HtmlTag="h2">
+                                Application Roles
+                            </MudText>
+
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       OnClick="CreateApplicationRoleAsync">
+                                Create role
+                            </MudButton>
+                        </MudStack>
+
+                        <MudTable T="ApplicationRoleSummary"
+                                  Items="ApplicationRoles"
+                                  Hover="true"
+                                  Elevation="0"
+                                  Breakpoint="Breakpoint.Sm"
+                                  OnRowClick="EditApplicationRoleAsync">
+
+                            <HeaderContent>
+                                <MudTh>Name</MudTh>
+                                <MudTh>Display name</MudTh>
+                                <MudTh>Description</MudTh>
+                            </HeaderContent>
+
+                            <RowTemplate>
+                                <MudTd DataLabel="Name">
+                                    @context.Name
+                                </MudTd>
+
+                                <MudTd DataLabel="Display name">
+                                    @context.DisplayName
+                                </MudTd>
+
+                                <MudTd DataLabel="Description">
+                                    @if (string.IsNullOrWhiteSpace(context.Description))
+                                    {
+                                        <MudText Typo="Typo.body2"
+                                                 Color="Color.Secondary">
+                                            Not provided
+                                        </MudText>
+                                    }
+                                    else
+                                    {
+                                        @context.Description
+                                    }
+                                </MudTd>
+                            </RowTemplate>
+
+                            <NoRecordsContent>
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">
+                                    No application roles have been defined.
+                                </MudText>
+                            </NoRecordsContent>
+                        </MudTable>
+                    </MudStack>
+                </MudPaper>
+                
+                <MudPaper Class="p-2 client-details-page__content"
+                          Elevation="1">
+
+                    <MudStack Spacing="3">
+                        <MudText Typo="Typo.h6"
+                                 HtmlTag="h2">
+                            Permissions
+                        </MudText>
+
+                        <div class="client-details-page__configuration-grid">
+                            <section class="client-details-page__section">
+                                <MudText Typo="Typo.subtitle1"
+                                         HtmlTag="h3">
+                                    Endpoints
+                                </MudText>
+
+                                @if (Client.EndpointPermissions.Count == 0)
+                                {
+                                    <MudText Typo="Typo.body2"
+                                             Color="Color.Secondary">
+                                        No endpoint permissions configured.
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <div class="client-details-page__chips">
+                                        @foreach (var permission in Client.EndpointPermissions)
+                                        {
+                                            <MudChip T="string"
+                                                     Variant="Variant.Outlined">
+                                                @permission
+                                            </MudChip>
+                                        }
+                                    </div>
+                                }
+                            </section>
+
+                            <section class="client-details-page__section">
+                                <MudText Typo="Typo.subtitle1"
+                                         HtmlTag="h3">
+                                    Grant types
+                                </MudText>
+
+                                @if (Client.GrantTypePermissions.Count == 0)
+                                {
+                                    <MudText Typo="Typo.body2"
+                                             Color="Color.Secondary">
+                                        No grant type permissions configured.
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <div class="client-details-page__chips">
+                                        @foreach (var permission in Client.GrantTypePermissions)
+                                        {
+                                            <MudChip T="string"
+                                                     Variant="Variant.Outlined">
+                                                @permission
+                                            </MudChip>
+                                        }
+                                    </div>
+                                }
+                            </section>
+
+                            <section class="client-details-page__section">
+                                <MudText Typo="Typo.subtitle1"
+                                         HtmlTag="h3">
+                                    Response types
+                                </MudText>
+
+                                @if (Client.ResponseTypePermissions.Count == 0)
+                                {
+                                    <MudText Typo="Typo.body2"
+                                             Color="Color.Secondary">
+                                        No response type permissions configured.
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <div class="client-details-page__chips">
+                                        @foreach (var permission in Client.ResponseTypePermissions)
+                                        {
+                                            <MudChip T="string"
+                                                     Variant="Variant.Outlined">
+                                                @permission
+                                            </MudChip>
+                                        }
+                                    </div>
+                                }
+                            </section>
+
+                            <section class="client-details-page__section">
+                                <MudText Typo="Typo.subtitle1"
+                                         HtmlTag="h3">
+                                    Scopes
+                                </MudText>
+
+                                @if (Client.ScopePermissions.Count == 0)
+                                {
+                                    <MudText Typo="Typo.body2"
+                                             Color="Color.Secondary">
+                                        No scope permissions configured.
+                                    </MudText>
+                                }
+                                else
+                                {
+                                    <div class="client-details-page__chips">
+                                        @foreach (var permission in Client.ScopePermissions)
+                                        {
+                                            <MudChip T="string"
+                                                     Variant="Variant.Outlined">
+                                                @permission
+                                            </MudChip>
+                                        }
+                                    </div>
+                                }
+                            </section>
+                        </div>
+                    </MudStack>
+                </MudPaper>
+
+                <MudPaper Class="p-2 client-details-page__content"
+                          Elevation="1">
+
+                    <MudStack Spacing="4">
+                        <section class="client-details-page__section">
+                            <MudText Typo="Typo.h6"
+                                     HtmlTag="h2">
+                                Redirect URIs
+                            </MudText>
+
+                            @if (Client.RedirectUris.Count == 0)
+                            {
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">
+                                    No redirect URIs configured.
+                                </MudText>
+                            }
+                            else
+                            {
+                                <ul class="client-details-page__uri-list">
+                                    @foreach (var redirectUri in Client.RedirectUris)
+                                    {
+                                        <li>
+                                            <MudText Typo="Typo.body2">
+                                                @redirectUri
+                                            </MudText>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </section>
+
+                        <MudDivider />
+
+                        <section class="client-details-page__section">
+                            <MudText Typo="Typo.h6"
+                                     HtmlTag="h2">
+                                Post-logout redirect URIs
+                            </MudText>
+
+                            @if (Client.PostLogoutRedirectUris.Count == 0)
+                            {
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">
+                                    No post-logout redirect URIs configured.
+                                </MudText>
+                            }
+                            else
+                            {
+                                <ul class="client-details-page__uri-list">
+                                    @foreach (var redirectUri in Client.PostLogoutRedirectUris)
+                                    {
+                                        <li>
+                                            <MudText Typo="Typo.body2">
+                                                @redirectUri
+                                            </MudText>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </section>
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        }
+    </MudStack>
+</div>

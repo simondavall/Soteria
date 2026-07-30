@@ -1,0 +1,59 @@
+﻿@page "/review"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Policy = "EditorOrReviewer")]
+
+@inherits ReferencePolicyPageBase
+
+<PageTitle>Review</PageTitle>
+
+<h1>Review</h1>
+
+<div class="alert alert-success" role="status">
+    <h2 class="h4">Editor or Reviewer policy satisfied</h2>
+
+    <p class="mb-0">
+        You can access this page because the authenticated user has either the
+        <strong>Editor</strong> or <strong>Reviewer</strong> Application Role.
+    </p>
+</div>
+
+<AuthorizeView>
+    <Authorized>
+        <p>
+            Authenticated user:
+            <strong>@context.User.Identity?.Name</strong>
+        </p>
+    </Authorized>
+</AuthorizeView>
+
+<button class="btn btn-primary"
+        disabled="@IsLoading"
+        @onclick="CallReferenceApiAsync">
+    @(IsLoading
+        ? "Calling API..."
+        : "Call Review API")
+</button>
+
+@if (!string.IsNullOrWhiteSpace(ResponseMessage))
+{
+    <div class="alert alert-success mt-3"
+         role="status">
+        @ResponseMessage
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <div class="alert alert-danger mt-3"
+         role="alert">
+        @ErrorMessage
+    </div>
+}
+
+@code {
+    protected override string ApiEndpoint => "review";
+
+    protected override string ReturnUrl => "/review";
+}

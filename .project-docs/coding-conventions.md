@@ -4,10 +4,24 @@
 - Async methods end with Async.
 - Interfaces prefixed with I.
 
-# Layout
-- Use primary constructors where appropriate.
-- Prefer collection expressions.
-- Prefer expression-bodied members only when clearer.
+# Formatting
+
+## C#
+
+- Prefer compact formatting where readability is preserved.
+- Keep parameter lists and method invocations on a single line when they remain comfortably readable.
+- Avoid introducing vertical whitespace unless it separates logical blocks.
+- Wrap expressions only when line length or readability genuinely benefits.
+- Prefer compact object construction where the intent remains clear.
+- Optimise for scanability rather than minimising line length.
+
+## Razor
+
+- Prefer vertically stacked component attributes where this improves scanability.
+- Place one attribute per line for components with several attributes.
+- Keep short, simple components on one line where they remain easy to read.
+- Use indentation and whitespace to make component structure and nesting clear.
+- Do not apply compact C# formatting preferences to Razor component attributes.
 
 # Components
 - Code-behind by default.
@@ -19,8 +33,11 @@
 
 # Validation
 - Use MudForm for interactive MudBlazor editors.
+- Use FluentValidation for interactive editor validation.
+- Keep validation rules in dedicated validator classes.
 - Use EditForm with built-in Blazor inputs for static SSR Identity workflows.
 - Prefer field-level validation messages over ValidationSummary where practical.
+- Display persistence and business-rule validation failures at dialog level.
 
 # Async
 - Prefer async all the way.

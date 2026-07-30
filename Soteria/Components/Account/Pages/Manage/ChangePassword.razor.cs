@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages.Manage;
 
@@ -16,11 +17,13 @@ public partial class ChangePassword
     [Inject] private ILogger<ChangePassword> Logger { get; set; } = null!;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
+
         _user = await UserManager.GetUserAsync(HttpContext.User);
         if (_user is null)
         {
@@ -43,7 +46,7 @@ public partial class ChangePassword
             return;
         }
 
-        var result = await UserManager.ChangePasswordAsync(_user, Input!.OldPassword, Input.NewPassword);
+        var result = await UserManager.ChangePasswordAsync(_user, Input.OldPassword, Input.NewPassword);
         if (!result.Succeeded)
         {
             _message = $"Error: {string.Join(", ", result.Errors.Select(error => error.Description))}";

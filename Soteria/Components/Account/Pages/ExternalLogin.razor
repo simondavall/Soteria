@@ -64,7 +64,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Input ??= new();
+        // this is needed, even though non-nullable
+        Input ??= new InputModel();
 
         if (RemoteError is not null)
         {

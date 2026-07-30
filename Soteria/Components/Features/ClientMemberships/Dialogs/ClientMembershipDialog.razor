@@ -1,0 +1,187 @@
+﻿@using Soteria.Data.Authorization
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="Form">
+            <MudStack Spacing="3">
+                @if (ErrorMessages.Count > 0)
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
+                        <MudList T="string"
+                                 Dense="true"
+                                 Class="pa-0">
+                            @foreach (var message in ErrorMessages)
+                            {
+                                <MudListItem T="string">
+                                    @message
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudAlert>
+                }
+
+                @if (IsLoading)
+                {
+                    <div class="d-flex justify-center pa-4">
+                        <MudProgressCircular Indeterminate="true"/>
+                    </div>
+                }
+                else if (IsEditMode && EditRequest is null)
+                {
+                    <MudAlert Severity="Severity.Error"
+                              Variant="Variant.Outlined">
+                        The selected Client Membership could not be found.
+                    </MudAlert>
+                }
+                else if (!IsEditMode && AvailableClients.Count == 0)
+                {
+                    <MudAlert Severity="Severity.Info"
+                              Variant="Variant.Outlined">
+                        This user already belongs to every available client application.
+                    </MudAlert>
+                }
+                else if (IsEditMode)
+                {
+                    <MudTextField T="string"
+                                  Label="Client application"
+                                  Variant="Variant.Outlined"
+                                  Value="@EditRequest!.ApplicationName"
+                                  ReadOnly="true"/>
+
+                    <MudSelect T="MembershipLevel"
+                               Label="Membership level"
+                               Variant="Variant.Outlined"
+                               Required="true"
+                               @bind-Value="EditRequest.MembershipLevel"
+                               For="@(() => EditRequest.MembershipLevel)"
+                               Validation="@EditClientMembershipValidator.ValidateValueAsync">
+
+                        @foreach (var membershipLevel in MembershipLevels)
+                        {
+                            <MudSelectItem T="MembershipLevel"
+                                           Value="@membershipLevel">
+                                @membershipLevel
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudDivider/>
+
+                    <MudStack Spacing="1">
+                        <MudText Typo="Typo.subtitle1">
+                            Application Roles
+                        </MudText>
+
+                        @if (ApplicationRoles.Count == 0)
+                        {
+                            <MudText Typo="Typo.body2"
+                                     Color="Color.Secondary">
+                                This client application has no Application Roles.
+                            </MudText>
+                        }
+                        else
+                        {
+                            @foreach (var role in ApplicationRoles)
+                            {
+                                <MudCheckBox T="bool"
+                                             Label="@role.DisplayName"
+                                             Value="@IsRoleSelected(role.ApplicationRoleId)"
+                                             ValueChanged="@(selected => SetRoleSelected(role.ApplicationRoleId, selected))"
+                                             Disabled="@IsSaving"/>
+
+                                @if (!string.IsNullOrWhiteSpace(role.Description))
+                                {
+                                    <MudText Typo="Typo.caption"
+                                             Color="Color.Secondary"
+                                             Class="ml-8">
+                                        @role.Description
+                                    </MudText>
+                                }
+                            }
+                        }
+                    </MudStack>
+                }
+                else
+                {
+                    <MudSelect T="string"
+                               Label="Client application"
+                               Variant="Variant.Outlined"
+                               Required="true"
+                               RequiredError="Select a client application."
+                               @bind-Value="CreateRequest.ClientId"
+                               For="@(() => CreateRequest.ClientId)"
+                               Validation="@CreateClientMembershipValidator.ValidateValueAsync">
+
+                        @foreach (var client in AvailableClients)
+                        {
+                            <MudSelectItem T="string"
+                                           Value="@client.ClientId">
+                                @client.DisplayName
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudSelect T="MembershipLevel"
+                               Label="Membership level"
+                               Variant="Variant.Outlined"
+                               Required="true"
+                               @bind-Value="CreateRequest.MembershipLevel"
+                               For="@(() => CreateRequest.MembershipLevel)"
+                               Validation="@CreateClientMembershipValidator.ValidateValueAsync">
+
+                        @foreach (var membershipLevel in MembershipLevels)
+                        {
+                            <MudSelectItem T="MembershipLevel"
+                                           Value="@membershipLevel">
+                                @membershipLevel
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+
+        @if (IsEditMode)
+        {
+            <MudButton Color="Color.Error"
+                       Variant="Variant.Text"
+                       OnClick="DeleteAsync"
+                       Disabled="@IsSaving">
+
+                Delete
+
+            </MudButton>
+        }
+
+        <MudSpacer/>
+
+        <MudButton OnClick="Cancel"
+                   Disabled="@IsSaving">
+
+            Cancel
+
+        </MudButton>
+
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   OnClick="SaveAsync"
+                   Disabled="@SaveDisabled">
+
+            @if (IsSaving)
+            {
+                <MudProgressCircular
+                    Size="Size.Small"
+                    Indeterminate="true"
+                    Class="mr-2"/>
+            }
+
+            @(IsEditMode ? "Save" : "Assign")
+
+        </MudButton>
+
+    </DialogActions>
+</MudDialog>

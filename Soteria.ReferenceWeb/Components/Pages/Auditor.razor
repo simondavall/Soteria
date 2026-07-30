@@ -1,0 +1,59 @@
+﻿@page "/auditor"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Policy = "Auditor")]
+
+@inherits ReferencePolicyPageBase
+
+<PageTitle>Auditor</PageTitle>
+
+<h1>Auditor</h1>
+
+<div class="alert alert-success" role="status">
+    <h2 class="h4">Auditor policy satisfied</h2>
+
+    <p class="mb-0">
+        You can access this page because the authenticated user has the
+        <strong>Auditor</strong> Application Role.
+    </p>
+</div>
+
+<AuthorizeView>
+    <Authorized>
+        <p>
+            Authenticated user:
+            <strong>@context.User.Identity?.Name</strong>
+        </p>
+    </Authorized>
+</AuthorizeView>
+
+<button class="btn btn-primary"
+        disabled="@IsLoading"
+        @onclick="CallReferenceApiAsync">
+    @(IsLoading
+        ? "Calling API..."
+        : "Call Auditor API")
+</button>
+
+@if (!string.IsNullOrWhiteSpace(ResponseMessage))
+{
+    <div class="alert alert-success mt-3"
+         role="status">
+        @ResponseMessage
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <div class="alert alert-danger mt-3"
+         role="alert">
+        @ErrorMessage
+    </div>
+}
+
+@code {
+    protected override string ApiEndpoint => "auditor";
+
+    protected override string ReturnUrl => "/auditor";
+}

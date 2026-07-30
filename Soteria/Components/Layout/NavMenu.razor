@@ -1,4 +1,5 @@
-﻿<MudNavMenu Class="pa-2">
+﻿@using Soteria.Components.Features.Authorization
+<MudNavMenu Class="pa-2">
     <MudNavLink Href="/"
                 Match="NavLinkMatch.All"
                 Icon="@Icons.Material.Filled.Home">
@@ -23,39 +24,58 @@
         Auth Required
     </MudNavLink>
 
-    <MudDivider Class="my-2"/>
-
     <AuthorizeView>
         <Authorized Context="authContext">
+            
+            <AuthorizeView Policy="@SoteriaAuthorizationPolicies.Administration">
+                <Authorized>
+                    <MudDivider Class="my-2"/>
+
+                    <MudText Typo="Typo.overline"
+                             Class="px-4 pt-4 pb-1">
+                        Administration
+                    </MudText>
+
+                    <MudNavLink Href="clients"
+                                Match="NavLinkMatch.Prefix"
+                                Icon="@Icons.Material.Filled.Apps">
+                        Client Applications
+                    </MudNavLink>
+
+                    <MudNavLink Href="users"
+                                Match="NavLinkMatch.Prefix"
+                                Icon="@Icons.Material.Filled.People">
+                        Users
+                    </MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+
+            <MudDivider Class="my-2"/>
+
             <MudNavLink Href="/Account/Manage"
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Person">
                 @authContext.User.Identity?.Name
             </MudNavLink>
 
-            <form action="/Account/Logout" method="post">
-                <AntiforgeryToken/>
-                <input type="hidden"
-                       name="ReturnUrl"
-                       value="@CurrentRelativeUrl"/>
-
-                <MudButton ButtonType="ButtonType.Submit"
-                           Variant="Variant.Text"
-                           Color="Color.Inherit"
-                           StartIcon="@Icons.Material.Filled.Logout"
-                           FullWidth="true"
-                           Class="justify-start">
-                    Log out
-                </MudButton>
-            </form>
+            <MudNavLink Href="/Account/Logout"
+                        Match="NavLinkMatch.Prefix"
+                        Icon="@Icons.Material.Filled.Logout">
+                Log out
+            </MudNavLink>
         </Authorized>
 
         <NotAuthorized>
-            <MudNavLink Href="/Account/Register"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.PersonAdd">
-                Register
-            </MudNavLink>
+            <MudDivider Class="my-2"/>
+
+            @if (BootstrapRegistrationRequired)
+            {
+                <MudNavLink Href="/Account/Register"
+                            Match="NavLinkMatch.Prefix"
+                            Icon="@Icons.Material.Filled.PersonAdd">
+                    Register Soteria Admin
+                </MudNavLink>
+            }
 
             <MudNavLink Href="/Account/Login"
                         Match="NavLinkMatch.Prefix"

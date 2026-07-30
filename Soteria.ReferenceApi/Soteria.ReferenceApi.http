@@ -1,0 +1,6 @@
+@Soteria.ReferenceApi_HostAddress = http://localhost:5075
+
+GET {{Soteria.ReferenceApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

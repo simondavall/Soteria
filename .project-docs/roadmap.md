@@ -27,17 +27,18 @@ Enable Soteria to act as an OpenID Connect Provider capable of authenticating a 
 
 **Includes**
 
-- Establish the OpenID Connect provider architecture.
-- Configure OpenIddict.
-- Support Authorization Code Flow with PKCE.
-- Register an initial development client.
-- Authenticate a consuming web application.
-- Establish the initial scopes and claims.
-- Establish development signing and encryption credentials.
+- ✓ Establish the OpenID Connect provider architecture.
+- ✓ Create reference web and API applications.
+- ✓ Configure the OpenIddict provider.
+- ✓ Establish development signing and encryption credentials.
+- ✓ Support Authorization Code Flow with PKCE.
+- ✓ Register an initial development client.
+- ✓ Establish the initial scopes and claims.
+- ✓ A consuming application can authenticate users through Soteria and securely access protected APIs using OAuth-issued access tokens.
 
 **Deliverable**
 
-A consuming web application can successfully authenticate users through Soteria using OpenID Connect.
+A consuming web application can successfully authenticate users through Soteria using OpenID Connect and securely access a protected resource API using OAuth-issued JWT access tokens.
 
 ---
 
@@ -49,12 +50,11 @@ Allow administrators to manage applications that delegate authentication to Sote
 
 **Includes**
 
-- Register client applications.
-- Configure redirect URIs.
-- Configure client authentication.
-- Configure OpenID Connect settings.
-- Enable or disable client applications.
-- Manage application metadata.
+- ✓ Register client applications.
+- ✓ Configure redirect URIs.
+- ✓ Configure client authentication.
+- ✓ Configure OpenID Connect settings.
+- ✓ Enable or disable client applications.
 
 **Deliverable**
 
@@ -70,14 +70,9 @@ Provide central administration of user identities.
 
 **Includes**
 
-- Create, edit, enable and disable users.
-- Search and manage users.
-- Manage passwords.
-- Manage email addresses.
-- Account lockout.
-- User self-service account management.
-- Two-factor authentication.
-- Additional identity management features as the project evolves.
+- ✓ Create & edit users.
+- ✓ Search and manage users.
+- ✓ Reset account lockout.
 
 **Deliverable**
 
@@ -93,8 +88,8 @@ Control which users can access each client application and what authorisation in
 
 **Includes**
 
-- Grant and revoke application access.
-- Manage application roles.
+- ✓ Grant and revoke application access.
+- ✓ Manage application roles.
 - Manage application claims.
 - Determine the authorisation information issued to client applications.
 - Additional access management features as the project evolves.
@@ -102,6 +97,12 @@ Control which users can access each client application and what authorisation in
 **Deliverable**
 
 Client applications trust Soteria as the source of truth for both authentication and authorisation.
+
+---
+
+# Phase 6 - Extended Application Configuration
+
+Allow other client types and permissions.
 
 ---
 

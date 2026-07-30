@@ -9,6 +9,14 @@
 - Distinguish clearly between observations, recommendations, and project decisions.
 - When suggesting documentation changes, quote the existing text and provide the replacement text.
 - When reviewing the documentation, focus on consistency, ambiguity, correctness, and completeness rather than stylistic improvements.
+- Provide document updates that are easy for the user to apply in the established format.
+- Recommend updates only for documents affected by the completed task.
+- Prefer a single replacement covering adjacent sections rather than multiple small replacements where it improves readability.
+
+Use the following format when suggesting document changes:
+- Replace \<existing section\> with \<replacement section\>.
+- Add \<new section\> after / before \<existing section\>.
+- Use a complete document replacement only when a document has been substantially restructured.
 
 ## Before implementation
 
@@ -24,24 +32,44 @@
 
 ## Task Workflow
 
-Development is tracked using a lightweight Jira-style ticket system.
+The assistant should complete each task using the following workflow:
 
-When beginning a new task, the assistant should provide:
+1. Discuss the implementation where architectural or design decisions remain. Do not revisit established project decisions unless a genuine inconsistency or ambiguity is identified.
+2. Update affected project documentation immediately when the discussion settles a project decision, scope clarification, responsibility boundary or delivery-plan change. The documentation should describe the implementation that is about to be performed before implementation begins.
+3. Define the Jira ticket after the discussion phase so that its title, description, goal and scope reflect the agreed implementation. The developer will assign the RefId.
+4. Provide the complete implementation together with the verification checklist in a single response, pausing only where new information or a genuine decision is required.
+5. Once verification has passed, recommend updates that record the completed implementation and advance the documented project state.
 
-- A concise ticket title.
-- A short task description suitable for the tracking system.
-- A concise task goal
-- A scope for the task
+Discussion-phase documentation updates may include:
 
-The developer will assign a reference ID (RefId) to the task.
+- architectural decisions;
+- Jira scope and task-boundary clarifications;
+- delivery-plan changes;
+- roadmap changes;
+- responsibility clarifications;
+- implementation requirements established during discussion.
 
-The RefId is used consistently throughout development:
+Completion-phase documentation updates may include:
 
-- Git branch names.
-- Git commit messages. (Always past tense, in the form '<lowercase refId>: <commit message>)
-- Task tracking.
+- completed work in current-state.md;
+- the next current task;
+- implementation decisions discovered during development;
+- proven implementation patterns;
+- permanent regression verification.
 
-The assistant should use the ticket title and description to help define the scope of the work before implementation begins.
+Use explicit copy-ready recommendations in the established format:
+
+- Replace <existing section> with <replacement section>.
+- Add <new section> after / before <existing section>.
+- Where adjacent sections are changing, prefer a single replacement covering all affected sections.
+
+The task is not considered complete until verification has passed and the required project documentation updates have been applied or recommended.
+
+Verification should include confirming that:
+- the application builds successfully (where applicable);
+- the application starts successfully and remains runnable after the changes;
+- previously completed behaviour required by the current task continues to work;
+- the new behaviour introduced by the task behaves as expected.
 
 ## Implementation
 

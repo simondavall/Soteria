@@ -1,0 +1,73 @@
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using Soteria.Components.Features.Users.Dialogs;
+
+namespace Soteria.Components.Features.Users.Pages;
+
+public partial class UserList
+{
+    [Inject]
+    private UserService UserService { get; set; } = default!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = default!;
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    private IReadOnlyList<UserSummary> Users { get; set; } = [];
+    private string _searchText = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await UserService.GetUsersAsync();
+    }
+
+    private async Task CreateUserAsync()
+    {
+        var options =
+            new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                BackdropClick = false
+            };
+
+        var dialog = await DialogService.ShowAsync<CreateUserDialog>("Create user", options);
+        
+        var result = await dialog.Result;
+        if (result is null
+            || result.Canceled
+            || result.Data is not Guid userId)
+        {
+            return;
+        }
+
+        Navigation.NavigateTo($"/users/{userId}");
+    }
+
+    private bool FilterUser(UserSummary user)
+    {
+        if (string.IsNullOrWhiteSpace(_searchText))
+        {
+            return true;
+        }
+
+        var searchText = _searchText.Trim();
+
+        return user.UserName.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+               || (user.DisplayName?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false)
+               || user.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+               || user.EmailConfirmed.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase)
+               || user.IsLockedOut.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void SelectUser(TableRowClickEventArgs<UserSummary> args)
+    {
+        if (args.Item is null)
+        {
+            return;
+        }
+
+        Navigation.NavigateTo($"/users/{args.Item.UserId}");
+    }
+}

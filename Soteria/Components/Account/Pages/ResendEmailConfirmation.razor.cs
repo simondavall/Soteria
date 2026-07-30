@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Soteria.Data;
+// ReSharper disable NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
 
 namespace Soteria.Components.Account.Pages;
 
@@ -17,16 +18,17 @@ public partial class ResendEmailConfirmation
     [Inject] private IEmailSender<ApplicationUser> EmailSender { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    [SupplyParameterFromForm] private InputModel? Input { get; set; }
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
 
     protected override void OnInitialized()
     {
+        // this is needed, even though non-nullable
         Input ??= new InputModel();
     }
 
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input!.Email);
+        var user = await UserManager.FindByEmailAsync(Input.Email);
         if (user is null)
         {
             _message = ConfirmationMessage;

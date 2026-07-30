@@ -21,15 +21,55 @@ Identity pages that participate directly in ASP.NET Core Identity workflows (log
 ## Reason
 Static SSR is required for the Identity request/response flow, while MudBlazor's stateful form controls require an interactive render mode. This approach preserves the Identity architecture while maintaining a consistent MudBlazor user experience.
 
-# Status-message redirects
+# OpenIddict endpoints
+When implementing OpenIddict endpoints that require application logic:
+
+• Enable the appropriate ASP.NET Core pass-through.
+• Map the endpoint explicitly using endpoint routing.
+• Perform application-specific work.
+• Complete the protocol using the OpenIddict authentication scheme.
+• Keep protocol validation inside OpenIddict and business logic inside Soteria.
+
+## Shared Provider Configuration
+
+### Problem
+
+Multiple workflows need to configure an OpenIddict application using the same provider defaults. Duplicating the configuration increases the risk of the provider behaviour diverging over time.
+
+### Pattern
+
+Place the shared provider configuration into a small internal helper that applies the common configuration to an `OpenIddictApplicationDescriptor`.
+
+Individual workflows remain responsible for supplying their own application-specific values (for example client identifier, display name, client secret and redirect URIs) before creating or updating the application.
+
+### Benefits
+
+- Maintains a single source of truth for provider defaults.
+- Keeps bootstrap registration and administrative workflows aligned.
+- Reduces maintenance effort when provider defaults evolve.
+- Avoids introducing unnecessary service abstractions while still removing duplicated implementation.
+
+# MudBlazor Administrative Editors
 
 ## Context
-Identity workflows that redirect after POST.
 
-## Implementation
-- Use IdentityRedirectManager redirect helpers.
-- Display workflow outcomes through StatusMessage.
-- Redirect to an appropriate page with a user-facing status message rather than exposing exceptions for foreseeable user actions.
+Interactive administration dialogs that create or edit entities.
 
-## Reason
-Keeps users within the normal application flow while preserving static SSR request semantics.
+## Pattern
+
+- Use MudForm for interactive validation.
+- Use FluentValidation for validation rules.
+- Keep validation in dedicated validator classes.
+- Inject FluentValidation's `IValidator<T>` into feature services.
+- Use a small MudBlazor adapter interface only where required to integrate with `MudForm`.
+- Keep persistence lookups used by validation behind small query services rather than injecting feature services into validators.
+- Display server-side validation failures at dialog level while leaving field validation to MudBlazor.
+- Normalise request values immediately before persistence.
+
+## Benefits
+
+- Separates UI validation from persistence.
+- Avoids circular service dependencies.
+- Keeps validators reusable.
+- Keeps feature services focused on business behaviour.
+- Produces consistent validation behaviour across administrative editors.

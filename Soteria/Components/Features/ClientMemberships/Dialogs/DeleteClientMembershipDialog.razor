@@ -1,0 +1,33 @@
+﻿<MudDialog>
+
+    <DialogContent>
+
+        <MudText Typo="Typo.body1">
+            Remove the Client Membership for
+            <strong>@ApplicationName</strong>?
+        </MudText>
+
+        <MudAlert Severity="Severity.Warning"
+                  Variant="Variant.Outlined"
+                  Class="mt-4">
+            This will permanently remove the user's membership of this
+            client application.
+        </MudAlert>
+
+    </DialogContent>
+
+    <DialogActions>
+
+        <MudButton OnClick="Cancel">
+            Cancel
+        </MudButton>
+
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Filled"
+                   OnClick="Confirm">
+            Delete
+        </MudButton>
+
+    </DialogActions>
+
+</MudDialog>

@@ -1,0 +1,132 @@
+﻿@page "/clients"
+
+@using Microsoft.AspNetCore.Authorization
+@using Soteria.Components.Features.Authorization
+
+@attribute [Authorize(Policy = SoteriaAuthorizationPolicies.Administration)]
+
+<PageTitle>Client Applications</PageTitle>
+
+<div class="clients-page">
+    <MudStack Spacing="4">
+        <header class="clients-page__header">
+            <MudStack Row="true"
+                      AlignItems="AlignItems.Center"
+                      Justify="Justify.SpaceBetween"
+                      Spacing="3"
+                      Class="clients-page__header-content">
+
+                <MudStack Row="true"
+                          AlignItems="AlignItems.Center"
+                          Spacing="2">
+
+                    <MudAvatar Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Size="Size.Large">
+                        <MudIcon Icon="@Icons.Material.Filled.Apps"/>
+                    </MudAvatar>
+
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h4"
+                                 HtmlTag="h1">
+                            Client Applications
+                        </MudText>
+
+                        <MudText Typo="Typo.body1"
+                                 Color="Color.Secondary">
+                            Manage applications that authenticate
+                            users through Soteria.
+                        </MudText>
+                    </MudStack>
+                </MudStack>
+
+                @if (CanCreateClient)
+                {
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="CreateClientAsync">
+                        Create Client
+                    </MudButton>
+                }
+                
+            </MudStack>
+        </header>
+
+        <MudPaper Class="clients-page__content">
+
+            @if (Clients.Count == 0)
+            {
+                <MudStack Class="clients-page__empty-state"
+                          AlignItems="AlignItems.Center"
+                          Justify="Justify.Center"
+                          Spacing="3">
+
+                    <MudIcon Icon="@Icons.Material.Filled.Apps"
+                             Size="Size.Large"/>
+
+                    <MudText Typo="Typo.h5">
+                        No client applications
+                    </MudText>
+
+                    <MudText Class="clients-page__empty-description"
+                             Align="Align.Center">
+                        No OpenIddict client applications are currently registered.
+                    </MudText>
+
+                </MudStack>
+            }
+            else
+            {
+                <MudTable T="ClientSummary"
+                          Items="Clients"
+                          Hover="true"
+                          Dense="true"
+                          OnRowClick="SelectClient">
+
+                    <HeaderContent>
+
+                        <MudTh>Display Name</MudTh>
+                        <MudTh>Client Id</MudTh>
+                        <MudTh>Type</MudTh>
+                        <MudTh>Consent</MudTh>
+                        <MudTh>Status</MudTh>
+
+                    </HeaderContent>
+
+                    <RowTemplate>
+
+                        <MudTd DataLabel="Display Name">
+                            @context.DisplayName
+                        </MudTd>
+
+                        <MudTd DataLabel="Client Id">
+                            @context.ClientId
+                        </MudTd>
+
+                        <MudTd DataLabel="Type">
+                            @FormatClientType(context.ClientType)
+                        </MudTd>
+
+                        <MudTd DataLabel="Consent">
+                            @FormatConsentType(context.ConsentType)
+                        </MudTd>
+
+                        <MudTd DataLabel="Status">
+
+                            <MudChip T="string"
+                                     Color="@(context.IsEnabled ? Color.Success : Color.Error)"
+                                     Variant="Variant.Filled">
+                                @(context.IsEnabled ? "Enabled" : "Disabled")
+                            </MudChip>
+
+                        </MudTd>
+
+                    </RowTemplate>
+
+                </MudTable>
+            }
+
+        </MudPaper>
+    </MudStack>
+</div>

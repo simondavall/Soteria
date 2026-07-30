@@ -8,18 +8,23 @@
         <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
     </PropertyGroup>
 
-    <ItemGroup>
-        <None Update="Data\app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
-    </ItemGroup>
+    <PropertyGroup>
+        <Version>0.0.1</Version>
+        <InformationalVersion>0.0.1</InformationalVersion>
+    </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9"/>
-        <PackageReference Include="MudBlazor" Version="9.6.0"/>
+        <PackageReference Include="FluentValidation" Version="12.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9" />
+        <PackageReference Include="MudBlazor" Version="9.6.0" />
         <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="3.0.0" />
+        <PackageReference Include="OpenIddict.AspNetCore" Version="7.6.0" />
+        <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.6.0" />
+        <PackageReference Include="DotNetEnv" Version="3.2.0" />
     </ItemGroup>
 
 </Project>
