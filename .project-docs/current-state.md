@@ -13,15 +13,23 @@ where development should continue.
 
 # Current task
 
-- Establish the deployment baseline.
-    - Confirm the deployment scope.
-    - Confirm the target hosting environment.
-    - Confirm the canonical deployment URL.
-    - Record deployment assumptions and constraints.
+- Establish that no hidden configuration exists.
+  - Review all application configuration sources.
+  - Identify configuration required outside source control.
+  - Identify development-only configuration.
+  - Produce a complete deployment configuration inventory.
 
 # Remaining milestone tasks
 
-- Establish that no hidden configuration exists.
 - Establish production-readiness gaps.
 
 # Completed
+
+- Created the initial deployment documentation.
+- Defined the purpose and scope of the deployment architecture.
+- Confirmed Windows 11 Pro and IIS as the initial deployment platform.
+- Confirmed SQLite as the initial deployment database.
+- Confirmed the canonical deployment URL as https://soteria.local.
+- Defined the initial single-machine deployment architecture.
+- Recorded the initial deployment assumptions and constraints.
+- Excluded the Reference Web Application and Reference API from the deployment scope.

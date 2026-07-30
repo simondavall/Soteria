@@ -652,11 +652,11 @@ reference resource API.
 
 ## Milestone 6.1 – Deployment Baseline
 
-- Establish the deployment baseline.
-  - Confirm the deployment scope.
-  - Confirm the target hosting environment.
-  - Confirm the canonical deployment URL.
-  - Record deployment assumptions and constraints.
+- ✓ Establish the deployment baseline.
+  - ✓ Confirm the deployment scope.
+  - ✓ Confirm the target hosting environment.
+  - ✓ Confirm the canonical deployment URL.
+  - ✓ Record deployment assumptions and constraints.
 
 - Establish that no hidden configuration exists.
   - Review all application configuration sources.

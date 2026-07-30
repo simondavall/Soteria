@@ -2,11 +2,56 @@
 
 ## 1. Purpose
 
+This document defines the deployment architecture and operational procedures for Soteria.
+
+It records the agreed deployment architecture, operational procedures and
+verification steps for the current implementation. The document is intended to
+evolve alongside the project and become the authoritative operational guide for
+deploying and maintaining Soteria.
+
+---
+
 ## 2. Deployment Scope
+
+The initial deployment targets a single-machine installation of Soteria for
+development and evaluation purposes.
+
+Current scope:
+
+- Operating System: Windows 11 Pro
+- Web Server: IIS
+- Application URL: https://soteria.local
+- Database: SQLite
+- Database migrations applied manually
+- Database backed up before migrations are applied
+- Single Soteria application deployment
+- Reference Web Application excluded
+- Reference API excluded
+
+Future phases may introduce support for additional deployment topologies,
+database providers and production hosting environments.
+
+---
 
 ## 3. Deployment Architecture
 
 ### 3.1 Target Environment
+
+The current deployment architecture consists of a single Windows machine hosting
+both the Soteria application and its SQLite database.
+
+Characteristics:
+
+- Single server deployment
+- Local IIS hosting
+- Local SQLite database
+- Local application storage
+- HTTPS endpoint exposed via IIS
+- No external infrastructure dependencies beyond the .NET runtime and IIS
+
+This deployment model provides a simple baseline that can later be extended to
+support larger or distributed production environments.
+
 ### 3.2 Hosting Model
 ### 3.3 Directory Structure
 ### 3.4 Network Topology
