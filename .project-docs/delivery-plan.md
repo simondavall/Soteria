@@ -638,40 +638,251 @@ reference resource API.
   - ✓ Preserve existing token lifetime behaviour.
   - ✓ Verify successful authorisation for valid client memberships.
 
-- Enforce Client Membership during token redemption.
-  - Consume the shared OpenId authorisation context during authorisation-code redemption.
-  - Consume the shared OpenId authorisation context during refresh-token redemption.
-  - Reject redemption when the client or membership is no longer valid.
-  - Preserve rolling refresh-token behaviour.
-  - Preserve existing token lifetime behaviour.
-  - Verify revoked memberships immediately prevent further token issuance.
-
-- Verify end-to-end application authorisation.
-  - Verify existing Soteria administration behaviour remains unchanged.
-  - Verify successful authorisation for valid client memberships.
-  - Verify failed authorisation for missing client memberships.
-  - Verify failed authorisation following membership removal.
-  - Verify failed refresh-token redemption following membership removal.
-  - Verify end-to-end Application Role claim issuance remains correct.
+- ✓ Enforce Client Membership during token redemption.
+  - ✓ Consume the shared OpenId authorisation context during authorisation-code redemption.
+  - ✓ Consume the shared OpenId authorisation context during refresh-token redemption.
+  - ✓ Reject redemption when the client or membership is no longer valid.
+  - ✓ Preserve rolling refresh-token behaviour.
+  - ✓ Preserve existing token lifetime behaviour.
+  - ✓ Verify revoked memberships immediately prevent further token issuance.
 
 ---
 
-# Phase 6 - Extended Application Configuration
+# Phase 6 – Deployment
 
-## Milestone 6.1 – OpenID Connect Configuration
+## Milestone 6.1 – Deployment Baseline
 
-- Manage client type.
-  - Configure the client as public or confidential.
-  - Apply the authentication requirements appropriate to the selected client type.
-  - Verify public and confidential client authentication.
+- Establish the deployment baseline.
+  - Confirm the deployment scope.
+  - Confirm the target hosting environment.
+  - Confirm the canonical deployment URL.
+  - Record deployment assumptions and constraints.
 
-- Manage OpenID Connect permissions.
-  - Configure endpoint permissions.
-  - Configure grant type permissions.
-  - Configure response type permissions.
-  - Configure scope permissions.
-  - Configure PKCE requirements.
-  - Configure consent behaviour.
-  - Verify permission changes.
+- Establish that no hidden configuration exists.
+  - Review all application configuration sources.
+  - Identify configuration required outside source control.
+  - Identify development-only configuration.
+  - Produce a complete deployment configuration inventory.
+
+- Establish production-readiness gaps.
+  - Review startup behaviour outside Development.
+  - Review credential management.
+  - Review Data Protection.
+  - Review startup initialisers.
+  - Produce a list of deployment work required.
 
 ---
+
+## Milestone 6.2 – Deployment Architecture
+
+- Define the IIS hosting model.
+  - Define the IIS site.
+  - Define the application pool.
+  - Define runtime settings.
+  - Define application permissions.
+
+- Define the deployment directory structure.
+  - Define the application directory.
+  - Define persistent data locations.
+  - Define key storage.
+  - Define logging locations.
+
+- Define hostname and HTTPS.
+  - Define the hostname.
+  - Define HTTPS bindings.
+  - Define certificate management.
+  - Define issuer configuration.
+
+---
+
+## Milestone 6.3 – Production Configuration
+
+- Define the production configuration model.
+  - Define configuration sources.
+  - Define production application settings.
+  - Define environment variables.
+  - Produce a production configuration template.
+
+- Define production secret management.
+  - Inventory application secrets.
+  - Define secret storage.
+  - Define secret deployment.
+  - Define secret rotation.
+
+---
+
+## Milestone 6.4 – Database Deployment
+
+- Establish the first deployment database state.
+  - Determine the initial deployment database.
+  - Define bootstrap administrator behaviour.
+  - Remove development-only data where required.
+  - Produce the initial deployment checklist.
+
+- Define SQLite deployment.
+  - Define the database location.
+  - Configure permissions.
+  - Verify database accessibility.
+  - Define integrity expectations.
+
+- Define database migration.
+  - Define the migration procedure.
+  - Define migration verification.
+  - Define migration failure handling.
+  - Produce the migration runbook.
+
+- Define backup and restore.
+  - Define backup procedures.
+  - Define restore procedures.
+  - Define rollback procedures.
+  - Verify backup and restore.
+
+---
+
+## Milestone 6.5 – Production Security
+
+- Configure OpenIddict signing credentials.
+  - Define the signing certificate.
+  - Register production signing credentials.
+  - Verify token signing.
+  - Document certificate renewal.
+
+- Configure OpenIddict encryption credentials.
+  - Define token encryption.
+  - Register production encryption credentials.
+  - Verify encrypted token persistence.
+  - Document credential rotation.
+
+- Configure persistent Data Protection.
+  - Configure key persistence.
+  - Configure key protection.
+  - Verify cookie persistence.
+  - Document key recovery.
+
+---
+
+## Milestone 6.6 – Production Readiness
+
+- Define production email behaviour.
+  - Define deployed email support.
+  - Remove development email behaviour.
+  - Verify Identity workflows.
+  - Document operational limitations.
+
+- Review startup initialisation.
+  - Review OpenIddict initialisation.
+  - Review administrator bootstrap.
+  - Verify startup safety.
+  - Document startup behaviour.
+
+- Configure production logging.
+  - Define logging providers.
+  - Configure production log levels.
+  - Prevent secret disclosure.
+  - Define log retention.
+
+- Implement startup validation.
+  - Validate required configuration.
+  - Validate credentials.
+  - Validate deployment directories.
+  - Produce clear startup failures.
+
+---
+
+## Milestone 6.7 – Deployment Package
+
+- Define the publication process.
+  - Define the publish model.
+  - Define the publish procedure.
+  - Define deployment prerequisites.
+  - Verify publish output.
+
+- Create the deployment package.
+  - Define package contents.
+  - Exclude development artefacts.
+  - Include deployment templates.
+  - Record package version.
+
+---
+
+## Milestone 6.8 – IIS Deployment
+
+- Prepare the deployment host.
+  - Install prerequisites.
+  - Configure IIS.
+  - Configure directories.
+  - Configure HTTPS.
+
+- Configure the IIS application.
+  - Create the application pool.
+  - Create the IIS site.
+  - Configure bindings.
+  - Configure application settings.
+
+- Deploy the database.
+  - Backup the existing database.
+  - Deploy the production database.
+  - Apply migrations.
+  - Verify database deployment.
+
+- Deploy the application.
+  - Publish the release build.
+  - Deploy the application files.
+  - Configure production settings.
+  - Verify application startup.
+
+---
+
+## Milestone 6.9 – Deployment Verification
+
+- Verify platform deployment.
+  - Verify HTTPS.
+  - Verify issuer configuration.
+  - Verify startup.
+  - Verify persistent storage.
+
+- Verify Identity functionality.
+  - Verify authentication.
+  - Verify administrator access.
+  - Verify account management.
+  - Verify application restart.
+
+- Verify OpenIddict functionality.
+  - Verify discovery metadata.
+  - Verify token issuance.
+  - Verify authorisation.
+  - Verify token validation.
+
+- Verify operational readiness.
+  - Verify backups.
+  - Verify credential persistence.
+  - Verify failure handling.
+  - Record known limitations.
+
+---
+
+## Milestone 6.10 – Operational Procedures
+
+- Define routine deployment.
+  - Define deployment preparation.
+  - Define upgrade procedures.
+  - Define rollback.
+  - Produce the deployment runbook.
+
+- Define operational procedures.
+  - Define routine health checks.
+  - Define monitoring.
+  - Define certificate maintenance.
+  - Define database maintenance.
+
+- Define recovery procedures.
+  - Define deployment recovery.
+  - Define database recovery.
+  - Define credential recovery.
+  - Verify recovery procedures.
+
+- Review and finalise deployment documentation.
+  - Verify deployment documentation.
+  - Verify deployment procedures.
+  - Verify operational documentation.
+
