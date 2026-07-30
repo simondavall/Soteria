@@ -5,7 +5,7 @@ where development should continue.
 
 # Current phase
 
-## Phase 6 – Application polish
+## Phase 6 – Deployment
 
 # Current milestone
 

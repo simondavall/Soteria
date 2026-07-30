@@ -166,11 +166,13 @@ public class Program
                     .EnableEndSessionEndpointPassthrough()
                     .EnableStatusCodePagesIntegration();
 
-                if (builder.Environment.IsDevelopment())
-                {
-                    options.AddDevelopmentSigningCertificate();
-                    options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
-                }
+                options.AddSoteriaCredentials(builder.Environment, builder.Configuration);
+                
+                // if (builder.Environment.IsDevelopment())
+                // {
+                //     options.AddDevelopmentSigningCertificate();
+                //     options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
+                // }
             });
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
