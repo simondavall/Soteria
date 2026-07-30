@@ -9,20 +9,25 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 6.1 – Deployment Baseline
+## Milestone 6.2 – Production Runtime
 
 # Current task
 
-- Establish production-readiness gaps.
-  - Review startup behaviour outside Development.
-  - Review credential management.
-  - Review Data Protection.
-  - Review startup initialisers.
-  - Produce a list of deployment work required.
+- Configure OpenIddict production credentials.
+  - Define the production signing credential strategy.
+  - Define the production encryption credential strategy.
+  - Register production signing credentials.
+  - Register production encryption credentials.
+  - Separate development and production credential registration.
+  - Prevent development credentials being used outside Development.
+  - Verify token signing.
+  - Verify token encryption.
+  - Verify application startup using production credentials.
 
 # Remaining milestone tasks
 
-- None
+- Configure persistent Data Protection.
+- Implement startup validation.
 
 # Completed
 
@@ -40,3 +45,9 @@ where development should continue.
 - Produced the initial deployment configuration inventory.
 - Confirmed no hidden application configuration exists outside the documented configuration sources.
 - Identified development-only configuration dependencies.
+- Reviewed production startup behaviour outside the Development environment.
+- Identified production credential requirements.
+- Identified ASP.NET Core Data Protection as a deployment requirement.
+- Reviewed startup initialisation behaviour.
+- Produced the production-readiness action list.
+- Restructured the Phase 6 delivery plan to reflect the agreed deployment implementation sequence.

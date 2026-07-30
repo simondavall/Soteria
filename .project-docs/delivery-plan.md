@@ -664,16 +664,75 @@ reference resource API.
   - ✓ Identify development-only configuration.
   - ✓ Produce a complete deployment configuration inventory.
 
-- Establish production-readiness gaps.
-  - Review startup behaviour outside Development.
-  - Review credential management.
-  - Review Data Protection.
-  - Review startup initialisers.
-  - Produce a list of deployment work required.
+- ✓ Establish production-readiness gaps.
+  - ✓ Review startup behaviour outside Development.
+  - ✓ Review credential management.
+  - ✓ Review Data Protection.
+  - ✓ Review startup initialisers.
+  - ✓ Produce the production-readiness action list.
 
 ---
 
-## Milestone 6.2 – Deployment Architecture
+## Milestone 6.2 – Production Runtime
+
+- Configure OpenIddict production credentials.
+  - Define the production signing credential strategy.
+  - Define the production encryption credential strategy.
+  - Register production signing credentials.
+  - Register production encryption credentials.
+  - Separate development and production credential registration.
+  - Prevent development credentials being used outside Development.
+  - Verify token signing.
+  - Verify token encryption.
+  - Verify application startup using production credentials.
+
+- Configure persistent Data Protection.
+  - Define the Data Protection persistence strategy.
+  - Define the Data Protection storage location.
+  - Configure persistent key storage.
+  - Configure key protection.
+  - Verify authentication cookies survive application restart.
+  - Document key recovery expectations.
+
+- Implement startup validation.
+  - Validate required application configuration.
+  - Validate deployment credentials.
+  - Validate deployment directories.
+  - Validate required secrets.
+  - Produce clear startup failures.
+  - Verify invalid deployments fail with actionable diagnostics.
+
+---
+
+## Milestone 6.3 – Production Services
+
+- Configure production email.
+  - Define deployed email support.
+  - Define production email configuration.
+  - Replace the Development email sender.
+  - Verify account confirmation.
+  - Verify password reset.
+  - Verify Identity workflows.
+
+- Review startup initialisation.
+  - Separate development-only startup behaviour.
+  - Review OpenIddict initialisation.
+  - Prevent Reference Web Application initialisation outside Development.
+  - Prevent Reference API initialisation outside Development.
+  - Review administrator bootstrap.
+  - Verify startup remains idempotent.
+  - Verify startup behaviour.
+
+- Configure production logging.
+  - Define logging providers.
+  - Configure production log levels.
+  - Prevent secret disclosure.
+  - Define log retention.
+  - Verify production logging.
+
+---
+
+## Milestone 6.4 – Deployment Architecture
 
 - Define the IIS hosting model.
   - Define the IIS site.
@@ -684,7 +743,7 @@ reference resource API.
 - Define the deployment directory structure.
   - Define the application directory.
   - Define persistent data locations.
-  - Define key storage.
+  - Define Data Protection key storage.
   - Define logging locations.
 
 - Define hostname and HTTPS.
@@ -693,25 +752,16 @@ reference resource API.
   - Define certificate management.
   - Define issuer configuration.
 
----
-
-## Milestone 6.3 – Production Configuration
-
 - Define the production configuration model.
-  - Define configuration sources.
+  - Define supported configuration sources.
   - Define production application settings.
   - Define environment variables.
-  - Produce a production configuration template.
-
-- Define production secret management.
-  - Inventory application secrets.
-  - Define secret storage.
-  - Define secret deployment.
-  - Define secret rotation.
+  - Define production secret storage.
+  - Produce the deployment configuration template.
 
 ---
 
-## Milestone 6.4 – Database Deployment
+## Milestone 6.5 – Database Deployment
 
 - Establish the first deployment database state.
   - Determine the initial deployment database.
@@ -739,57 +789,7 @@ reference resource API.
 
 ---
 
-## Milestone 6.5 – Production Security
-
-- Configure OpenIddict signing credentials.
-  - Define the signing certificate.
-  - Register production signing credentials.
-  - Verify token signing.
-  - Document certificate renewal.
-
-- Configure OpenIddict encryption credentials.
-  - Define token encryption.
-  - Register production encryption credentials.
-  - Verify encrypted token persistence.
-  - Document credential rotation.
-
-- Configure persistent Data Protection.
-  - Configure key persistence.
-  - Configure key protection.
-  - Verify cookie persistence.
-  - Document key recovery.
-
----
-
-## Milestone 6.6 – Production Readiness
-
-- Define production email behaviour.
-  - Define deployed email support.
-  - Remove development email behaviour.
-  - Verify Identity workflows.
-  - Document operational limitations.
-
-- Review startup initialisation.
-  - Review OpenIddict initialisation.
-  - Review administrator bootstrap.
-  - Verify startup safety.
-  - Document startup behaviour.
-
-- Configure production logging.
-  - Define logging providers.
-  - Configure production log levels.
-  - Prevent secret disclosure.
-  - Define log retention.
-
-- Implement startup validation.
-  - Validate required configuration.
-  - Validate credentials.
-  - Validate deployment directories.
-  - Produce clear startup failures.
-
----
-
-## Milestone 6.7 – Deployment Package
+## Milestone 6.6 – Deployment Package
 
 - Define the publication process.
   - Define the publish model.
@@ -801,11 +801,12 @@ reference resource API.
   - Define package contents.
   - Exclude development artefacts.
   - Include deployment templates.
+  - Include deployment documentation.
   - Record package version.
 
 ---
 
-## Milestone 6.8 – IIS Deployment
+## Milestone 6.7 – IIS Deployment
 
 - Prepare the deployment host.
   - Install prerequisites.
@@ -833,7 +834,7 @@ reference resource API.
 
 ---
 
-## Milestone 6.9 – Deployment Verification
+## Milestone 6.8 – Deployment Verification
 
 - Verify platform deployment.
   - Verify HTTPS.
@@ -856,26 +857,33 @@ reference resource API.
 - Verify operational readiness.
   - Verify backups.
   - Verify credential persistence.
+  - Verify Data Protection persistence.
   - Verify failure handling.
   - Record known limitations.
 
 ---
 
-## Milestone 6.10 – Operational Procedures
+## Milestone 6.9 – Operational Documentation
 
-- Define routine deployment.
-  - Define deployment preparation.
+- Produce the deployment guide.
+  - Verify deployment architecture.
+  - Verify deployment prerequisites.
+  - Verify deployment configuration.
+  - Verify deployment verification procedures.
+
+- Produce the deployment runbook.
+  - Define routine deployment.
   - Define upgrade procedures.
-  - Define rollback.
-  - Produce the deployment runbook.
+  - Define rollback procedures.
+  - Verify deployment procedures.
 
-- Define operational procedures.
+- Produce the operations guide.
   - Define routine health checks.
   - Define monitoring.
   - Define certificate maintenance.
   - Define database maintenance.
 
-- Define recovery procedures.
+- Produce the recovery guide.
   - Define deployment recovery.
   - Define database recovery.
   - Define credential recovery.
@@ -883,6 +891,6 @@ reference resource API.
 
 - Review and finalise deployment documentation.
   - Verify deployment documentation.
-  - Verify deployment procedures.
   - Verify operational documentation.
+  - Verify recovery documentation.
 
