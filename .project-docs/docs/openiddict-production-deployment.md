@@ -17,7 +17,7 @@ Development credentials are never used outside the Development environment.
 
 Before deployment ensure the target server has:
 
-- Windows Server with IIS installed.
+- Windows 11 Pro with IIS installed.
 - Soteria application published.
 - Administrator access to the server.
 - Two RSA certificates:

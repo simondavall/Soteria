@@ -39,6 +39,8 @@ public class Program
             .AddInteractiveServerComponents();
         builder.Services.AddMudServices();
 
+        builder.Services.AddSoteriaDataProtection(builder.Environment);
+        
         builder.Services.AddCascadingAuthenticationState();
 
         builder.Services.AddAuthorization(options =>
@@ -167,12 +169,6 @@ public class Program
                     .EnableStatusCodePagesIntegration();
 
                 options.AddSoteriaCredentials(builder.Environment, builder.Configuration);
-                
-                // if (builder.Environment.IsDevelopment())
-                // {
-                //     options.AddDevelopmentSigningCertificate();
-                //     options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
-                // }
             });
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();

@@ -686,18 +686,18 @@ reference resource API.
   - ✓ Verify token encryption.
   - ✓ Verify application startup using production credentials.
 
-- Configure persistent Data Protection.
-  - Define the Data Protection persistence strategy.
-  - Define the Data Protection storage location.
-  - Configure persistent key storage.
-  - Configure key protection.
-  - Verify authentication cookies survive application restart.
-  - Document key recovery expectations.
+- ✓ Configure persistent Data Protection.
+  - ✓ Define the Data Protection persistence strategy.
+  - ✓ Define the Data Protection storage location.
+  - ✓ Configure persistent key storage.
+  - ✓ Configure key protection.
+  - ✓ Verify authentication cookies survive application restart.
+  - ✓ Document key recovery expectations.
 
 - Implement startup validation.
   - ✓ Validate required application configuration.
   - ✓ Validate deployment credentials.
-  - Validate deployment directories.
+  - ✓ Validate deployment directories.
   - Validate required secrets.
   - ✓ Produce clear startup failures.
   - ✓ Verify invalid deployments fail with actionable diagnostics
@@ -734,28 +734,28 @@ reference resource API.
 
 ## Milestone 6.4 – Deployment Architecture
 
-- Define the IIS hosting model.
-  - Define the IIS site.
-  - Define the application pool.
-  - Define runtime settings.
-  - Define application permissions.
+- ✓ Define the IIS hosting model.
+  - ✓ Define the IIS site.
+  - ✓ Define the application pool.
+  - ✓ Define runtime settings.
+  - ✓ Define application permissions.
 
 - Define the deployment directory structure.
-  - Define the application directory.
-  - Define persistent data locations.
-  - Define Data Protection key storage.
+  - ✓ Define the application directory.
+  - ✓ Define persistent data locations.
+  - ✓ Define Data Protection key storage.
   - Define logging locations.
 
 - Define hostname and HTTPS.
-  - Define the hostname.
-  - Define HTTPS bindings.
-  - Define certificate management.
+  - ✓ Define the hostname.
+  - ✓ Define HTTPS bindings.
+  - ✓ Define certificate management.
   - Define issuer configuration.
 
 - Define the production configuration model.
-  - Define supported configuration sources.
-  - Define production application settings.
-  - Define environment variables.
+  - ✓ Define supported configuration sources.
+  - ✓ Define production application settings.
+  - ✓ Define environment variables.
   - Define production secret storage.
   - Produce the deployment configuration template.
 
@@ -769,11 +769,11 @@ reference resource API.
   - Remove development-only data where required.
   - Produce the initial deployment checklist.
 
-- Define SQLite deployment.
-  - Define the database location.
-  - Configure permissions.
-  - Verify database accessibility.
-  - Define integrity expectations.
+- ✓ Define SQLite deployment.
+  - ✓ Define the database location.
+  - ✓ Configure permissions.
+  - ✓ Verify database accessibility.
+  - ✓ Define integrity expectations.
 
 - Define database migration.
   - Define the migration procedure.
@@ -808,45 +808,45 @@ reference resource API.
 
 ## Milestone 6.7 – IIS Deployment
 
-- Prepare the deployment host.
-  - Install prerequisites.
-  - Configure IIS.
-  - Configure directories.
-  - Configure HTTPS.
+- ✓ Prepare the deployment host.
+  - ✓ Install prerequisites.
+  - ✓ Configure IIS.
+  - ✓ Configure directories.
+  - ✓ Configure HTTPS.
 
-- Configure the IIS application.
-  - Create the application pool.
-  - Create the IIS site.
-  - Configure bindings.
-  - Configure application settings.
+- ✓ Configure the IIS application.
+  - ✓ Create the application pool.
+  - ✓ Create the IIS site.
+  - ✓ Configure bindings.
+  - ✓ Configure application settings.
 
 - Deploy the database.
   - Backup the existing database.
   - Deploy the production database.
-  - Apply migrations.
-  - Verify database deployment.
+  - ✓ Apply migrations.
+  - ✓ Verify database deployment.
 
-- Deploy the application.
-  - Publish the release build.
-  - Deploy the application files.
-  - Configure production settings.
-  - Verify application startup.
+- ✓ Deploy the application.
+  - ✓ Publish the release build.
+  - ✓ Deploy the application files.
+  - ✓ Configure production settings.
+  - ✓ Verify application startup.
 
 ---
 
 ## Milestone 6.8 – Deployment Verification
 
-- Verify platform deployment.
-  - Verify HTTPS.
-  - Verify issuer configuration.
-  - Verify startup.
-  - Verify persistent storage.
+- ✓ Verify platform deployment.
+  - ✓ Verify HTTPS.
+  - ✓ Verify issuer configuration.
+  - ✓ Verify startup.
+  - ✓ Verify persistent storage.
 
-- Verify Identity functionality.
-  - Verify authentication.
-  - Verify administrator access.
-  - Verify account management.
-  - Verify application restart.
+- ✓ Verify Identity functionality.
+  - ✓ Verify authentication.
+  - ✓ Verify administrator access.
+  - ✓ Verify account management.
+  - ✓ Verify application restart.
 
 - Verify OpenIddict functionality.
   - Verify discovery metadata.
@@ -857,7 +857,7 @@ reference resource API.
 - Verify operational readiness.
   - Verify backups.
   - Verify credential persistence.
-  - Verify Data Protection persistence.
+  - ✓ Verify Data Protection persistence.
   - Verify failure handling.
   - Record known limitations.
 
