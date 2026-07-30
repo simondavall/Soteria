@@ -658,11 +658,11 @@ reference resource API.
   - ✓ Confirm the canonical deployment URL.
   - ✓ Record deployment assumptions and constraints.
 
-- Establish that no hidden configuration exists.
-  - Review all application configuration sources.
-  - Identify configuration required outside source control.
-  - Identify development-only configuration.
-  - Produce a complete deployment configuration inventory.
+- ✓ Establish that no hidden configuration exists.
+  - ✓ Review all application configuration sources.
+  - ✓ Identify configuration required outside source control.
+  - ✓ Identify development-only configuration.
+  - ✓ Produce a complete deployment configuration inventory.
 
 - Establish production-readiness gaps.
   - Review startup behaviour outside Development.

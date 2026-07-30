@@ -67,6 +67,20 @@ support larger or distributed production environments.
 ## 5. Configuration
 
 ### 5.1 Configuration Sources
+
+The current implementation uses the following configuration sources.
+
+| Source | Purpose |
+|---------|---------|
+| `appsettings.json` | Default application configuration. |
+| `appsettings.{Environment}.json` | Environment-specific configuration overrides. |
+| Environment variables | Secrets and deployment-specific configuration. |
+| Local `.env` file | Development environment variables loaded during local execution. |
+| `launchSettings.json` | Local development launch profile only. Not used for deployed environments. |
+
+The application does not currently use ASP.NET Core User Secrets.
+
+No additional application-specific configuration sources currently exist.
 ### 5.2 Application Settings
 ### 5.3 Environment Variables
 ### 5.4 Secrets

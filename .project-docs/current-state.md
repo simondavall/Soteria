@@ -13,15 +13,16 @@ where development should continue.
 
 # Current task
 
-- Establish that no hidden configuration exists.
-  - Review all application configuration sources.
-  - Identify configuration required outside source control.
-  - Identify development-only configuration.
-  - Produce a complete deployment configuration inventory.
+- Establish production-readiness gaps.
+  - Review startup behaviour outside Development.
+  - Review credential management.
+  - Review Data Protection.
+  - Review startup initialisers.
+  - Produce a list of deployment work required.
 
 # Remaining milestone tasks
 
-- Establish production-readiness gaps.
+- None
 
 # Completed
 
@@ -33,3 +34,9 @@ where development should continue.
 - Defined the initial single-machine deployment architecture.
 - Recorded the initial deployment assumptions and constraints.
 - Excluded the Reference Web Application and Reference API from the deployment scope.
+- Reviewed all application configuration sources.
+- Confirmed the application does not use ASP.NET Core User Secrets.
+- Identified all deployment configuration sources.
+- Produced the initial deployment configuration inventory.
+- Confirmed no hidden application configuration exists outside the documented configuration sources.
+- Identified development-only configuration dependencies.
