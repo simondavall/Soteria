@@ -5,421 +5,49 @@ where development should continue.
 
 # Current phase
 
-## Phase 5 – Application Authorisation
+## Phase 6 – Application polish
 
 # Current milestone
 
-## Milestone 5.7 – OpenID Connect Authorisation Enforcement
+## Milestone 6.2 – Production Runtime
 
 # Current task
 
-- Enforce Client Membership during token redemption.
-  - Consume the shared OpenId authorisation context during authorisation-code redemption.
-  - Consume the shared OpenId authorisation context during refresh-token redemption.
-  - Reject redemption when the client or membership is no longer valid.
-  - Preserve rolling refresh-token behaviour.
-  - Preserve existing token lifetime behaviour.
-  - Verify revoked memberships immediately prevent further token issuance.
+- Configure OpenIddict production credentials.
+  - Define the production signing credential strategy.
+  - Define the production encryption credential strategy.
+  - Register production signing credentials.
+  - Register production encryption credentials.
+  - Separate development and production credential registration.
+  - Prevent development credentials being used outside Development.
+  - Verify token signing.
+  - Verify token encryption.
+  - Verify application startup using production credentials.
 
 # Remaining milestone tasks
 
-- Verify end-to-end application authorisation
+- Configure persistent Data Protection.
+- Implement startup validation.
 
 # Completed
 
-- Established the initial project structure.
-- Created the project documentation.
-- Defined the project vision and roadmap.
-- Added and configured MudBlazor 9.6.
-- Established the initial application theme.
-- Configured the MudBlazor providers.
-- Established the shared application layout.
-- Migrated the built-in ASP.NET Core Identity UI to the project UI conventions.
-- Added development email sender for Identity.
-- Preserved ASP.NET Core Identity behaviour and static SSR workflows.
-- Established the project Identity implementation patterns.
-- Reviewed and restructured the project roadmap and delivery planning model.
-- Defined the OpenID Connect provider architecture.
-- Defined the authentication flow between Soteria and consuming applications.
-- Defined the initial client application model.
-- Defined the boundary between hard-coded configuration and future configuration.
-- Defined and created the reference web application.
-- Defined and created the reference Resource API.
-- Verified communication between the reference web application and the reference Resource API.
-- Added the required OpenIddict packages.
-- Changed ASP.NET Core Identity users and roles to use Guid keys.
-- Recreated the development database as soteria.db.
-- Renamed the Soteria database connection to SoteriaDb.
-- Recreated and applied the initial Identity migration.
-- Verified the Guid-based Identity schema and existing Identity workflows.
-- Configured the OpenIddict Entity Framework Core stores.
-- Extended SoteriaDbContext to include the OpenIddict entity model.
-- Created and applied the initial OpenIddict Entity Framework migration.
-- Verified the OpenIddict database schema.
-- Defined the development signing and encryption certificate strategy.
-- Confirmed that local Rider execution runs Soteria under the interactive development account.
-- Defined separate OpenIddict development signing and encryption certificates.
-- Defined Development-only credential registration and deferred the production and IIS credential strategy.
-- Registered the OpenIddict server services and ASP.NET Core host integration.
-- Configured the initial OpenIddict Authorization and Token endpoint URIs.
-- Enabled Authorization Code Flow as the initial supported protocol flow.
-- Generated and verified the OpenIddict development signing and encryption certificates.
-- Verified that the development certificates are reused between application restarts.
-- Verified the authorization and token endpoints hav basic default configuration.
-- Verified the discovery endpoint and signing-key metadata.
-- Verified the published endpoint metadata.
-- Confirmed Authorization Code Flow as the only supported protocol flow.
-- Mandated PKCE for all Authorization Code clients.
-- Verified the advertised grant type, response type and PKCE capabilities.
-- Registered the reference web application client with an OpenIddict initializer.
-- Verified discovery metadata.
-- Verified endpoint availability.
-- Verified client registration.
-- Verified scope registration.
-- Verified unsupported requests are rejected.
-- Enabled OpenIddict authorization endpoint pass-through.
-- Added the Soteria authorization endpoint.
-- Connected OpenIddict authorization requests to the ASP.NET Core Identity authentication workflow.
-- Redirected unauthenticated authorization requests to the Soteria login page.
-- Preserved the complete OpenID Connect authorization request through login.
-- Verified authenticated users return to the Soteria authorization endpoint through the OpenIddict authorization pipeline.
-- Added a temporary authenticated response that ends the incomplete authorization workflow without creating a redirect loop.
-- Implemented the OpenIddict authorisation workflow.
-- Created the initial OpenIddict claims principal.
-- Granted validated scopes and resolved associated resources.
-- Returned authorised principals to OpenIddict for protocol response generation.
-- Verified successful Authorization Code issuance.
-- Verified implicit consent behaviour.
-- Verified clients requiring consent are rejected with `consent_required`.
-- Verified stale Identity sessions are handled safely.
-- Defined the initial ID token claims.
-- Defined the initial access token claims.
-- Implemented scope-based claim destinations.
-- Defined the initial Reference API audience.
-- Registered the standard OpenID Connect profile and email scopes.
-- Verified scope-sensitive claim issuance.
-- Configured the OpenIddict token endpoint.
-- Enabled ID token issuance.
-- Enabled access token issuance.
-- Enabled refresh token issuance using the Refresh Token grant.
-- Registered the standard `offline_access` scope.
-- Configured refresh tokens to be issued only when the `offline_access` scope is requested.
-- Verified that refresh tokens are issued when `offline_access` is requested and omitted otherwise.
-- Defined the refresh-token strategy.
-- Configured refresh-token lifetime.
-- Configured access-token renewal.
-- Verified rolling refresh-token rotation.
-- Verified consent-required behaviour remains unchanged.
-- Defined implicit consent as the only supported behaviour for managed client applications.
-- Configured and verified implicit consent behaviour.
-- Replaced the Reference Web application's local ASP.NET Core Identity authentication with OpenID Connect.
-- Configured the Reference Web application as a confidential OpenID Connect client.
-- Added local `.env` configuration for development secrets.
-- Configured the Reference API to validate access tokens issued by Soteria.
-- Verified end-to-end authentication and protected API access.
-- Implemented automatic access-token renewal in the Reference Web application.
-- Added proactive access-token expiry detection.
-- Added refresh-token exchange through Soteria's token endpoint.
-- Persisted replacement access tokens and rolling refresh tokens in the local authentication session.
-- Added a single protected API retry following forced token renewal.
-- Verified renewal failure invalidates the local consuming-application session.
-- Verified tokens remain unavailable to browser application code.
-- Verified automatic renewal end to end.
-- Implemented RP-initiated OpenID Connect logout.
-- Added the OpenIddict end-session endpoint.
-- Implemented Soteria end-session handling.
-- Configured Reference Web application logout.
-- Registered post-logout redirect URIs.
-- Verified complete logout workflow and authentication regression.
-- Added authenticated administration navigation.
-- Created the initial client application list and details pages.
-- Enabled the MudBlazor dark theme.
-- Implemented the authenticated client application listing page.
-- Displayed application summary information.
-- Displayed the initial application status column.
-- Implemented the client application details page.
-- Retrieved OpenIddict application configuration directly from the database.
-- Defined the client creation workflow.
-- Implemented client application creation.
-- Added a shared OpenIddict application defaults helper.
-- Implemented FluentValidation-based client validation.
-- Introduced a dedicated client application lookup service.
-- Verified successful client application creation.
-- Defined the client edit workflow.
-- Implemented client application editing.
-- Implemented optional client secret replacement.
-- Implemented client host updates.
-- Derived redirect URI and post-logout redirect URI from the client host.
-- Verified successful client application updates.
-- Implemented explicit client application enabled state.
-- Added custom SoteriaApplication OpenIddict entity.
-- Persisted client enabled state.
-- Updated client administration UI to manage enabled state.
-- Prevented disabled client applications from starting new OpenID Connect authentication.
-- Prevented disabled client applications from redeeming authorization codes.
-- Prevented disabled client applications from redeeming refresh tokens.
-- Verified existing access tokens remain valid until expiry.
-- Verified re-enabling a client immediately restores authentication.
-- Added a shared authentication error page for browser-facing OpenID Connect failures.
-- Integrated OpenIddict status-code pages with ASP.NET Core.
-- Mapped recognised protocol errors to user-friendly messages.
-- Added safe fallback handling for unrecognised authentication errors.
-- Preserved OpenIddict protocol validation while separating presentation into Soteria.
-- Excluded the error page from interactive routing to preserve the OpenIddict server response during status-code re-execution.
-- Added authenticated user administration navigation.
-- Created the initial user list page.
-- Created the initial user details page.
-- Established the user administration navigation workflow.
-- Implemented the user administration listing.
-- Added the user feature service using the established direct Entity Framework Core query pattern.
-- Displayed user email, email-confirmation status and current lockout status.
-- Added client-side user searching.
-- Preserved user-row navigation to the user details page.
-- Added the DisplayName profile property to ApplicationUser.
-- Recreated the Identity Entity Framework migration from the current model.
-- Recreated the development database.
-- Updated ASP.NET Core Identity profile management to allow users to maintain their display name.
-- Preserved nullable DisplayName semantics, allowing the application to fall back to the username where required.
-- Updated the user administration listing to display Username and DisplayName separately.
-- Implemented the user details page.
-- Added a dedicated user details query using the established direct Entity Framework Core pattern.
-- Displayed account, profile, email and lockout information for the selected user.
-- Added graceful handling for unknown users.
-- Preserved read-only administration workflow pending user editing.
-- Refined the user details page into consolidated User Details and Permissions sections.
-- Added Create User dialog from the User Administration page.
-- Implemented administrative registration for new Identity users.
-- Existing users now redirect directly to their User Details page.
-- UserName and Email are both initialised from the submitted email address.
-- Reused the existing ASP.NET Core Identity confirmation email workflow.
-- Added FluentValidation for both client-side and server-side validation.
-- Permissions remain a Phase 5 placeholder.
-- Added Edit User dialog launched from the User Details page.
-- Displayed all user account information as read-only.
-- Implemented administrative account unlock workflow.
-- Unlock updates the dialog immediately and persists only when Save is selected.
-- Cleared LockoutEnd when unlocking an account.
-- Created the Phase 5 application authorisation persistence model.
-- Added the SystemRole persistence model.
-- Added the UserSystemRole assignment model.
-- Added the ClientMembership persistence model.
-- Added MembershipLevel support for User and Administrator memberships.
-- Added the ApplicationRole persistence model.
-- Added the ClientMembershipApplicationRole assignment model.
-- Enforced uniqueness constraints across all authorisation entities.
-- Enforced same-client Application Role assignment through composite foreign keys.
-- Configured authorisation entity deletion behaviour.
-- Seeded the initial SoteriaAdministrator System Role.
-- Recreated the initial Entity Framework migration from the updated model.
-- Recreated the development database.
-- Verified the complete authorisation persistence schema.
-- Displayed Application Roles on the Client Details page.
-- Added a dedicated Application Role query using the established direct Entity Framework Core pattern.
-- Displayed Application Role Name, Display Name and Description.
-- Added an empty-state message when no Application Roles exist.
-- Preserved graceful handling for unknown client applications.
-- Refined the Client Details page layout with a dedicated Application Roles card.
-- Added Create Application Role dialog from the Client Details page.
-- Implemented Application Role creation.
-- Added FluentValidation for both client-side and server-side Application Role validation.
-- Prevented whitespace and control characters in stable Application Role names.
-- Enforced unique Application Role names within each client application while preserving case-sensitive names.
-- Allowed duplicate Application Role names across different client applications.
-- Displayed validation and persistence errors without closing the dialog.
-- Refreshed the Application Roles section immediately after successful role creation.
-- Added Application Role editing from the Client Details page.
-- Opened the Application Role edit dialog by selecting anywhere within the role row.
-- Added scoped clickable-row styling to the Application Roles table.
-- Retrieved Application Roles for editing within the selected client application.
-- Displayed the stable Application Role Name as read-only.
-- Allowed Application Role Display Name and Description to be updated.
-- Prevented the stable Name and client application association from being changed.
-- Added FluentValidation for editable Application Role fields.
-- Displayed validation and persistence errors without closing the edit dialog.
-- Refreshed the Application Roles section immediately after successful updates.
-- Added Application Role removal from the Application Role edit dialog.
-- Positioned the Delete Application Role action separately from the Save and Cancel actions.
-- Added explicit confirmation before Application Role removal.
-- Displayed the Application Role name and assignment count during confirmation.
-- Warned that deleting an Application Role also removes its assignments.
-- Verified Application Role ownership before removal.
-- Removed Application Roles through the application service.
-- Refreshed the Application Roles section immediately after successful removal.
-- Preserved cancellation without deleting the Application Role.
-- Displayed Client Memberships on the User Details page.
-- Added a dedicated Client Membership query using the established direct Entity Framework Core pattern.
-- Displayed the associated client application, Membership Level and assigned Application Roles.
-- Displayed "None" when a membership has no assigned Application Roles.
-- Added an empty-state message when the user has no Client Memberships.
-- Preserved graceful handling for unknown users.
-- Ensured Client Memberships belonging to other users are never displayed.
-- Added Assign Client action to the User Details Permissions card.
-- Created the Client Membership assignment dialog.
-- Added a dedicated available-client lookup using the established lookup-service pattern.
-- Excluded client applications for which the user already has a Client Membership.
-- Defaulted new Client Memberships to the User Membership Level.
-- Added Client Membership creation using the established UserService pattern.
-- Validated that the selected client application still exists before creation.
-- Prevented duplicate Client Memberships through both validation and persistence checks.
-- Displayed validation and persistence errors without closing the dialog.
-- Refreshed the Permissions card immediately after successful Client Membership creation.
-- Reused the Client Membership dialog for both creation and editing workflows.
-- Opened the Client Membership dialog by selecting anywhere within a Client Membership row.
-- Added scoped clickable-row styling to the Client Membership table.
-- Retrieved Client Memberships for editing while verifying ownership by the selected user.
-- Displayed the associated client application as read-only during editing.
-- Allowed Membership Level to be updated.
-- Retrieved Application Roles belonging to the selected client application.
-- Displayed Application Roles using a multi-select checklist.
-- Added and removed Client Membership Application Role assignments.
-- Prevented duplicate Application Role assignments.
-- Prevented assignment of Application Roles belonging to another client application.
-- Displayed validation and persistence errors without closing the dialog.
-- Refreshed the Permissions card immediately after successful Client Membership updates.
-- Added Client Membership removal from the Client Membership dialog.
-- Displayed the Delete action only when editing an existing Client Membership.
-- Positioned the Delete action separately from the Save and Cancel actions.
-- Added explicit confirmation before Client Membership removal.
-- Displayed the associated client application during confirmation.
-- Warned that removing a Client Membership also removes all assigned Application Roles.
-- Verified Client Membership ownership before removal.
-- Removed Client Memberships through the application service.
-- Removed associated Application Role assignments through configured cascade behaviour.
-- Refreshed the Permissions card immediately after successful Client Membership removal.
-- Preserved cancellation without deleting the Client Membership.
-- Issued Application Role names as standard OpenID Connect role claims.
-- Issued only Application Roles assigned through the authenticated user's Client Membership for the requesting client application.
-- Issued Application Role claims to both the ID token and access token.
-- Preserved existing scope-sensitive identity claim behaviour.
-- Preserved existing authorisation scope and resource resolution.
-- Verified client-isolated Application Role claim issuance.
-- Verified users without matching Client Memberships receive no Application Role claims.
-- Configured named authorisation policies in the Reference Web application.
-- Configured named authorisation policies in the Reference API.
-- Demonstrated page-level policy-based authorisation in the Reference Web application.
-- Demonstrated Minimal API policy-based authorisation in the Reference API.
-- Added development-only authenticated claims diagnostics to the Reference Web application.
-- Added development-only authenticated claims diagnostics to the Reference API.
-- Generalised the authenticated Reference API proxy to support multiple protected endpoints.
-- Generalised the authenticated JavaScript API helper for reusable endpoint invocation.
-- Added protected Editor, Auditor and Review demonstration endpoints.
-- Added authenticated API demonstrations to the Reference Web application.
-- Verified end-to-end Application Role authorisation using issued role claims.
-- Defined a shared stable System Role identifier.
-- Reused the shared System Role identifier for database seeding.
-- Added configuration-driven bootstrap of the initial Soteria Administrator.
-- Added an idempotent Soteria Administrator startup initializer.
-- Assigned the Soteria Administrator System Role to an existing Identity user.
-- Preserved bootstrap credentials outside committed configuration using local environment configuration.
-- Prevented duplicate System Administrator assignments across repeated application startups.
-- Failed application startup with a clear error when the configured bootstrap user could not be found.
-- Verified initial System Administrator bootstrap.
-- Verified idempotent startup behaviour.
-- Added Soteria Administrator status to the User Details query.
-- Displayed a Soteria Admin status chip on the User Details card.
-- Displayed the administrator indicator only for users assigned the SoteriaAdministrator System Role.
-- Preserved the existing Client Membership permissions display.
-- Verified the bootstrapped Soteria Administrator status is displayed correctly.
-- Added Soteria Administrator management to the Edit User dialog.
-- Displayed the current Soteria Administrator assignment using a dedicated switch.
-- Initialised the switch from the persisted System Role assignment.
-- Allowed Soteria Administrator assignments to be added and removed.
-- Persisted System Role assignment changes through the User service.
-- Preserved the existing account unlock workflow.
-- Persisted unlock and Soteria Administrator changes within a single save operation.
-- Prevented duplicate Soteria Administrator assignments.
-- Prevented removal of the final Soteria Administrator.
-- Added dedicated FluentValidation support for Edit User.
-- Added client-side MudBlazor validation for Soteria Administrator changes.
-- Introduced UserLookup queries for Soteria Administrator validation.
-- Preserved transactional validation during persistence to protect the final Soteria Administrator.
-- Verified Soteria Administrator assignment management.
-- Added the `SoteriaAdministrator` authorisation policy.
-- Added a dedicated authorisation requirement and handler.
-- Resolved System Role authorisation from persisted assignments.
-- Introduced a reusable current-user authorisation context.
-- Protected the Create Client action in the UI.
-- Protected client creation within the application service.
-- Protected Soteria Administrator assignment management in the UI.
-- Protected Soteria Administrator assignment changes within the application service.
-- Preserved account unlock behaviour for users without the System Role.
-- Prevented unauthorised requests that bypass UI visibility.
-- Implemented resilient first-run bootstrap of the initial Soteria Administrator.
-- Allowed application startup when no Identity users or Soteria Administrators exist.
-- Preserved optional configuration-driven bootstrap for development deployments.
-- Introduced one-time bootstrap registration of the initial Soteria Administrator.
-- Added contextual "Register Soteria Admin" navigation when bootstrap registration is required.
-- Automatically assigned the first registered user the persisted `SoteriaAdministrator` System Role.
-- Disabled bootstrap registration once the initial administrator had been established.
-- Protected against concurrent bootstrap registration attempts.
-- Added an Administration authorisation policy.
-- Introduced delegated administration authorisation.
-- Introduced a reusable current-user administration context.
-- Determined whether the current user is a Client Administrator.
-- Resolved administered client applications for the current user.
-- Cached delegated administration scope for the current request.
-- Exposed administered client application identifiers through the current-user context.
-- Displayed Administration navigation for Soteria Administrators and Client Administrators.
-- Restricted Client Applications administration to authorised administrators.
-- Restricted User administration to authorised administrators.
-- Prevented Client Users from directly accessing administration pages.
-- Preserved Create Client as a Soteria Administrator-only action.
-- Preserved unrestricted Soteria Administrator access.
-- Scoped client administration to administered client applications.
-- Filtered the Client Applications list using the current user's delegated administration scope.
-- Prevented delegated administrators from viewing client applications outside their administration scope.
-- Prevented delegated administrators from directly accessing unrelated client applications.
-- Permitted delegated editing of administered client applications.
-- Permitted delegated enabling and disabling of administered client applications.
-- Permitted delegated Application Role creation, editing and removal for administered client applications.
-- Enforced delegated client authorisation consistently within ClientService.
-- Preserved Create Client as a Soteria Administrator-only operation.
-- Prevented unauthorised client and Application Role operations that bypass UI visibility.
-- Added delegated administration support to the user administration feature.
-- Filtered the User Administration list to users associated with administered client applications.
-- Relaxed User Details access to permit delegated administration of known users.
-- Scoped displayed Client Memberships to administered client applications.
-- Restricted Client Membership creation to administered client applications.
-- Restricted Client Membership editing and removal to administered client applications.
-- Restricted Application Role assignment to administered client applications.
-- Permitted delegated Membership Level changes.
-- Permitted delegated appointment and revocation of Client Administrators.
-- Prevented removal or demotion of the final Client Administrator from a client application.
-- Enforced delegated authorisation consistently within UserService.
-- Enforced delegated authorisation consistently within ClientMembershipService.
-- Protected user and Client Membership operations from requests that bypass UI visibility.
-- Introduced a dedicated Client Membership feature.
-- Extracted Client Membership operations into its own ClientMembership feature.
-- Introduced a reusable OpenID Connect authorisation context.
-- Added a dedicated request-scoped OpenID Connect authorisation context service.
-- Resolved the requesting client application for OpenID Connect processing.
-- Resolved the authenticated Identity user for OpenID Connect processing.
-- Resolved the user's Client Membership for the requesting client application.
-- Resolved Application Role assignments from the current Client Membership.
-- Returned a single immutable OpenID Connect authorisation context.
-- Cached the resolved OpenID Connect authorisation context for the lifetime of the request.
-- Defined consistent OpenID Connect authorisation resolution failure states.
-- Replaced inline OpenID Connect authorisation resolution within the authorisation endpoint.
-- Preserved existing OpenID Connect authorisation behaviour pending Client Membership enforcement.
-- Verified only Application Roles belonging to the resolved Client Membership are returned.
-- Introduced a reusable OpenId principal factory.
-- Built OpenId principals from the shared OpenId authorisation context.
-- Centralised Subject, Name and Email claim creation.
-- Centralised Application Role claim creation.
-- Centralised scope and resource resolution.
-- Centralised claim destination configuration.
-- Removed principal construction from the OpenId authorisation endpoint.
-- Reduced the OpenId authorisation endpoint to request flow, consent validation and principal issuance.
-- Preserved existing OpenID Connect claims, scopes, resources and token contents.
-- Verified principal creation behaviour remains unchanged following the refactoring.
-- Enforced Client Membership during OpenID Connect authorisation requests.
-- Rejected authorisation requests for users without a Client Membership for the requesting client application.
-- Returned `access_denied` for unauthorised client membership requests.
-- Added a dedicated friendly authentication error for missing Client Memberships.
-- Preserved existing implicit consent behaviour.
-- Preserved existing OpenID Connect principal creation.
-- Preserved existing OpenID Connect claims, scopes, resources and token contents.
-- Added support for interactive account switching using `prompt=login`.
-- Preserved Soteria single sign-on while allowing authentication as a different user.
-- Verified successful authorisation for valid Client Memberships.
-- Verified users without a Client Membership cannot obtain an authorisation code.
+- Created the initial deployment documentation.
+- Defined the purpose and scope of the deployment architecture.
+- Confirmed Windows 11 Pro and IIS as the initial deployment platform.
+- Confirmed SQLite as the initial deployment database.
+- Confirmed the canonical deployment URL as https://soteria.local.
+- Defined the initial single-machine deployment architecture.
+- Recorded the initial deployment assumptions and constraints.
+- Excluded the Reference Web Application and Reference API from the deployment scope.
+- Reviewed all application configuration sources.
+- Confirmed the application does not use ASP.NET Core User Secrets.
+- Identified all deployment configuration sources.
+- Produced the initial deployment configuration inventory.
+- Confirmed no hidden application configuration exists outside the documented configuration sources.
+- Identified development-only configuration dependencies.
+- Reviewed production startup behaviour outside the Development environment.
+- Identified production credential requirements.
+- Identified ASP.NET Core Data Protection as a deployment requirement.
+- Reviewed startup initialisation behaviour.
+- Produced the production-readiness action list.
+- Restructured the Phase 6 delivery plan to reflect the agreed deployment implementation sequence.

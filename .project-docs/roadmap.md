@@ -90,9 +90,9 @@ Control which users can access each client application and what authorisation in
 
 - ✓ Grant and revoke application access.
 - ✓ Manage application roles.
-- Manage application claims.
-- Determine the authorisation information issued to client applications.
-- Additional access management features as the project evolves.
+- ✓ Manage application claims.
+- ✓ Determine the authorisation information issued to client applications.
+- ✓ Additional access management features as the project evolves.
 
 **Deliverable**
 
@@ -100,9 +100,23 @@ Client applications trust Soteria as the source of truth for both authentication
 
 ---
 
-# Phase 6 - Extended Application Configuration
+# Phase 6 – Deployment
 
-Allow other client types and permissions.
+**Goal**
+
+Prepare Soteria for secure, repeatable deployment and ongoing operation.
+
+**Includes**
+
+- Establish the deployment architecture and hosting model.
+- Configure production-ready security, credentials and application configuration.
+- Define database deployment, migration, backup and recovery procedures.
+- Deploy and verify Soteria under IIS.
+- Produce the operational deployment and maintenance documentation.
+
+**Deliverable**
+
+Soteria can be deployed, operated, maintained and upgraded through a documented, repeatable production deployment process.
 
 ---
 
