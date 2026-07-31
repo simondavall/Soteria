@@ -755,28 +755,28 @@ reference resource API.
   - ✓ Define Data Protection key storage.
   - ✓ Define logging locations.
 
-- Define hostname and HTTPS.
+- ✓ Define hostname and HTTPS.
   - ✓ Define the hostname.
   - ✓ Define HTTPS bindings.
   - ✓ Define certificate management.
-  - Define issuer configuration.
+  - ✓ Define issuer configuration.
 
-- Define the production configuration model.
+- ✓ Define the production configuration model.
   - ✓ Define supported configuration sources.
   - ✓ Define production application settings.
   - ✓ Define environment variables.
   - ✓ Define production secret storage.
-  - Produce the deployment configuration template.
+  - ✓ Produce the deployment configuration template.
 
 ---
 
 ## Milestone 6.5 – Database Deployment
 
-- Establish the first deployment database state.
-  - Determine the initial deployment database.
-  - Define bootstrap administrator behaviour.
-  - Remove development-only data where required.
-  - Produce the initial deployment checklist.
+- ✓ Establish the first deployment database state.
+  - ✓ Determine the initial deployment database.
+  - ✓ Define bootstrap administrator behaviour.
+  - ✓ Remove development-only data where required.
+  - ✓ Produce the initial deployment checklist.
 
 - ✓ Define SQLite deployment.
   - ✓ Define the database location.
@@ -784,17 +784,17 @@ reference resource API.
   - ✓ Verify database accessibility.
   - ✓ Define integrity expectations.
 
-- Define database migration.
-  - Define the migration procedure.
-  - Define migration verification.
-  - Define migration failure handling.
-  - Produce the migration runbook.
+- ✓ Define database migration.
+  - ✓ Define the migration procedure.
+  - ✓ Define migration verification.
+  - ✓ Define migration failure handling.
+  - ✓ Produce the migration runbook.
 
-- Define backup and restore.
-  - Define backup procedures.
-  - Define restore procedures.
-  - Define rollback procedures.
-  - Verify backup and restore.
+- ✓ Define backup and restore.
+  - ✓ Define backup procedures.
+  - ✓ Define restore procedures.
+  - ✓ Define rollback procedures.
+  - ✓ Verify backup and restore.
 
 ---
 
@@ -829,9 +829,9 @@ reference resource API.
   - ✓ Configure bindings.
   - ✓ Configure application settings.
 
-- Deploy the database.
-  - Backup the existing database.
-  - Deploy the production database.
+- ✓ Deploy the database.
+  - ✓ Backup the existing database.
+  - ✓ Deploy the production database.
   - ✓ Apply migrations.
   - ✓ Verify database deployment.
 
@@ -864,7 +864,7 @@ reference resource API.
   - Verify token validation.
 
 - Verify operational readiness.
-  - Verify backups.
+  - ✓ Verify backups.
   - Verify credential persistence.
   - ✓ Verify Data Protection persistence.
   - Verify failure handling.
