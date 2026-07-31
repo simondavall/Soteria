@@ -717,23 +717,27 @@ reference resource API.
   - ✓ Verify password reset.
   - ✓ Verify Identity workflows.
 
-- Configure production logging.
-  - Define logging providers.
-  - Configure production log levels.
-  - Prevent secret disclosure.
-  - Define log retention.
-  - Verify production logging.
+- ✓ Configure production logging.
+  - ✓ Define Serilog as the Production logging provider.
+  - ✓ Configure rolling Production log files.
+  - ✓ Store logs in `C:\ProgramData\Soteria\Logs`.
+  - ✓ Configure Production log levels.
+  - ✓ Configure daily and size-based rolling.
+  - ✓ Retain Production logs for 14 days.
+  - ✓ Prevent secret and token disclosure.
+  - ✓ Preserve IIS stdout logging for temporary startup troubleshooting only.
+  - ✓ Verify Production logging.
 
-- Review startup initialisation.
+- ✓ Review startup initialisation.
   - ✓ Separate development-only startup behaviour.
   - ✓ Review OpenIddict initialisation.
   - ✓ Prevent Reference Web Application initialisation outside Development.
   - ✓ Prevent Reference API initialisation outside Development.
   - ✓ Review administrator bootstrap.
   - ✓ Review initialisation introduced by production email.
-  - Review initialisation introduced by production logging.
-  - Verify startup remains idempotent.
-  - Verify final Production startup behaviour.
+  - ✓ Review initialisation introduced by production logging.
+  - ✓ Verify startup remains idempotent.
+  - ✓ Verify final Production startup behaviour.
 
 ---
 
@@ -745,11 +749,11 @@ reference resource API.
   - ✓ Define runtime settings.
   - ✓ Define application permissions.
 
-- Define the deployment directory structure.
+- ✓ Define the deployment directory structure.
   - ✓ Define the application directory.
   - ✓ Define persistent data locations.
   - ✓ Define Data Protection key storage.
-  - Define logging locations.
+  - ✓ Define logging locations.
 
 - Define hostname and HTTPS.
   - ✓ Define the hostname.

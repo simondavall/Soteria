@@ -119,6 +119,7 @@ state.
 | Published application | `C:\inetpub\wwwroot\Soteria` |
 | SQLite database | `C:\ProgramData\Soteria\Database` |
 | Data Protection key ring | `C:\ProgramData\Soteria\DataProtection` |
+| Application logs | `C:\ProgramData\Soteria\Logs` |
 
 This separation allows application updates to replace the published binaries
 without affecting authentication state or persisted application data.
@@ -179,6 +180,7 @@ Required permissions are summarised below.
 | Published application | Read & Execute |
 | SQLite database directory | Modify |
 | Data Protection directory | Modify |
+| Application log directory | Modify |
 | OpenIddict Signing certificate private key | Read |
 | OpenIddict Encryption certificate private key | Read |
 
@@ -369,6 +371,52 @@ Startup validation verifies:
 
 Deployment fails immediately if any validation fails.
 
+### 5.7 Production Logging
+
+Soteria uses Serilog for Production application logging.
+
+Production logs are stored at:
+
+```text
+C:\ProgramData\Soteria\Logs
+```
+The log directory is persistent operational state and is stored outside the
+published application directory.
+
+Logging uses:
+
+- Readable text files.
+- Structured message templates.
+- Daily rolling.
+- Additional size-based rolling.
+- A 14-day retention period. 
+- Information logging for Soteria application categories.
+- Warning logging for framework categories unless a more specific override is configured.
+
+Logs must not contain:
+
+- Passwords.
+- SMTP credentials.
+- Client secrets.
+- OpenIddict encryption keys.
+- Certificate private-key material.
+- Authorization codes.
+- Access tokens.
+- Refresh tokens.
+- ID tokens.
+- Password-reset codes or links.
+- Account-confirmation links.
+- Authentication cookies.
+- Anti-forgery tokens.
+- Complete request headers.
+- Identity or OpenID Connect request bodies.
+
+IIS ASP.NET Core Module stdout logging remains disabled during normal operation.
+
+It may be enabled temporarily when diagnosing an application startup failure
+that occurs before normal application logging becomes available. It must be
+disabled again after troubleshooting because stdout logs are not subject to the
+application log retention policy.
 
 ## 6. Database
 
@@ -440,6 +488,8 @@ Verify:
 - Account confirmation emails are delivered successfully.
 - Password reset emails are delivered successfully.
 - SMTP configuration validation succeeds.
+- Production application log files are created.
+- Routine application activity is recorded.
 
 ## 8. Operational Procedures
 
@@ -523,8 +573,12 @@ C:\
         ├── Database
         │   └── soteria.db
         │
-        └── DataProtection
-            ├── key-xxxxxxxx.xml
+        ├── DataProtection
+        │   ├── key-xxxxxxxx.xml
+        │   └── ...
+        │
+        └── Logs
+            ├── soteria-yyyyMMdd.log
             └── ...
 ```
 

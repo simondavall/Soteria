@@ -9,20 +9,19 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 6.3 – Production Services
+## Milestone 6.4 – Deployment Architecture
 
 # Current task
 
-- Configure production logging.
-  - Define logging providers.
-  - Configure production log levels.
-  - Prevent secret disclosure.
-  - Define log retention.
-  - Verify production logging.
+- Define hostname and HTTPS.
+  - ✓ Define the hostname.
+  - ✓ Define HTTPS bindings.
+  - ✓ Define certificate management.
+  - Define issuer configuration.
 
 # Remaining milestone tasks
 
-- Review startup initialisation.
+- Define the production configuration model.
 
 # Completed
 
@@ -125,3 +124,13 @@ where development should continue.
 - Verified account confirmation email delivery.
 - Verified password reset email delivery.
 - Verified standard ASP.NET Core Identity email workflows.
+- Implemented Serilog as the Production logging provider.
+- Configured Production logging using rolling text log files.
+- Standardised the Production log location as `C:\ProgramData\Soteria\Logs`.
+- Configured daily and size-based log rolling.
+- Configured 14-day log retention.
+- Configured Production log filtering for application and framework categories.
+- Preserved the existing `ILogger<T>` programming model.
+- Preserved IIS stdout logging for temporary startup troubleshooting only.
+- Prevented logging of secrets, credentials, tokens and Identity action links.
+- Verified Production log creation, rolling and filtering.
