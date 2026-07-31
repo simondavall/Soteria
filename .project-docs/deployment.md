@@ -45,7 +45,7 @@ The current deployment process should be performed in the following order.
 6. Install the OpenIddict signing certificate.
 7. Install the OpenIddict encryption certificate.
 8. Grant the IIS Application Pool access to both certificate private keys.
-9. Configure the Production application settings.
+9. Configure the Production environment variables.
 10. Start the application.
 11. Verify OpenIddict.
 12. Verify Data Protection.
@@ -200,6 +200,11 @@ The current implementation uses the following configuration sources.
 | Local `.env` file | Development environment variables loaded during local execution. |
 | `launchSettings.json` | Local development launch profile only. Not used for deployed environments. |
 
+- `.env` is Development-only.
+- It is loaded only after the application confirms it is running in Development.
+- Existing process environment variables take precedence.
+- `.env` is not included in publish output or Production deployment.
+
 The application does not currently use ASP.NET Core User Secrets.
 
 No additional application-specific configuration sources currently exist.
@@ -259,43 +264,42 @@ Production deployments must configure:
 ASPNETCORE_ENVIRONMENT=Production
 ```
 
-The Development environment uses:
+SMTP configuration is also supplied through environment variables.
+
+Required values:
 
 ```
-ASPNETCORE_ENVIRONMENT=Development
+Soteria__Email__Host
+Soteria__Email__Port
+Soteria__Email__Security
+Soteria__Email__DisplayName
+Soteria__Email__SenderAddress
+Soteria__Email__Username
+Soteria__Email__Password
 ```
 
-Credential selection is performed automatically based on the current environment.
+Development loads these values from the local `.env` file.
 
-Current Production deployments also require:
+Production does not load `.env` files and must provide the values through the hosting environment.
 
-```
-OpenIddict__EncryptionKey
-```
+### 5.4 Secrets and Credentials
 
-This value exists as a legacy compatibility requirement while the application
-continues to validate the existing symmetric encryption configuration.
+Production OpenIddict credentials are provided through separate signing and
+encryption certificates installed in the Windows Local Machine certificate store.
 
-This dependency is expected to be removed once the Production implementation
-relies solely on certificate-based encryption.
+SMTP credentials are supplied through Production environment variables.
 
-### 5.4 Secrets
+The SMTP host, mailbox address, username and password are deployment
+configuration and are not committed to source control.
 
-Deployment secrets are supplied through Windows Environment Variables.
+Development uses the local `.env` file for Development-only configuration,
+including:
 
-Application configuration intentionally separates deployment configuration from
-secret material.
+- OpenIddict Development encryption key.
+- Reference Web client secret.
+- SMTP configuration.
 
-Production secrets are therefore not committed to source control or stored in
-application configuration files.
-
-The current implementation uses:
-
-- OpenIddict certificate thumbprints stored in configuration.
-- Secret values supplied through Environment Variables.
-
-The long-term objective is to minimise the number of required deployment
-secrets through increased use of certificate-based authentication.
+The `.env` file is never deployed to Production.
 
 ### 5.5 Data Protection
 
@@ -390,6 +394,15 @@ Redeploying the application must not replace or recreate this database.
 
 ### 7.1 Prepare the Host
 ### 7.2 Publish Soteria
+
+To publish use the following from the solution root:
+
+```bash
+dotnet publish .\Soteria --configuration Release --output "C:\inetpub\wwwroot\Soteria"
+```
+- It is the currently verified deployment approach.
+- It publishes directly into the live IIS directory.
+
 ### 7.3 Configure IIS
 ### 7.4 Configure Application
 
@@ -402,7 +415,7 @@ Before starting the application verify:
 - SQLite database directory exists.
 - Data Protection directory exists.
 - IIS Application Pool has Modify permission to both persistent directories.
-- Required Production Environment Variables are configured.
+- Required SMTP environment variables are configured.
 - ASPNETCORE_ENVIRONMENT is set to `Production`.
 
 ### 7.5 Start the Application
@@ -424,11 +437,23 @@ Verify:
 - Authentication survives Application Pool recycling.
 - Authentication survives IIS restart.
 - SQLite database persists across application redeployment.
-
+- Account confirmation emails are delivered successfully.
+- Password reset emails are delivered successfully.
+- SMTP configuration validation succeeds.
 
 ## 8. Operational Procedures
 
 ### 8.1 Routine Deployment
+
+To publish use the following from the solution root:
+
+```bash
+dotnet publish .\Soteria --configuration Release --output "C:\inetpub\wwwroot\Soteria"
+```
+
+- It is the currently verified deployment approach.
+- It publishes directly into the live IIS directory.
+
 ### 8.2 Upgrading
 
 Routine upgrades replace only the published application files.

@@ -20,11 +20,14 @@ internal static class DataProtectionServiceCollectionExtensions
 
         Directory.CreateDirectory(ProductionKeyRingPath);
 
+        // todo: Currently only Windows is supported here. This is a design choice but will be revisited.
+#pragma warning disable CA1416
         services
             .AddDataProtection()
             .SetApplicationName(ApplicationName)
             .PersistKeysToFileSystem(new DirectoryInfo(ProductionKeyRingPath))
             .ProtectKeysWithDpapi(protectToLocalMachine: true);
+#pragma warning restore CA1416
 
         return services;
     }
