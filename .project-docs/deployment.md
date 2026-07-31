@@ -142,6 +142,13 @@ The current deployment is intended for local development and evaluation.
 Future production deployments may replace the hostname with an externally
 accessible domain.
 
+### 3.5 OpenIddict Issuer
+
+The canonical OpenIddict issuer for the current Production deployment is:
+
+```text
+https://soteria.local
+```
 
 ## 4. Prerequisites
 
@@ -434,9 +441,101 @@ directory.
 Redeploying the application must not replace or recreate this database.
 
 ### 6.2 First Deployment
+
+The initial deployment begins with no existing Production database.
+
+The database is created by manually applying the Entity Framework Core
+migrations to the configured SQLite database location.
+
+No seed data is deployed with the application.
+
+The initial database therefore contains only the schema required by the current
+application version together with any data created by Entity Framework
+migrations.
+
+Following the initial deployment:
+
+- The application starts normally.
+- Entity Framework migrations have created the initial database schema.
+- If no Soteria Administrator exists, the navigation menu displays `Register Soteria Administrator` above `Log in`.
+- If one or more Soteria Administrators already exist, the `Register Soteria Administrator` option is not displayed.
+
+Although no database exists during the initial deployment, the same migration
+procedure is used for both first deployment and subsequent upgrades to maintain
+a single repeatable operational process.
+
 ### 6.3 Applying Migrations
+
+### 6.3 Applying Migrations
+
+Entity Framework Core migrations are applied manually.
+
+Automatic migration during application startup is intentionally not used.
+
+This allows the database to be backed up immediately before any schema changes
+are applied.
+
+Migration procedure:
+
+1. Stop the Soteria IIS Application Pool.
+2. Verify the target database location.
+3. If the database already exists, create a backup.
+4. Apply the Entity Framework Core migrations. From the solution root execute:
+
+   ```bash
+   dotnet ef database update --project .\Soteria
+   ```
+5. Verify that the migration completed successfully.
+6. Start the IIS Application Pool.
+7. Verify successful application startup.
+
+First deployment follows the same procedure except no backup is required because
+no database yet exists.
+
+If a migration fails, the application must not be started until the cause has
+been investigated and corrected.
+
 ### 6.4 Backup
+
+The SQLite database forms part of the persistent operational state of the
+application.
+
+A backup must be taken immediately before applying Entity Framework Core
+migrations to an existing database.
+
+The backup should consist of a complete copy of:
+
+```text
+C:\ProgramData\Soteria\Database\soteria.db
+```
+The backup must be retained until:
+
+- the migration completes successfully;
+- application startup has been verified;
+- normal application operation has been confirmed.
+
 ### 6.5 Restore
+
+If a deployment or migration fails after the database schema has been modified,
+the database may be restored from the backup created immediately before the
+migration.
+
+Typical recovery procedure:
+
+1. Stop the IIS Application Pool.
+2. Replace the database with the backup copy.
+3. Restore the corresponding application version if required.
+4. Start the IIS Application Pool.
+5. Verify successful application startup.
+
+Database restoration does not affect:
+
+- OpenIddict certificates;
+- Data Protection keys;
+- Production configuration;
+- application log files.
+
+Only the SQLite database is restored.
 
 ## 7. Deployment Procedure
 
@@ -490,6 +589,16 @@ Verify:
 - SMTP configuration validation succeeds.
 - Production application log files are created.
 - Routine application activity is recorded.
+- Database schema version matches the deployed application.
+- No pending Entity Framework Core migrations remain.
+
+Verify administrator bootstrap behaviour:
+
+- If no Soteria Administrator exists, the navigation menu displays
+  `Register Soteria Administrator` above `Log in`.
+- After the first administrator has been created, the
+  `Register Soteria Administrator` menu option is no longer displayed.
+- Existing Soteria Administrators can sign in normally.
 
 ## 8. Operational Procedures
 
@@ -555,6 +664,73 @@ Verify the following:
 ## 12. Future Enhancements
 
 ## Appendix A - Configuration Reference
+
+This appendix provides the complete configuration template for the current
+Production deployment.
+
+Replace all placeholder values before starting the application.
+
+### A.1 appsettings.Production.json
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=C:/ProgramData/Soteria/Database/soteria.db"
+  },
+  "OpenIddict": {
+    "Certificates": {
+      "SigningThumbprint": "<SIGNING_CERTIFICATE_THUMBPRINT>",
+      "EncryptionThumbprint": "<ENCRYPTION_CERTIFICATE_THUMBPRINT>"
+    },
+    "Tokens": {
+      "AccessTokenLifetimeMinutes": <ACCESS_TOKEN_LIFETIME_MINUTES>,
+      "RefreshTokenLifetimeDays": <REFRESH_TOKEN_LIFETIME_DAYS>
+    }
+  }
+}
+```
+A.2 Production Environment Variables
+
+```
+ASPNETCORE_ENVIRONMENT=Production
+
+Soteria__Email__Host=<SMTP_HOST>
+Soteria__Email__Port=<SMTP_PORT>
+Soteria__Email__Security=<SMTP_SECURITY_MODE>
+Soteria__Email__DisplayName=<SENDER_DISPLAY_NAME>
+Soteria__Email__SenderAddress=<SENDER_EMAIL_ADDRESS>
+Soteria__Email__Username=<SMTP_USERNAME>
+Soteria__Email__Password=<SMTP_PASSWORD>
+```
+
+A.3 IIS Application Pool Environment Variables
+
+For the current IIS deployment, configure the environment variables for the
+Soteria application or Application Pool using the chosen IIS deployment
+mechanism.
+
+Do not commit populated Production values to source control.
+
+After changing environment variables, restart the Soteria Application Pool so
+that the worker process receives the new values.
+
+A.4 Fixed Production Conventions
+
+The following values are implementation conventions and are not currently
+deployment-configurable:
+
+| Setting | Value |
+|----------|------------|
+| Canonical URL	| https://soteria.local |
+| Published application	| C:\inetpub\wwwroot\Soteria |
+| SQLite database	| C:\ProgramData\Soteria\Database\soteria.db |
+| Data Protection key ring	| C:\ProgramData\Soteria\DataProtection |
+| Data Protection application name	| Soteria |
+| Application logs	| C:\ProgramData\Soteria\Logs |
+| Certificate store	| LocalMachine\My |
+| IIS Application Pool	| Soteria |
+| IIS identity	| IIS AppPool\Soteria |
+
 
 ## Appendix B - Directory Layout
 

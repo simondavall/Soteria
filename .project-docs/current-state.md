@@ -9,19 +9,19 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 6.4 – Deployment Architecture
+## Milestone 6.6 – Deployment Package
 
 # Current task
 
-- Define hostname and HTTPS.
-  - ✓ Define the hostname.
-  - ✓ Define HTTPS bindings.
-  - ✓ Define certificate management.
-  - Define issuer configuration.
+- Define the publication process.
+  - Define the publish model.
+  - Define the publish procedure.
+  - Define deployment prerequisites.
+  - Verify publish output.
 
 # Remaining milestone tasks
 
-- Define the production configuration model.
+- Create the deployment package.
 
 # Completed
 
@@ -104,7 +104,6 @@ where development should continue.
 - Restricted Reference API scope initialisation to Development.
 - Restricted Reference Web client initialisation to Development.
 - Removed the Production dependency on the Reference Web OpenID Connect client secret.
-- Confirmed the Production deployment requires no application-specific environment variables.
 - Preserved optional first-user Soteria Administrator bootstrap in Production.
 - Excluded the optional bootstrap administrator email from Production startup validation.
 - Verified Production startup without Development-only secrets.
@@ -134,3 +133,12 @@ where development should continue.
 - Preserved IIS stdout logging for temporary startup troubleshooting only.
 - Prevented logging of secrets, credentials, tokens and Identity action links.
 - Verified Production log creation, rolling and filtering.
+- Documented the caninical issuer.
+- Provide a configuration template in Appendix A
+- Defined the initial Production database state.
+- Confirmed manual Entity Framework Core migrations as the Production deployment strategy.
+- Standardised `dotnet ef database update` as the Production migration procedure.
+- Defined a single migration workflow for first deployment and subsequent application upgrades.
+- Confirmed Production deployments contain no Development-only database content.
+- Documented first-run Soteria Administrator deployment behaviour.
+- Produced the initial Production database deployment checklist.
