@@ -31,9 +31,16 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        Env.TraversePath().Load();
-
         var builder = WebApplication.CreateBuilder(args);
+
+        if (builder.Environment.IsDevelopment())
+        {
+            Env.NoClobber()
+                .TraversePath()
+                .Load();
+
+            builder.Configuration.AddEnvironmentVariables();
+        }
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
@@ -113,9 +120,6 @@ public class Program
         {
             throw new InvalidOperationException("OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
         }
-
-        var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
-                            ?? throw new InvalidOperationException("The OpenIddict:EncryptionKey configuration value is required.");
 
         builder.Services.AddOpenIddict()
             .AddCore(options =>
@@ -233,8 +237,11 @@ public class Program
 
         await using (var scope = app.Services.CreateAsyncScope())
         {
-            var openIddictInitializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
-            await openIddictInitializer.InitializeAsync();
+            if (app.Environment.IsDevelopment())
+            {
+                var openIddictInitializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
+                await openIddictInitializer.InitializeAsync();
+            }
 
             var soteriaAdminInitializer = scope.ServiceProvider.GetRequiredService<SoteriaAdministratorInitializer>();
             await soteriaAdminInitializer.InitializeAsync();

@@ -706,14 +706,6 @@ reference resource API.
 
 ## Milestone 6.3 – Production Services
 
-- Configure production email.
-  - Define deployed email support.
-  - Define production email configuration.
-  - Replace the Development email sender.
-  - Verify account confirmation.
-  - Verify password reset.
-  - Verify Identity workflows.
-
 - Review startup initialisation.
   - Separate development-only startup behaviour.
   - Review OpenIddict initialisation.
@@ -729,6 +721,14 @@ reference resource API.
   - Prevent secret disclosure.
   - Define log retention.
   - Verify production logging.
+
+- Configure production email.
+  - Define deployed email support.
+  - Define production email configuration.
+  - Replace the Development email sender.
+  - Verify account confirmation.
+  - Verify password reset.
+  - Verify Identity workflows.
 
 ---
 
