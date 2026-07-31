@@ -13,17 +13,17 @@ where development should continue.
 
 # Current task
 
-- Configure persistent Data Protection.
-  - Define the Data Protection persistence strategy.
-  - Define the Data Protection storage location.
-  - Configure persistent key storage.
-  - Configure key protection.
-  - Verify authentication cookies survive application restart.
-  - Document key recovery expectations.
+- Implement startup validation.
+  - ✓ Validate required application configuration.
+  - ✓ Validate deployment credentials.
+  - ✓ Validate deployment directories.
+  - Validate required secrets.
+  - ✓ Produce clear startup failures.
+  - ✓ Verify invalid deployments fail with actionable diagnostics
 
 # Remaining milestone tasks
 
-- Implement startup validation.
+- None
 
 # Completed
 
@@ -70,3 +70,29 @@ where development should continue.
 - Documented certificate installation and IIS private-key configuration.
 - Documented production configuration requirements.
 - Produced the production deployment verification checklist.
+- Implemented persistent ASP.NET Core Data Protection for Production deployments.
+- Configured a persistent Data Protection key ring outside the application directory.
+- Protected Production Data Protection keys using Windows DPAPI (Local Machine).
+- Standardised the Production Data Protection application name as `Soteria`.
+- Verified authentication cookies survive IIS Application Pool recycling.
+- Verified authentication cookies survive IIS restart.
+- Verified Data Protection keys persist independently of application deployment.
+- Implemented deployment directory validation during Production startup.
+- Defined the canonical Production deployment directory structure.
+- Standardised the published application location as `C:\inetpub\wwwroot\Soteria`.
+- Standardised the SQLite database location as `C:\ProgramData\Soteria\Database`.
+- Standardised the Data Protection key location as `C:\ProgramData\Soteria\DataProtection`.
+- Defined the IIS Production hosting model.
+- Defined the Production IIS Application Pool configuration.
+- Defined Production HTTPS hosting using Server Name Indication (SNI).
+- Verified HTTPS deployment using the `soteria.local` host name.
+- Verified Production OpenIddict signing and encryption certificates under IIS.
+- Verified IIS Application Pool access to OpenIddict certificate private keys.
+- Verified Production startup under IIS.
+- Verified Production SQLite deployment outside the published application directory.
+- Produced the complete Production deployment architecture.
+- Produced the Production deployment runbook.
+- Produced the Production operations guide.
+- Documented Production deployment verification procedures.
+- Documented Production troubleshooting procedures.
+- Documented Production backup and recovery procedures.

@@ -4,7 +4,7 @@ namespace Soteria.Data.OpenIddict;
 
 internal static class OpenIddictServerBuilderExtensions
 {
-    public static OpenIddictServerBuilder AddSoteriaCredentials(this OpenIddictServerBuilder builder, IWebHostEnvironment environment, 
+    public static OpenIddictServerBuilder AddSoteriaCredentials(this OpenIddictServerBuilder builder, IWebHostEnvironment environment,
         IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -27,15 +27,36 @@ internal static class OpenIddictServerBuilderExtensions
     {
         builder.AddDevelopmentSigningCertificate();
 
-        var encryptionKey = configuration["OpenIddict:EncryptionKey"];
-
-        if (string.IsNullOrWhiteSpace(encryptionKey))
+        var configuredEncryptionKey = configuration["OpenIddict:EncryptionKey"];
+        if (string.IsNullOrWhiteSpace(configuredEncryptionKey))
         {
             throw new InvalidOperationException(
-                "Configuration value 'OpenIddict:EncryptionKey' is missing.");
+                "The Development configuration value 'OpenIddict:EncryptionKey' is required.");
         }
 
-        builder.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
+        byte[] encryptionKey;
+
+        try
+        {
+            encryptionKey = Convert.FromBase64String(configuredEncryptionKey.Trim());
+        }
+        catch (FormatException exception)
+        {
+            throw new InvalidOperationException(
+                "The Development configuration value " +
+                "'OpenIddict:EncryptionKey' must be a valid Base64 value.",
+                exception);
+        }
+
+        if (encryptionKey.Length < 32)
+        {
+            throw new InvalidOperationException(
+                "The Development configuration value " +
+                "'OpenIddict:EncryptionKey' must contain at least " +
+                "256 bits of key material.");
+        }
+
+        builder.AddEncryptionKey(new SymmetricSecurityKey(encryptionKey));
     }
 
     private static void ConfigureProduction(OpenIddictServerBuilder builder, IConfiguration configuration)
