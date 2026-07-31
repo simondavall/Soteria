@@ -694,11 +694,11 @@ reference resource API.
   - ✓ Verify authentication cookies survive application restart.
   - ✓ Document key recovery expectations.
 
-- Implement startup validation.
+- ✓ Implement startup validation.
   - ✓ Validate required application configuration.
   - ✓ Validate deployment credentials.
   - ✓ Validate deployment directories.
-  - Validate required secrets.
+  - ✓ Validate required secrets.
   - ✓ Produce clear startup failures.
   - ✓ Verify invalid deployments fail with actionable diagnostics
 
@@ -706,14 +706,16 @@ reference resource API.
 
 ## Milestone 6.3 – Production Services
 
-- Review startup initialisation.
-  - Separate development-only startup behaviour.
-  - Review OpenIddict initialisation.
-  - Prevent Reference Web Application initialisation outside Development.
-  - Prevent Reference API initialisation outside Development.
-  - Review administrator bootstrap.
-  - Verify startup remains idempotent.
-  - Verify startup behaviour.
+- ✓ Configure production email.
+  - ✓ Define deployed email support.
+  - ✓ Define production email configuration.
+  - ✓ Replace the Development email sender.
+  - ✓ Configure SMTP delivery using a shared email sender.
+  - ✓ Load SMTP configuration from environment variables.
+  - ✓ Validate SMTP configuration during startup.
+  - ✓ Verify account confirmation.
+  - ✓ Verify password reset.
+  - ✓ Verify Identity workflows.
 
 - Configure production logging.
   - Define logging providers.
@@ -722,13 +724,16 @@ reference resource API.
   - Define log retention.
   - Verify production logging.
 
-- Configure production email.
-  - Define deployed email support.
-  - Define production email configuration.
-  - Replace the Development email sender.
-  - Verify account confirmation.
-  - Verify password reset.
-  - Verify Identity workflows.
+- Review startup initialisation.
+  - ✓ Separate development-only startup behaviour.
+  - ✓ Review OpenIddict initialisation.
+  - ✓ Prevent Reference Web Application initialisation outside Development.
+  - ✓ Prevent Reference API initialisation outside Development.
+  - ✓ Review administrator bootstrap.
+  - ✓ Review initialisation introduced by production email.
+  - Review initialisation introduced by production logging.
+  - Verify startup remains idempotent.
+  - Verify final Production startup behaviour.
 
 ---
 
@@ -756,7 +761,7 @@ reference resource API.
   - ✓ Define supported configuration sources.
   - ✓ Define production application settings.
   - ✓ Define environment variables.
-  - Define production secret storage.
+  - ✓ Define production secret storage.
   - Produce the deployment configuration template.
 
 ---

@@ -175,7 +175,11 @@ public class Program
                 options.AddSoteriaCredentials(builder.Environment, builder.Configuration);
             });
 
-        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
+        var emailOptions = EmailOptionsLoader.Load(builder.Configuration);
+        builder.Services.AddSingleton(emailOptions);
+        builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
+        
+        //builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
         builder.Services.AddScoped<OpenIddictInitializer>();
         builder.Services.AddSingleton<SoteriaAdministratorInitializer>();

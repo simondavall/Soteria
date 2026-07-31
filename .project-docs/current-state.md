@@ -9,21 +9,20 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 6.2 – Production Runtime
+## Milestone 6.3 – Production Services
 
 # Current task
 
-- Implement startup validation.
-  - ✓ Validate required application configuration.
-  - ✓ Validate deployment credentials.
-  - ✓ Validate deployment directories.
-  - Validate required secrets.
-  - ✓ Produce clear startup failures.
-  - ✓ Verify invalid deployments fail with actionable diagnostics
+- Configure production logging.
+  - Define logging providers.
+  - Configure production log levels.
+  - Prevent secret disclosure.
+  - Define log retention.
+  - Verify production logging.
 
 # Remaining milestone tasks
 
-- None
+- Review startup initialisation.
 
 # Completed
 
@@ -90,9 +89,39 @@ where development should continue.
 - Verified IIS Application Pool access to OpenIddict certificate private keys.
 - Verified Production startup under IIS.
 - Verified Production SQLite deployment outside the published application directory.
+  Verified database survives redeployment
 - Produced the complete Production deployment architecture.
 - Produced the Production deployment runbook.
 - Produced the Production operations guide.
 - Documented Production deployment verification procedures.
 - Documented Production troubleshooting procedures.
 - Documented Production backup and recovery procedures.
+- Restricted local `.env` loading to the Development environment.
+- Preserved the root `.env` file as the portable Development secret source.
+- Ensured existing process environment variables take precedence over `.env` values.
+- Removed the Production requirement for the symmetric OpenIddict encryption key.
+- Preserved Development validation of the symmetric OpenIddict encryption key.
+- Added clear Development startup diagnostics for missing, malformed and undersized encryption keys.
+- Restricted Reference API scope initialisation to Development.
+- Restricted Reference Web client initialisation to Development.
+- Removed the Production dependency on the Reference Web OpenID Connect client secret.
+- Confirmed the Production deployment requires no application-specific environment variables.
+- Preserved optional first-user Soteria Administrator bootstrap in Production.
+- Excluded the optional bootstrap administrator email from Production startup validation.
+- Verified Production startup without Development-only secrets.
+- Verified a refresh deployment succeeds with the revised environment-specific configuration.
+- Completed environment-specific startup validation.
+- Implemented production SMTP email delivery using a shared email sender.
+- Replaced the Development logging email sender as the default Identity email provider.
+- Added strongly typed SMTP configuration.
+- Loaded SMTP configuration from `.env` during Development.
+- Loaded SMTP configuration from environment variables in Production.
+- Kept SMTP host, mailbox details and credentials outside committed configuration.
+- Implemented startup validation for SMTP configuration.
+- Preserved startup independence from SMTP server availability.
+- Implemented HTML account confirmation emails.
+- Implemented HTML password reset emails.
+- Implemented password reset code email delivery.
+- Verified account confirmation email delivery.
+- Verified password reset email delivery.
+- Verified standard ASP.NET Core Identity email workflows.
