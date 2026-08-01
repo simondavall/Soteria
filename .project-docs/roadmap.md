@@ -108,11 +108,11 @@ Prepare Soteria for secure, repeatable deployment and ongoing operation.
 
 **Includes**
 
-- Establish the deployment architecture and hosting model.
-- Configure production-ready security, credentials and application configuration.
-- Define database deployment, migration, backup and recovery procedures.
-- Deploy and verify Soteria under IIS.
-- Produce the operational deployment and maintenance documentation.
+- ✓ Establish the deployment architecture and hosting model.
+- ✓ Configure production-ready security, credentials and application configuration.
+- ✓ Define database deployment, migration, backup and recovery procedures.
+- ✓ Deploy and verify Soteria under IIS.
+- ✓ Produce the operational deployment and maintenance documentation.
 
 **Deliverable**
 

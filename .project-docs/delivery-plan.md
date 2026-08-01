@@ -863,20 +863,25 @@ reference resource API.
   - ✓ Verify deployment configuration.
   - ✓ Verify deployment verification procedures.
 
-- Produce the deployment runbook.
-  - Define routine deployment.
-  - Define upgrade procedures.
-  - Define rollback procedures.
-  - Verify deployment procedures.
+- ✓ Produce the deployment runbook.
+  - ✓ Define routine deployment.
+  - ✓ Define upgrade procedures.
+  - ✓ Define rollback procedures.
+  - ✓ Verify deployment procedures.
 
-- Produce the recovery guide.
-  - Define deployment recovery.
-  - Define database recovery.
-  - Define credential recovery.
-  - Verify recovery procedures.
+- ✓ Produce the recovery guide.
+  - ✓ Define deployment recovery.
+  - ✓ Define database recovery.
+  - ✓ Define credential recovery.
+  - ✓ Verify recovery procedures.
 
-- Review and finalise deployment documentation.
-  - Verify deployment documentation.
-  - Verify operational documentation.
-  - Verify recovery documentation.
+- ✓ Review and finalise deployment documentation.
+  - ✓ Verify deployment documentation.
+  - ✓ Verify operational documentation.
+  - ✓ Verify recovery documentation.
 
+---
+
+## Enhancements
+
+- Add users to Client details page, and rearrange the display to use tabs.
