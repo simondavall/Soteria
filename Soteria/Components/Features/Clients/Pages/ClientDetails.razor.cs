@@ -13,12 +13,13 @@ public partial class ClientDetails
     private NavigationManager NavigationManager { get; set; } = default!;
     [Inject]
     private IDialogService DialogService { get; set; } = default!;
-    
+
     [Parameter]
     public string ClientId { get; set; } = string.Empty;
-    
+
     private ClientApplicationDetails? Client { get; set; }
     private IReadOnlyList<ApplicationRoleSummary> ApplicationRoles { get; set; } = [];
+    private IReadOnlyList<ClientUserSummary> Users { get; set; } = [];
     private bool IsLoading { get; set; }
 
     protected override async Task OnParametersSetAsync()
@@ -29,24 +30,34 @@ public partial class ClientDetails
     private async Task LoadClientAsync()
     {
         IsLoading = true;
+        ApplicationRoles = [];
+        Users = [];
 
         try
         {
             Client = await ClientService.GetClientAsync(ClientId);
-            ApplicationRoles = Client is null ? [] : await ClientService.GetApplicationRolesAsync(ClientId);
+            if (Client is null)
+            {
+                return;
+            }
+
+            ApplicationRoles = await ClientService.GetApplicationRolesAsync(ClientId);
+            Users = await ClientService.GetUsersAsync(ClientId);
         }
         finally
         {
             IsLoading = false;
         }
     }
-    
+
     private async Task EditClientAsync()
     {
         var request = await ClientService.GetClientForEditAsync(ClientId);
         if (request is null)
         {
             Client = null;
+            ApplicationRoles = [];
+            Users = [];
             return;
         }
 
@@ -72,7 +83,7 @@ public partial class ClientDetails
 
         await LoadClientAsync();
     }
-    
+
     private async Task CreateApplicationRoleAsync()
     {
         var parameters = new DialogParameters
@@ -136,8 +147,19 @@ public partial class ClientDetails
         }
 
         ApplicationRoles = await ClientService.GetApplicationRolesAsync(ClientId);
+        Users = await ClientService.GetUsersAsync(ClientId);
     }
-    
+
+    private void SelectUser(TableRowClickEventArgs<ClientUserSummary> eventArgs)
+    {
+        if (eventArgs.Item is null)
+        {
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/users/{eventArgs.Item.UserId}");
+    }
+
     private void ReturnToClientList()
     {
         NavigationManager.NavigateTo("/clients");

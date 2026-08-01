@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>0.0.1</Version>
-        <InformationalVersion>0.0.1</InformationalVersion>
+        <Version>1.0.0</Version>
+        <InformationalVersion>1.0.0</InformationalVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,6 +25,8 @@
         <PackageReference Include="OpenIddict.AspNetCore" Version="7.6.0" />
         <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.6.0" />
         <PackageReference Include="DotNetEnv" Version="3.2.0" />
+        <PackageReference Include="MailKit" Version="4.17.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     </ItemGroup>
 
 </Project>

@@ -4,16 +4,26 @@
     margin: 0 auto;
 }
 
-.client-details-page__application-roles-table ::deep tbody tr {
-    cursor: pointer;
-}
-
 .client-details-page__header {
     padding-block: 0.5rem;
 }
 
-.client-details-page__header-content {
+.client-details-page__header-content,
+.client-details-page__section-header {
     flex-wrap: wrap;
+}
+
+.client-details-page__tabs {
+    overflow: hidden;
+    border-radius: 0.75rem;
+}
+
+.client-details-page__tab-control {
+    width: 100%;
+}
+
+.client-details-page__tab-content {
+    padding: 2rem;
 }
 
 .client-details-page__content {
@@ -56,9 +66,62 @@
     overflow-wrap: anywhere;
 }
 
+.client-details-page__table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.client-details-page__application-roles-table {
+    min-width: 42rem;
+}
+
+.client-details-page__users-table {
+    min-width: 48rem;
+}
+
+.client-details-page__application-roles-table
+::deep tbody tr,
+.client-details-page__users-table
+::deep tbody tr {
+    cursor: pointer;
+}
+
+.client-details-page__application-roles-table
+::deep tbody tr:focus-visible,
+.client-details-page__users-table
+::deep tbody tr:focus-visible {
+    outline: 0.125rem solid currentColor;
+    outline-offset: -0.125rem;
+}
+
+.client-details-page__roles {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.client-details-page__empty-users {
+    min-height: 16rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
 @media (max-width: 59.99rem) {
     .client-details-page__metadata-grid,
     .client-details-page__configuration-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 37.49rem) {
+    .client-details-page__tab-content,
+    .client-details-page__content {
+        padding: 1.25rem;
     }
 }

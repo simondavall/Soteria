@@ -27,17 +27,11 @@
                         <MudIcon Icon="@Icons.Material.Filled.Person"/>
                     </MudAvatar>
 
-                    <MudStack Spacing="0">
-                        <MudText Typo="Typo.h4"
-                                 HtmlTag="h1">
-                            User Details
-                        </MudText>
+                    <MudText Typo="Typo.h4"
+                             HtmlTag="h1">
+                        User Details
+                    </MudText>
 
-                        <MudText Typo="Typo.body1"
-                                 Color="Color.Secondary">
-                            Review the selected user's account and profile information.
-                        </MudText>
-                    </MudStack>
                 </MudStack>
 
                 <MudStack Row="true"
@@ -139,30 +133,6 @@
                                 <div class="user-details-page__field">
                                     <MudText Typo="Typo.overline"
                                              Color="Color.Secondary">
-                                        User ID
-                                    </MudText>
-
-                                    <MudText Typo="Typo.body1">
-                                        @User.UserId
-                                    </MudText>
-                                </div>
-
-                                <div class="user-details-page__field">
-                                    <MudText Typo="Typo.overline"
-                                             Color="Color.Secondary">
-                                        Email
-                                    </MudText>
-
-                                    <MudText Typo="Typo.body1">
-                                        @User.Email
-                                    </MudText>
-                                </div>
-                            </div>
-
-                            <div class="user-details-page__column">
-                                <div class="user-details-page__field">
-                                    <MudText Typo="Typo.overline"
-                                             Color="Color.Secondary">
                                         Username
                                     </MudText>
 
@@ -179,6 +149,30 @@
 
                                     <MudText Typo="Typo.body1">
                                         @User.DisplayName
+                                    </MudText>
+                                </div>
+                            </div>
+
+                            <div class="user-details-page__column">
+                                <div class="user-details-page__field">
+                                    <MudText Typo="Typo.overline"
+                                             Color="Color.Secondary">
+                                        User ID
+                                    </MudText>
+
+                                    <MudText Typo="Typo.body1">
+                                        @User.UserId
+                                    </MudText>
+                                </div>
+
+                                <div class="user-details-page__field">
+                                    <MudText Typo="Typo.overline"
+                                             Color="Color.Secondary">
+                                        Email
+                                    </MudText>
+
+                                    <MudText Typo="Typo.body1">
+                                        @User.Email
                                     </MudText>
                                 </div>
                             </div>
