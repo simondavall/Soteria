@@ -13,7 +13,7 @@ where development should continue.
 
 # Current task
 
-- Add users to Client details page, and rearrange the display to use tabs.
+- None
 
 # Remaining milestone tasks
 

@@ -25,19 +25,12 @@
                                Size="Size.Large">
                         <MudIcon Icon="@Icons.Material.Filled.Apps"/>
                     </MudAvatar>
+                    
+                    <MudText Typo="Typo.h4"
+                             HtmlTag="h1">
+                        Client Applications
+                    </MudText>
 
-                    <MudStack Spacing="0">
-                        <MudText Typo="Typo.h4"
-                                 HtmlTag="h1">
-                            Client Applications
-                        </MudText>
-
-                        <MudText Typo="Typo.body1"
-                                 Color="Color.Secondary">
-                            Manage applications that authenticate
-                            users through Soteria.
-                        </MudText>
-                    </MudStack>
                 </MudStack>
 
                 @if (CanCreateClient)
@@ -49,7 +42,7 @@
                         Create Client
                     </MudButton>
                 }
-                
+
             </MudStack>
         </header>
 
