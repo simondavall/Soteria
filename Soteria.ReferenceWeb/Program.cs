@@ -11,6 +11,11 @@ Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.UseStaticWebAssets();
+}
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

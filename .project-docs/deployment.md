@@ -33,7 +33,7 @@ database providers and production hosting environments.
 
 ---
 
-## 3. Deployment Workflow
+## Deployment Workflow
 
 The current deployment process should be performed in the following order.
 
@@ -46,10 +46,11 @@ The current deployment process should be performed in the following order.
 7. Install the OpenIddict encryption certificate.
 8. Grant the IIS Application Pool access to both certificate private keys.
 9. Configure the Production environment variables.
-10. Start the application.
-11. Verify OpenIddict.
-12. Verify Data Protection.
-13. Perform post-deployment verification.
+10. Apply Entity Framework Core migrations.
+11. Start the application.
+12. Verify OpenIddict. 
+13. Verify Data Protection. 
+14. Perform post-deployment verification.
 
 The remaining sections of this document provide the detailed procedures for each
 step.
@@ -466,8 +467,6 @@ a single repeatable operational process.
 
 ### 6.3 Applying Migrations
 
-### 6.3 Applying Migrations
-
 Entity Framework Core migrations are applied manually.
 
 Automatic migration during application startup is intentionally not used.
@@ -483,7 +482,7 @@ Migration procedure:
 4. Apply the Entity Framework Core migrations. From the solution root execute:
 
    ```bash
-   dotnet ef database update --project .\Soteria
+   dotnet ef database update --project .\Soteria --configuration Release
    ```
 5. Verify that the migration completed successfully.
 6. Start the IIS Application Pool.
@@ -503,16 +502,22 @@ application.
 A backup must be taken immediately before applying Entity Framework Core
 migrations to an existing database.
 
-The backup should consist of a complete copy of:
+The backup consists of a complete copy of:
 
 ```text
 C:\ProgramData\Soteria\Database\soteria.db
 ```
+
 The backup must be retained until:
 
 - the migration completes successfully;
 - application startup has been verified;
 - normal application operation has been confirmed.
+
+No other application files require backup as part of the migration procedure.
+
+Routine operational backups are outside the scope of the current deployment
+guide.
 
 ### 6.5 Restore
 
@@ -561,7 +566,7 @@ Before starting the application verify:
 - IIS Application Pool has Read access to both certificate private keys.
 - SQLite database directory exists.
 - Data Protection directory exists.
-- IIS Application Pool has Modify permission to both persistent directories.
+- IIS Application Pool has Modify permission to all three persistent directories.
 - Required SMTP environment variables are configured.
 - ASPNETCORE_ENVIRONMENT is set to `Production`.
 
@@ -596,9 +601,9 @@ Verify administrator bootstrap behaviour:
 
 - If no Soteria Administrator exists, the navigation menu displays
   `Register Soteria Administrator` above `Log in`.
-- After the first administrator has been created, the
-  `Register Soteria Administrator` menu option is no longer displayed.
-- Existing Soteria Administrators can sign in normally.
+- If one or more Soteria Administrators exist, the
+  `Register Soteria Administrator` option is not displayed.
+- Existing Soteria Administrators can authenticate successfully.
 
 ## 8. Operational Procedures
 
@@ -615,6 +620,17 @@ dotnet publish .\Soteria --configuration Release --output "C:\inetpub\wwwroot\So
 
 ### 8.2 Upgrading
 
+Routine application upgrades use the standard deployment workflow.
+
+Upgrade procedure:
+
+1. Stop the Soteria IIS Application Pool.
+2. Create a backup of the existing SQLite database.
+3. Publish the updated application.
+4. Apply Entity Framework Core migrations.
+5. Start the IIS Application Pool.
+6. Perform the deployment verification procedure.
+
 Routine upgrades replace only the published application files.
 
 The following operational data must be preserved:
@@ -624,11 +640,30 @@ The following operational data must be preserved:
 - OpenIddict certificates.
 - HTTPS certificate.
 - Production configuration.
+- Production log files.
 
 Successful upgrades should not require users to authenticate again and should
 not affect persisted application data.
 
 ### 8.3 Rollback
+
+Rollback restores the application to the state immediately before deployment.
+
+Rollback procedure:
+
+1. Stop the Soteria IIS Application Pool.
+2. Restore the previous published application files if required.
+3. If the deployment included a database migration, restore the SQLite database
+   backup created immediately before the migration.
+4. Start the IIS Application Pool.
+5. Perform the deployment verification procedure.
+
+Database restoration is required only when a migration has modified the database
+schema or data.
+
+If deployment fails before migrations are applied, restoring the published
+application files is normally sufficient.
+
 ### 8.4 Certificate Renewal
 ### 8.5 Secret Rotation
 
@@ -641,10 +676,24 @@ not affect persisted application data.
 Verify the following:
 
 - Discovery metadata is available.
-- Authorisation Code flow succeeds.
-- Refresh-token flow succeeds.
-- Access tokens are signed.
-- Access tokens are encrypted.
+- The published issuer is `https://soteria.local`.
+- Signing-key metadata is published.
+- Authorisation Code Flow succeeds.
+- PKCE authentication succeeds.
+- ID tokens are issued successfully.
+- Access tokens are issued successfully.
+- Refresh tokens are issued successfully.
+- Automatic access-token renewal succeeds.
+- Rolling refresh-token replacement succeeds.
+- Client Membership is enforced during authorisation.
+- Client Membership is enforced during refresh-token redemption.
+- Application Role claims are issued correctly.
+- The Reference Web Application authenticates successfully against the deployed Soteria instance.
+- The Reference API successfully validates Production access tokens.
+- Production access tokens are digitally signed.
+- Production access tokens are encrypted.
+- Invalid or missing access tokens are rejected.
+- Role-based API authorisation behaves as expected.
 - Startup validation rejects invalid certificate configurations.
 
 ### 9.4 Security Verification
@@ -760,16 +809,116 @@ C:\
 
 ## Appendix C - Deployment Checklist
 
+### Host Preparation
+
+- [ ] Supported .NET runtime installed.
+- [ ] IIS installed and configured.
+- [ ] HTTPS certificate created for `https://soteria.local`.
+- [ ] IIS HTTPS binding configured.
+- [ ] IIS Application Pool `Soteria` created.
+- [ ] Application Pool configured for **No Managed Code**.
+- [ ] Application Pool identity is `ApplicationPoolIdentity`.
+
+### OpenIddict Certificates
+
+- [ ] Signing certificate installed in `LocalMachine\My`.
+- [ ] Encryption certificate installed in `LocalMachine\My`.
+- [ ] Both certificates contain private keys.
+- [ ] IIS Application Pool has Read access to both private keys.
+- [ ] Certificate thumbprints configured correctly.
+
+### Application Configuration
+
+- [ ] `ASPNETCORE_ENVIRONMENT=Production`.
+- [ ] SMTP environment variables configured.
+- [ ] `appsettings.Production.json` configured.
+- [ ] OpenIddict certificate thumbprints configured.
+- [ ] Token lifetime settings configured.
+
+### Persistent Storage
+
+- [ ] SQLite database directory exists.
+- [ ] Data Protection directory exists.
+- [ ] Log directory exists or can be created.
+- [ ] IIS Application Pool has Modify permission to all persistent directories.
+
 ### Data Protection
 
-- [ ] Data Protection directory created.
-- [ ] IIS Application Pool has Modify permission.
 - [ ] Key ring created after first startup.
 - [ ] Authentication persists after application restart.
 
+### Database
+
+- [ ] Existing database backed up (upgrade deployments only).
+- [ ] Entity Framework Core migrations applied successfully.
+- [ ] Database schema matches the deployed application.
+- [ ] No pending Entity Framework Core migrations remain.
+
+### Application Startup
+
+- [ ] Application starts successfully.
+- [ ] No startup validation errors occur.
+- [ ] Production log files created.
+- [ ] Data Protection key ring created.
+- [ ] Discovery document available.
+
+### Functional Verification
+
+- [ ] Authorisation endpoint responds.
+- [ ] Token endpoint responds.
+- [ ] Access tokens issued successfully.
+- [ ] Access tokens signed.
+- [ ] Access tokens encrypted.
+- [ ] Refresh-token flow succeeds.
+- [ ] Account confirmation email delivered.
+- [ ] Password reset email delivered.
+
+### Administrator Verification
+
+- [ ] If no Soteria Administrator exists, `Register Soteria Administrator` is displayed.
+- [ ] If one or more Soteria Administrators exist, the option is not displayed.
+- [ ] Existing Soteria Administrators can authenticate successfully.
+
+### Persistence Verification
+
+- [ ] Authentication survives Application Pool recycle.
+- [ ] Authentication survives IIS restart.
+- [ ] SQLite database persists across redeployment.
+- [ ] Data Protection keys persist across redeployment.
+
 ## Appendix D - Recovery Checklist
 
-### Data Protection Key Ring
+### Failed Deployment
+
+If deployment fails before Entity Framework Core migrations are applied:
+
+- Stop the IIS Application Pool.
+- Restore the previous published application files if required.
+- Restart the IIS Application Pool.
+- Verify successful application startup.
+
+### Failed Migration
+
+If deployment fails after database migration:
+
+- Stop the IIS Application Pool.
+- Restore the SQLite database backup created immediately before migration.
+- Restore the previous published application files if required.
+- Restart the IIS Application Pool.
+- Verify successful application startup.
+
+### SQLite Database Recovery
+
+To restore the Production database:
+
+- Stop the IIS Application Pool.
+- Replace `C:\ProgramData\Soteria\Database\soteria.db`
+  with the required backup.
+- Restart the IIS Application Pool.
+- Verify application startup.
+- Verify application functionality.
+
+### Data Protection Key Ring Recovery
 
 If the Data Protection key ring is lost:
 
@@ -787,4 +936,29 @@ If a backup of the key ring is available:
 Otherwise:
 
 - Allow users to authenticate again.
+
+### OpenIddict Certificate Recovery
+
+If an OpenIddict certificate is lost or replaced:
+
+- Install the replacement certificate into `LocalMachine\My`.
+- Grant the IIS Application Pool Read access to the private key.
+- Update the configured certificate thumbprint if necessary.
+- Restart the IIS Application Pool.
+- Verify successful application startup.
+- Verify token issuance.
+
+Existing tokens signed or encrypted with the previous certificate may no longer
+be usable.
+
+### SMTP Recovery
+
+If email delivery fails:
+
+- Verify all SMTP environment variables are configured.
+- Verify SMTP credentials.
+- Restart the IIS Application Pool after configuration changes.
+- Verify account confirmation email delivery.
+- Verify password reset email delivery.
+
 

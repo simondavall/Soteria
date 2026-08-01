@@ -9,19 +9,18 @@ where development should continue.
 
 # Current milestone
 
-## Milestone 6.6 – Deployment Package
+## Milestone 6.7 – Deployment Verification
 
 # Current task
 
-- Define the publication process.
-  - Define the publish model.
-  - Define the publish procedure.
-  - Define deployment prerequisites.
-  - Verify publish output.
+- Verify operational readiness.
+  - Verify credential persistence.
+  - Verify failure handling.
+  - Record known limitations.
 
 # Remaining milestone tasks
 
-- Create the deployment package.
+- None
 
 # Completed
 
@@ -142,3 +141,27 @@ where development should continue.
 - Confirmed Production deployments contain no Development-only database content.
 - Documented first-run Soteria Administrator deployment behaviour.
 - Produced the initial Production database deployment checklist.
+- Verified OpenIddict discovery metadata in the Production deployment.
+- Verified the published OpenIddict issuer as `https://soteria.local`.
+- Verified the published discovery metadata and signing-key metadata.
+- Verified Production Authorization Code Flow.
+- Verified Production PKCE authentication.
+- Verified Production ID token issuance.
+- Verified Production access-token issuance.
+- Verified Production refresh-token issuance.
+- Verified automatic access-token renewal using refresh tokens.
+- Verified rolling refresh-token replacement.
+- Verified Client Membership enforcement during authorisation.
+- Verified Client Membership enforcement during refresh-token redemption.
+- Verified Application Role claim issuance in the Production deployment.
+- Verified Application Role policy enforcement in the Reference Web Application.
+- Verified Production access-token validation by the Reference API.
+- Verified Production access-token decryption using the Production encryption certificate.
+- Verified Production issuer validation.
+- Verified Production audience validation.
+- Verified rejection of invalid access tokens.
+- Verified rejection of requests without access tokens.
+- Verified role-based API authorisation.
+- Verified Production end-to-end OpenID Connect authentication using the Reference Web Application and Reference API.
+- Verified the Reference Web Application against the deployed Production Soteria instance.
+- Verified the Reference API against the deployed Production Soteria instance.
