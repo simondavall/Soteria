@@ -1,17 +1,23 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Soteria.Components.Pages;
 
 public partial class Home
 {
     [Inject]
-    private ISnackbar Snackbar { get; set; } = default!;
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
 
-    private void VerifyMudBlazor()
+    protected override async Task OnInitializedAsync()
     {
-        Snackbar.Add(
-            "MudBlazor is configured successfully.",
-            Severity.Success);
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var destination = authenticationState.User.Identity?.IsAuthenticated == true
+                ? "/Account/Manage"
+                : "/Account/Login";
+
+        NavigationManager.NavigateTo(destination, forceLoad: true);
     }
 }

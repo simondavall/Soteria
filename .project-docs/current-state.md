@@ -13,7 +13,7 @@ where development should continue.
 
 # Current task
 
-- None
+- Remove test and sample pages from site.
 
 # Remaining milestone tasks
 
