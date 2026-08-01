@@ -21,17 +21,35 @@
                 </Authorized>
             </AuthorizeView>
 
-            <MudNavLink Href="/Account/Manage"
+            <MudNavLink  Href="/Account/Manage"
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Person">
                 @authContext.User.Identity?.Name
             </MudNavLink>
+            
+            <form action="/Account/Logout"
+                  method="post"
+                  data-enhance="false"
+                  class="nav-menu__logout-form">
 
-            <MudNavLink Href="/Account/Logout"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.Logout">
-                Log out
-            </MudNavLink>
+                <AntiforgeryToken />
+
+                <input type="hidden"
+                       name="ReturnUrl"
+                       value="Account/Login" />
+
+                <button type="submit"
+                        class="mud-nav-link nav-menu__logout-link">
+
+                    <MudIcon Icon="@Icons.Material.Filled.Logout"
+                             Class="mud-nav-link-icon" />
+
+                    <span>Log out</span>
+
+                </button>
+
+            </form>
+            
         </Authorized>
 
         <NotAuthorized>
