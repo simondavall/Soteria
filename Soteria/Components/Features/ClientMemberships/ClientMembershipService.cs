@@ -13,10 +13,8 @@ public interface IClientMembershipService
 {
     Task<IReadOnlyList<ClientMembershipDetailsModel>> GetForUserAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<EditClientMembershipRequest?> GetForEditAsync(Guid userId, Guid clientMembershipId, CancellationToken cancellationToken = default);
-
     Task<IReadOnlyList<ClientMembershipApplicationRoleItem>> GetApplicationRolesAsync(Guid userId, Guid clientMembershipId,
         CancellationToken cancellationToken = default);
-
     Task CreateAsync(CreateClientMembershipRequest request, CancellationToken cancellationToken = default);
     Task UpdateAsync(EditClientMembershipRequest request, CancellationToken cancellationToken = default);
     Task RemoveAsync(RemoveClientMembershipRequest request, CancellationToken cancellationToken = default);
@@ -44,7 +42,7 @@ public sealed class ClientMembershipService : IClientMembershipService
         _currentUserContext = currentUserContext;
     }
 
-    
+
     public async Task CreateAsync(CreateClientMembershipRequest request, CancellationToken cancellationToken = default)
     {
         var validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
@@ -124,16 +122,12 @@ public sealed class ClientMembershipService : IClientMembershipService
             throw CreateDuplicateMembershipException();
         }
     }
-    
+
     public async Task<IReadOnlyList<ClientMembershipDetailsModel>> GetForUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
 
-        if (administrationScope is
-            {
-                IsSoteriaAdministrator: false,
-                AdministeredClientIds.Count: 0
-            })
+        if (administrationScope is { IsSoteriaAdministrator: false, AdministeredClientIds.Count: 0 })
         {
             return [];
         }
@@ -467,7 +461,6 @@ public sealed class ClientMembershipService : IClientMembershipService
         }
 
         var administeredClientIds = administrationScope.AdministeredClientIds.ToArray();
-
         if (administeredClientIds.Length == 0)
         {
             throw new UnauthorizedAccessException("You cannot administer this Client Membership.");
@@ -505,9 +498,9 @@ public sealed class ClientMembershipService : IClientMembershipService
     }
 
     private async Task EnsureClientWillRetainAdministratorAsync(
-        ClientMembership membership, 
+        ClientMembership membership,
         MembershipLevel requestedMembershipLevel,
-        bool membershipWillBeRemoved, 
+        bool membershipWillBeRemoved,
         CancellationToken cancellationToken)
     {
         if (membership.MembershipLevel != MembershipLevel.Administrator)
@@ -523,9 +516,9 @@ public sealed class ClientMembershipService : IClientMembershipService
         var anotherAdministratorExists =
             await _dbContext.ClientMemberships
                 .AsNoTracking()
-                .AnyAsync(item => 
-                        item.ApplicationId == membership.ApplicationId && 
-                        item.Id != membership.Id && 
+                .AnyAsync(item =>
+                        item.ApplicationId == membership.ApplicationId &&
+                        item.Id != membership.Id &&
                         item.MembershipLevel == MembershipLevel.Administrator,
                     cancellationToken);
 
@@ -539,7 +532,7 @@ public sealed class ClientMembershipService : IClientMembershipService
             throw new RemoveClientMembershipValidationException(
             [
                 new ValidationFailure(nameof(RemoveClientMembershipRequest.ClientMembershipId),
-                    "The final Client Administrator cannot be removed. " + 
+                    "The final Client Administrator cannot be removed. " +
                     "Assign another Client Administrator before removing this membership.")
             ]);
         }
@@ -547,8 +540,50 @@ public sealed class ClientMembershipService : IClientMembershipService
         throw new EditClientMembershipValidationException(
         [
             new ValidationFailure(nameof(EditClientMembershipRequest.MembershipLevel),
-                "The final Client Administrator cannot be demoted. " + 
+                "The final Client Administrator cannot be demoted. " +
                 "Assign another Client Administrator before changing this membership.")
         ]);
     }
 }
+
+public sealed record ClientMembershipDetailsModel(
+    Guid ClientMembershipId,
+    string ApplicationName,
+    string MembershipLevel,
+    IReadOnlyList<string> ApplicationRoles);
+
+public sealed record ClientMembershipApplicationRoleItem(
+    Guid ApplicationRoleId,
+    string Name,
+    string DisplayName,
+    string? Description);
+
+internal sealed record ClientMembershipQueryResult(
+    Guid ClientMembershipId,
+    string ApplicationName,
+    MembershipLevel MembershipLevel);
+
+internal sealed record ClientMembershipRoleQueryResult(
+    Guid ClientMembershipId,
+    string ApplicationRoleName);
+
+public sealed class CreateClientMembershipValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client Membership validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class EditClientMembershipValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client Membership validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class RemoveClientMembershipValidationException(IReadOnlyList<ValidationFailure> failures)
+    : Exception("Client Membership removal validation failed.")
+{
+    public IReadOnlyList<ValidationFailure> Failures { get; } = failures;
+}
+
+public sealed class ClientMembershipNotFoundException(Guid userId, Guid clientMembershipId)
+    : Exception($"Client Membership '{clientMembershipId}' could not be found for user '{userId}'.");

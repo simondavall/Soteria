@@ -89,7 +89,7 @@ public sealed class ClientService
             ClientHost = GetClientHost(application.RedirectUris)
         };
     }
-    
+
     public async Task<IReadOnlyList<ClientSummary>> GetClientsAsync(CancellationToken cancellationToken = default)
     {
         var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
@@ -187,6 +187,69 @@ public sealed class ClientService
                 role.DisplayName,
                 role.Description))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<ClientUserSummary>> GetUsersAsync(string clientId, CancellationToken cancellationToken = default)
+    {
+        if (!await CanAdministerClientAsync(clientId, cancellationToken))
+        {
+            return [];
+        }
+
+        var memberships = await _dbContext.ClientMemberships
+            .AsNoTracking()
+            .Where(membership => membership.Application.ClientId == clientId)
+            .OrderBy(membership => membership.User.UserName)
+            .ThenBy(membership => membership.User.DisplayName)
+            .ThenBy(membership => membership.Id)
+            .Select(membership => new ClientUserQueryResult(
+                membership.Id,
+                membership.UserId,
+                membership.User.UserName ?? string.Empty,
+                membership.User.DisplayName,
+                membership.MembershipLevel))
+            .ToListAsync(cancellationToken);
+
+        if (memberships.Count == 0)
+        {
+            return [];
+        }
+
+        var membershipIds = memberships
+            .Select(membership => membership.ClientMembershipId)
+            .ToList();
+
+        var roleAssignments = await _dbContext.ClientMembershipApplicationRoles
+            .AsNoTracking()
+            .Where(assignment =>
+                membershipIds.Contains(assignment.ClientMembershipId) &&
+                assignment.ClientMembership.Application.ClientId == clientId)
+            .OrderBy(assignment => assignment.ApplicationRole.DisplayName)
+            .ThenBy(assignment => assignment.ApplicationRole.Name)
+            .ThenBy(assignment => assignment.ApplicationRole.Id)
+            .Select(assignment => new ClientUserRoleQueryResult(
+                assignment.ClientMembershipId,
+                assignment.ApplicationRole.DisplayName))
+            .ToListAsync(cancellationToken);
+
+        var rolesByMembership = roleAssignments
+            .GroupBy(assignment => assignment.ClientMembershipId)
+            .ToDictionary(
+                group => group.Key,
+                group => (IReadOnlyList<string>)group
+                    .Select(assignment => assignment.ApplicationRoleName)
+                    .ToList());
+
+        return memberships
+            .Select(membership => new ClientUserSummary(
+                membership.UserId,
+                membership.UserName,
+                membership.DisplayName,
+                membership.MembershipLevel.ToString(),
+                rolesByMembership.GetValueOrDefault(
+                    membership.ClientMembershipId,
+                    [])))
+            .ToList();
     }
 
     public async Task<EditApplicationRoleRequest?> GetApplicationRoleForEditAsync(string clientId, string name,
@@ -514,7 +577,7 @@ public sealed class ClientService
 
         return string.Join(" ", words.Select(word => char.ToUpperInvariant(word[0]) + word[1..]));
     }
-    
+
     private async Task<bool> CanAdministerClientAsync(string clientId, CancellationToken cancellationToken)
     {
         var administrationScope = await _currentUserContext.GetAdministrationScopeAsync(cancellationToken);
@@ -532,8 +595,8 @@ public sealed class ClientService
         return await _dbContext
             .Set<SoteriaApplication>()
             .AsNoTracking()
-            .AnyAsync(application => 
-                application.ClientId == clientId && 
+            .AnyAsync(application =>
+                application.ClientId == clientId &&
                 ((IEnumerable<Guid>)administeredClientIds).Contains(application.Id), cancellationToken);
     }
 
@@ -552,6 +615,24 @@ public sealed record ApplicationRoleSummary(
     string Name,
     string DisplayName,
     string? Description);
+
+public sealed record ClientUserSummary(
+    Guid UserId,
+    string UserName,
+    string? DisplayName,
+    string MembershipLevel,
+    IReadOnlyList<string> ApplicationRoles);
+
+internal sealed record ClientUserQueryResult(
+    Guid ClientMembershipId,
+    Guid UserId,
+    string UserName,
+    string? DisplayName,
+    MembershipLevel MembershipLevel);
+
+internal sealed record ClientUserRoleQueryResult(
+    Guid ClientMembershipId,
+    string ApplicationRoleName);
 
 public sealed record ClientSummary(
     string ClientId,
