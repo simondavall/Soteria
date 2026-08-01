@@ -2,20 +2,25 @@ using System.Security.Claims;
 using DotNetEnv;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Validation.AspNetCore;
-
-Env.NoClobber().TraversePath().Load();
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsDevelopment())
+{
+    Env.NoClobber().TraversePath().Load();
+
+    // DotNetEnv runs after the builder has loaded its initial configuration.
+    // Add the resulting process environment variables to configuration.
+    builder.Configuration.AddEnvironmentVariables();
+}
 
 builder.Services.AddOpenApi();
 
 var authority = builder.Configuration["Authentication:Authority"]
                 ?? throw new InvalidOperationException(
                     "The Authentication:Authority configuration value is required.");
-
-var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
-                    ?? throw new InvalidOperationException(
-                        "The OpenIddict:EncryptionKey configuration value is required.");
 
 builder.Services
     .AddAuthentication(options =>
@@ -60,7 +65,42 @@ builder.Services.AddOpenIddict()
     {
         options.SetIssuer(authority);
         options.AddAudiences("reference_api");
-        options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String(encryptionKey)));
+
+        if (builder.Environment.IsDevelopment())
+        {
+            var encryptionKey = builder.Configuration["OpenIddict:EncryptionKey"]
+                                ?? throw new InvalidOperationException(
+                                    "The OpenIddict:EncryptionKey configuration value is required in Development.");
+
+            byte[] encryptionKeyBytes;
+
+            try
+            {
+                encryptionKeyBytes = Convert.FromBase64String(encryptionKey);
+            }
+            catch (FormatException exception)
+            {
+                throw new InvalidOperationException(
+                    "The OpenIddict:EncryptionKey configuration value must be valid Base64.",
+                    exception);
+            }
+
+            options.AddEncryptionKey(
+                new SymmetricSecurityKey(encryptionKeyBytes));
+        }
+        else if (builder.Environment.IsProduction())
+        {
+            var encryptionCertificate =
+                LoadProductionEncryptionCertificate(builder.Configuration);
+
+            options.AddEncryptionCertificate(encryptionCertificate);
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"OpenIddict validation credentials are not configured for the " +
+                $"'{builder.Environment.EnvironmentName}' environment.");
+        }
 
         options.Configure(validationOptions =>
         {
@@ -150,4 +190,87 @@ static string DisplayName(ClaimsPrincipal user)
            ?? user.FindFirst("preferred_username")?.Value
            ?? user.FindFirst("sub")?.Value
            ?? "the authenticated user";
+}
+
+static X509Certificate2 LoadProductionEncryptionCertificate(IConfiguration configuration)
+{
+    var configuredThumbprint = configuration["OpenIddict:EncryptionCertificateThumbprint"];
+
+    if (string.IsNullOrWhiteSpace(configuredThumbprint))
+    {
+        throw new InvalidOperationException(
+            "The OpenIddict:EncryptionCertificateThumbprint configuration " +
+            "value is required in Production.");
+    }
+
+    var thumbprint = NormalizeCertificateThumbprint(configuredThumbprint);
+
+    using var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+    store.Open(OpenFlags.ReadOnly);
+
+    var certificates = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, validOnly: false);
+    var certificate = certificates.OfType<X509Certificate2>().SingleOrDefault();
+    if (certificate is null)
+    {
+        throw new InvalidOperationException(
+            $"The OpenIddict encryption certificate with thumbprint " +
+            $"'{thumbprint}' was not found in LocalMachine\\My.");
+    }
+
+    if (!certificate.HasPrivateKey)
+    {
+        certificate.Dispose();
+
+        throw new InvalidOperationException(
+            $"The OpenIddict encryption certificate with thumbprint " +
+            $"'{thumbprint}' does not contain an accessible private key.");
+    }
+
+    if (certificate.NotBefore.ToUniversalTime() > DateTime.UtcNow)
+    {
+        certificate.Dispose();
+
+        throw new InvalidOperationException(
+            $"The OpenIddict encryption certificate with thumbprint " +
+            $"'{thumbprint}' is not yet valid.");
+    }
+
+    if (certificate.NotAfter.ToUniversalTime() <= DateTime.UtcNow)
+    {
+        certificate.Dispose();
+
+        throw new InvalidOperationException(
+            $"The OpenIddict encryption certificate with thumbprint " +
+            $"'{thumbprint}' has expired.");
+    }
+
+    using var rsaPrivateKey = certificate.GetRSAPrivateKey();
+
+    if (rsaPrivateKey is null)
+    {
+        certificate.Dispose();
+
+        throw new InvalidOperationException(
+            $"The OpenIddict encryption certificate with thumbprint " +
+            $"'{thumbprint}' does not provide an RSA private key.");
+    }
+
+    return certificate;
+}
+
+static string NormalizeCertificateThumbprint(string thumbprint)
+{
+    var normalized = new string(
+        thumbprint
+            .Where(character => !char.IsWhiteSpace(character))
+            .ToArray());
+
+    if (normalized.Length == 0 || normalized.Any(character => !Uri.IsHexDigit(character)))
+    {
+        throw new InvalidOperationException(
+            "The OpenIddict:EncryptionCertificateThumbprint configuration " +
+            "value must contain a hexadecimal certificate thumbprint.");
+    }
+
+    return normalized;
 }

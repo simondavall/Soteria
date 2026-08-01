@@ -798,24 +798,7 @@ reference resource API.
 
 ---
 
-## Milestone 6.6 – Deployment Package
-
-- Define the publication process.
-  - Define the publish model.
-  - Define the publish procedure.
-  - Define deployment prerequisites.
-  - Verify publish output.
-
-- Create the deployment package.
-  - Define package contents.
-  - Exclude development artefacts.
-  - Include deployment templates.
-  - Include deployment documentation.
-  - Record package version.
-
----
-
-## Milestone 6.7 – IIS Deployment
+## Milestone 6.6 – IIS Deployment
 
 - ✓ Prepare the deployment host.
   - ✓ Install prerequisites.
@@ -843,7 +826,7 @@ reference resource API.
 
 ---
 
-## Milestone 6.8 – Deployment Verification
+## Milestone 6.7 – Deployment Verification
 
 - ✓ Verify platform deployment.
   - ✓ Verify HTTPS.
@@ -857,40 +840,34 @@ reference resource API.
   - ✓ Verify account management.
   - ✓ Verify application restart.
 
-- Verify OpenIddict functionality.
-  - Verify discovery metadata.
-  - Verify token issuance.
-  - Verify authorisation.
-  - Verify token validation.
+- ✓ Verify OpenIddict functionality.
+  - ✓ Verify discovery metadata.
+  - ✓ Verify token issuance.
+  - ✓ Verify authorisation.
+  - ✓ Verify token validation.
 
-- Verify operational readiness.
+- ✓ Verify operational readiness.
   - ✓ Verify backups.
-  - Verify credential persistence.
+  - ✓ Verify credential persistence.
   - ✓ Verify Data Protection persistence.
-  - Verify failure handling.
-  - Record known limitations.
+  - ✓ Verify failure handling.
+  - ✓ Record known limitations.
 
 ---
 
-## Milestone 6.9 – Operational Documentation
+## Milestone 6.8 – Operational Documentation
 
-- Produce the deployment guide.
-  - Verify deployment architecture.
-  - Verify deployment prerequisites.
-  - Verify deployment configuration.
-  - Verify deployment verification procedures.
+- ✓ Produce the deployment guide.
+  - ✓ Verify deployment architecture.
+  - ✓ Verify deployment prerequisites.
+  - ✓ Verify deployment configuration.
+  - ✓ Verify deployment verification procedures.
 
 - Produce the deployment runbook.
   - Define routine deployment.
   - Define upgrade procedures.
   - Define rollback procedures.
   - Verify deployment procedures.
-
-- Produce the operations guide.
-  - Define routine health checks.
-  - Define monitoring.
-  - Define certificate maintenance.
-  - Define database maintenance.
 
 - Produce the recovery guide.
   - Define deployment recovery.
