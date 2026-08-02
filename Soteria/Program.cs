@@ -187,9 +187,16 @@ public class Program
                     options.AddSoteriaCredentials(builder.Environment, builder.Configuration);
                 });
 
-            var emailOptions = EmailOptionsLoader.Load(builder.Configuration);
-            builder.Services.AddSingleton(emailOptions);
-            builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
+            }
+            else
+            {
+                var emailOptions = EmailOptionsLoader.Load(builder.Configuration);
+                builder.Services.AddSingleton(emailOptions);
+                builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
+            }
 
             //builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
