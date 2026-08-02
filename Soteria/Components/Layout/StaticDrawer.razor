@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Components
+
+<aside id="soteria-static-drawer"
+       class="static-drawer"
+       data-static-drawer
+       aria-label="Application navigation"
+       aria-hidden="false">
+
+    <div class="static-drawer__content">
+        @ChildContent
+    </div>
+</aside>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

@@ -1,74 +1,76 @@
 ﻿@using Soteria.Components.Features.Authorization
 
-<MudNavMenu Class="pa-2">
-    <AuthorizeView>
-        <Authorized Context="authContext">
-            <AuthorizeView Policy="@SoteriaAuthorizationPolicies.Administration">
-                <Authorized>
-                    <MudNavLink Href="clients"
-                                Match="NavLinkMatch.Prefix"
-                                Icon="@Icons.Material.Filled.Apps"
-                                data-enhance-nav="false">
-                        Client Applications
-                    </MudNavLink>
+<div class="nav-menu">
+    <MudNavMenu Class="pa-2">
+        <AuthorizeView>
+            <Authorized Context="authContext">
+                <AuthorizeView Policy="@SoteriaAuthorizationPolicies.Administration">
+                    <Authorized>
+                        <MudNavLink Href="clients"
+                                    Match="NavLinkMatch.Prefix"
+                                    Icon="@Icons.Material.Filled.Apps"
+                                    data-enhance-nav="false">
+                            Client Applications
+                        </MudNavLink>
 
-                    <MudNavLink Href="users"
-                                Match="NavLinkMatch.Prefix"
-                                Icon="@Icons.Material.Filled.People"
-                                data-enhance-nav="false">
-                        Users
-                    </MudNavLink>
+                        <MudNavLink Href="users"
+                                    Match="NavLinkMatch.Prefix"
+                                    Icon="@Icons.Material.Filled.People"
+                                    data-enhance-nav="false">
+                            Users
+                        </MudNavLink>
 
-                    <MudDivider Class="my-2" />
-                </Authorized>
-            </AuthorizeView>
+                        <MudDivider Class="my-2" />
+                    </Authorized>
+                </AuthorizeView>
 
-            <MudNavLink  Href="/Account/Manage"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.Person">
-                @authContext.User.Identity?.Name
-            </MudNavLink>
-            
-            <form action="/Account/Logout"
-                  method="post"
-                  data-enhance="false"
-                  class="nav-menu__logout-form">
-
-                <AntiforgeryToken />
-
-                <input type="hidden"
-                       name="ReturnUrl"
-                       value="Account/Login" />
-
-                <button type="submit"
-                        class="mud-nav-link nav-menu__logout-link">
-
-                    <MudIcon Icon="@Icons.Material.Filled.Logout"
-                             Class="mud-nav-link-icon" />
-
-                    <span>Log out</span>
-
-                </button>
-
-            </form>
-            
-        </Authorized>
-
-        <NotAuthorized>
-            @if (BootstrapRegistrationRequired)
-            {
-                <MudNavLink Href="/Account/Register"
-                            Match="NavLinkMatch.Prefix"
-                            Icon="@Icons.Material.Filled.PersonAdd">
-                    Register Soteria Admin
+                <MudNavLink  Href="/Account/Manage"
+                             Match="NavLinkMatch.Prefix"
+                             Icon="@Icons.Material.Filled.Person">
+                    @authContext.User.Identity?.Name
                 </MudNavLink>
-            }
+            
+                <form action="/Account/Logout"
+                      method="post"
+                      data-enhance="false"
+                      class="nav-menu__logout-form">
 
-            <MudNavLink Href="/Account/Login"
-                        Match="NavLinkMatch.Prefix"
-                        Icon="@Icons.Material.Filled.Login">
-                Log in
-            </MudNavLink>
-        </NotAuthorized>
-    </AuthorizeView>
-</MudNavMenu>
+                    <AntiforgeryToken />
+
+                    <input type="hidden"
+                           name="ReturnUrl"
+                           value="Account/Login" />
+
+                    <button type="submit"
+                            class="mud-nav-link nav-menu__logout-link">
+
+                        <MudIcon Icon="@Icons.Material.Filled.Logout"
+                                 Class="mud-nav-link-icon" />
+
+                        <span>Log out</span>
+
+                    </button>
+
+                </form>
+            
+            </Authorized>
+
+            <NotAuthorized>
+                @if (BootstrapRegistrationRequired)
+                {
+                    <MudNavLink Href="/Account/Register"
+                                Match="NavLinkMatch.Prefix"
+                                Icon="@Icons.Material.Filled.PersonAdd">
+                        Register Soteria Admin
+                    </MudNavLink>
+                }
+
+                <MudNavLink Href="/Account/Login"
+                            Match="NavLinkMatch.Prefix"
+                            Icon="@Icons.Material.Filled.Login">
+                    Log in
+                </MudNavLink>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudNavMenu>
+</div>
