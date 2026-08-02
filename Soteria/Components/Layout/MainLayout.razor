@@ -1,39 +1,89 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider Theme="@SoteriaTheme.Default" IsDarkMode="true"/>
-<MudPopoverProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+<MudThemeProvider Theme="@SoteriaTheme.Default"
+                  IsDarkMode="true" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                       Color="Color.Inherit"
-                       Edge="Edge.Start"
-                       OnClick="ToggleDrawer"
-                       aria-label="Open navigation" />
-        <MudText Typo="Typo.h6">
-            Soteria
-        </MudText>
-    </MudAppBar>
+@if (RendererInfo.IsInteractive)
+{
+    <MudLayout>
+        <MudAppBar Elevation="1">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                           Color="Color.Inherit"
+                           Edge="Edge.Start"
+                           OnClick="ToggleDrawer"
+                           aria-label="@(_drawerOpen
+                                           ? "Close navigation"
+                                           : "Open navigation")" />
 
-    <MudDrawer @bind-Open="_drawerOpen"
-               Variant="DrawerVariant.Responsive"
-               Breakpoint="Breakpoint.Md"
-               Elevation="1">
-        <NavMenu/>
-    </MudDrawer>
+            <MudText Typo="Typo.h6">
+                Soteria
+            </MudText>
+        </MudAppBar>
 
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.False"
-                      Class="pa-6">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+        <MudDrawer @bind-Open="_drawerOpen"
+                   Variant="DrawerVariant.Responsive"
+                   Breakpoint="Breakpoint.Md"
+                   Elevation="1">
 
-<div id="blazor-error-ui" data-nosnippet>
+            <NavMenu />
+        </MudDrawer>
+
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.False"
+                          Class="pa-6">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+}
+else
+{
+    <div class="soteria-static-layout"
+         data-static-layout>
+
+        <MudLayout>
+            <MudAppBar Elevation="1">
+                <button type="button"
+                        class="mud-button-root mud-icon-button mud-inherit-text hover:mud-inherit-hover mud-ripple mud-ripple-icon mud-icon-button-edge-start soteria-static-layout__toggle"
+                        data-static-drawer-toggle
+                        aria-label="Close navigation"
+                        aria-controls="soteria-static-drawer"
+                        aria-expanded="true">
+
+                    <span class="mud-icon-button-label">
+                        <MudIcon Icon="@Icons.Material.Filled.Menu"
+                                 Size="Size.Medium" />
+                    </span>
+                </button>
+
+                <MudText Typo="Typo.h6">
+                    Soteria
+                </MudText>
+            </MudAppBar>
+
+            <StaticDrawer>
+                <NavMenu />
+            </StaticDrawer>
+
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.False"
+                              Class="pa-6">
+                    @Body
+                </MudContainer>
+            </MudMainContent>
+        </MudLayout>
+    </div>
+}
+
+<div id="blazor-error-ui"
+     data-nosnippet>
     An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
+    <a href="."
+       class="reload">
+        Reload
+    </a>
     <span class="dismiss">🗙</span>
 </div>

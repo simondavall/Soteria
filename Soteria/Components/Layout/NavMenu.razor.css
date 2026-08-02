@@ -1,4 +1,8 @@
-﻿.nav-menu__logout-form {
+﻿.nav-menu {
+    padding-top: var(--mud-appbar-height);
+}
+
+.nav-menu__logout-form {
     width: 100%;
 }
 
