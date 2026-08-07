@@ -6,15 +6,18 @@ namespace Soteria.Components.Features.OpenIdConnect;
 
 public interface IOpenIdPrincipalFactory
 {
-    Task<ClaimsPrincipal> CreateAsync(ResolvedOpenIdAuthorizationContext authorizationContext, IEnumerable<string> scopes, 
+    Task<ClaimsPrincipal> CreateAsync(ResolvedOpenIdAuthorizationContext authorizationContext, IEnumerable<string> scopes,
         CancellationToken cancellationToken = default);
-    Task RefreshAsync(ClaimsPrincipal principal, ResolvedOpenIdAuthorizationContext authorizationContext, 
+
+    Task RefreshAsync(ClaimsPrincipal principal, ResolvedOpenIdAuthorizationContext authorizationContext,
         CancellationToken cancellationToken = default);
 }
 
 public sealed class OpenIdPrincipalFactory(IOpenIddictScopeManager scopeManager) : IOpenIdPrincipalFactory
 {
-    public async Task<ClaimsPrincipal> CreateAsync(ResolvedOpenIdAuthorizationContext authorizationContext, IEnumerable<string> scopes, 
+    private const string DisplayNameClaimType = "display_name";
+
+    public async Task<ClaimsPrincipal> CreateAsync(ResolvedOpenIdAuthorizationContext authorizationContext, IEnumerable<string> scopes,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(authorizationContext);
@@ -22,7 +25,7 @@ public sealed class OpenIdPrincipalFactory(IOpenIddictScopeManager scopeManager)
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var identity = 
+        var identity =
             new ClaimsIdentity(
                 authenticationType: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
                 nameType: OpenIddictConstants.Claims.Name,
@@ -47,7 +50,7 @@ public sealed class OpenIdPrincipalFactory(IOpenIddictScopeManager scopeManager)
         return principal;
     }
 
-    public Task RefreshAsync(ClaimsPrincipal principal, ResolvedOpenIdAuthorizationContext authorizationContext, 
+    public Task RefreshAsync(ClaimsPrincipal principal, ResolvedOpenIdAuthorizationContext authorizationContext,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(principal);
@@ -61,6 +64,7 @@ public sealed class OpenIdPrincipalFactory(IOpenIddictScopeManager scopeManager)
 
         RemoveClaims(identity, OpenIddictConstants.Claims.Subject);
         RemoveClaims(identity, OpenIddictConstants.Claims.Name);
+        RemoveClaims(identity, DisplayNameClaimType);
         RemoveClaims(identity, OpenIddictConstants.Claims.Email);
         RemoveClaims(identity, OpenIddictConstants.Claims.Role);
 
@@ -83,6 +87,11 @@ public sealed class OpenIdPrincipalFactory(IOpenIddictScopeManager scopeManager)
         identity.AddClaim(OpenIddictConstants.Claims.Subject, authorizationContext.User.Id.ToString());
         identity.AddClaim(OpenIddictConstants.Claims.Name, userName);
         identity.AddClaim(OpenIddictConstants.Claims.Email, email);
+
+        if (!string.IsNullOrWhiteSpace(authorizationContext.User.DisplayName))
+        {
+            identity.AddClaim(DisplayNameClaimType, authorizationContext.User.DisplayName);
+        }
 
         foreach (var applicationRoleName in authorizationContext.ApplicationRoleNames)
         {
@@ -110,6 +119,12 @@ public sealed class OpenIdPrincipalFactory(IOpenIddictScopeManager scopeManager)
                 ],
 
                 OpenIddictConstants.Claims.Name when claim.Subject?.HasScope(OpenIddictConstants.Scopes.Profile) is true =>
+                [
+                    OpenIddictConstants.Destinations.IdentityToken,
+                    OpenIddictConstants.Destinations.AccessToken
+                ],
+
+                DisplayNameClaimType when claim.Subject?.HasScope(OpenIddictConstants.Scopes.Profile) is true =>
                 [
                     OpenIddictConstants.Destinations.IdentityToken,
                     OpenIddictConstants.Destinations.AccessToken
