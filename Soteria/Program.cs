@@ -1,30 +1,13 @@
 using DotNetEnv;
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
-using OpenIddict.Abstractions;
-using OpenIddict.Server;
 using Serilog;
-using static OpenIddict.Server.OpenIddictServerEvents;
 using Soteria.Components;
 using Soteria.Components.Account;
-using Soteria.Components.Account.Email;
+using Soteria.Components.Features;
 using Soteria.Components.Features.Authorization;
-using Soteria.Components.Features.ClientMemberships;
-using Soteria.Components.Features.ClientMemberships.Queries;
-using Soteria.Components.Features.Clients;
-using Soteria.Components.Features.Clients.Queries;
 using Soteria.Components.Features.OpenIdConnect;
-using Soteria.Components.Features.Shared;
-using Soteria.Components.Features.Users;
-using Soteria.Components.Features.Users.Queries;
 using Soteria.Data;
 using Soteria.Data.Authorization;
-using Soteria.Data.OpenIddict;
 
 namespace Soteria;
 
@@ -68,59 +51,8 @@ public class Program
 
             builder.Services.AddSingleton<SoteriaAdministratorInitializer>();
 
-            builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
-            builder.Services.AddScoped<ClientService>();
-            builder.Services.AddTransient<CreateClientValidator>();
-            builder.Services.AddTransient<IValidator<CreateClientRequest>>(provider => provider.GetRequiredService<CreateClientValidator>());
-            builder.Services.AddTransient<IMudValidator<CreateClientRequest>>(provider => provider.GetRequiredService<CreateClientValidator>());
-            builder.Services.AddTransient<EditClientValidator>();
-            builder.Services.AddTransient<IValidator<EditClientRequest>>(provider => provider.GetRequiredService<EditClientValidator>());
-            builder.Services.AddTransient<IMudValidator<EditClientRequest>>(provider => provider.GetRequiredService<EditClientValidator>());
-
-            builder.Services.AddScoped<IUserLookup, UserLookup>();
-            builder.Services.AddScoped<UserService>();
-
-            builder.Services.AddScoped<CreateUserValidator>();
-            builder.Services.AddScoped<IValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
-            builder.Services.AddScoped<IMudValidator<CreateUserRequest>>(provider => provider.GetRequiredService<CreateUserValidator>());
-
-            builder.Services.AddScoped<EditUserValidator>();
-            builder.Services.AddScoped<IValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
-            builder.Services.AddScoped<IMudValidator<EditUserRequest>>(provider => provider.GetRequiredService<EditUserValidator>());
-
-            builder.Services.AddScoped<IClientMembershipLookup, ClientMembershipLookup>();
-            builder.Services.AddScoped<IClientMembershipService, ClientMembershipService>();
-
-            builder.Services.AddScoped<CreateClientMembershipValidator>();
-            builder.Services.AddScoped<IValidator<CreateClientMembershipRequest>>(provider =>
-                provider.GetRequiredService<CreateClientMembershipValidator>());
-            builder.Services.AddScoped<IMudValidator<CreateClientMembershipRequest>>(provider =>
-                provider.GetRequiredService<CreateClientMembershipValidator>());
-
-            builder.Services.AddScoped<EditClientMembershipValidator>();
-            builder.Services.AddScoped<IValidator<EditClientMembershipRequest>>(provider =>
-                provider.GetRequiredService<EditClientMembershipValidator>());
-            builder.Services.AddScoped<IMudValidator<EditClientMembershipRequest>>(provider =>
-                provider.GetRequiredService<EditClientMembershipValidator>());
-
-            builder.Services.AddScoped<RemoveClientMembershipValidator>();
-            builder.Services.AddScoped<IValidator<RemoveClientMembershipRequest>>(provider =>
-                provider.GetRequiredService<RemoveClientMembershipValidator>());
-
-            builder.Services.AddScoped<IApplicationRoleLookup, ApplicationRoleLookup>();
-
-            builder.Services.AddTransient<CreateApplicationRoleValidator>();
-            builder.Services.AddTransient<IValidator<CreateApplicationRoleRequest>>(provider =>
-                provider.GetRequiredService<CreateApplicationRoleValidator>());
-            builder.Services.AddTransient<IMudValidator<CreateApplicationRoleRequest>>(provider =>
-                provider.GetRequiredService<CreateApplicationRoleValidator>());
-
-            builder.Services.AddTransient<EditApplicationRoleValidator>();
-            builder.Services.AddTransient<IValidator<EditApplicationRoleRequest>>(provider =>
-                provider.GetRequiredService<EditApplicationRoleValidator>());
-            builder.Services.AddTransient<IMudValidator<EditApplicationRoleRequest>>(provider =>
-                provider.GetRequiredService<EditApplicationRoleValidator>());
-
+            builder.Services.AddSoteriaFeatures();
+            
             var app = builder.Build();
 
             await using (var scope = app.Services.CreateAsyncScope())

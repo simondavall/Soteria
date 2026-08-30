@@ -54,6 +54,7 @@ internal static class SoteriaOpenIddictServiceCollectionExtensions
                 options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
                     .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
 
+                // Uncomment this line to provide visible unencrypted access token during development.
                 //options.DisableAccessTokenEncryption();
                 
                 options.RegisterScopes(
