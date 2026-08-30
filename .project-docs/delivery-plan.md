@@ -888,7 +888,7 @@ reference resource API.
 - ✓ Remove test and sample pages from site.
 - ✓ Replace Windows DPAPI with cross platform Data Protection
 - ✓ Activate Required Password Change
-- Refactor Soteria Program.cs
+- ✓ Refactor Soteria Program.cs
 - Relocate log files to c:\inetpub\logs\Soteria
 - Relocate data file to c:\inetpub\data\Soteria
 - Add 'latest version' field to projects table
