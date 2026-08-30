@@ -13,12 +13,11 @@ where development should continue.
 
 # Current task
 
-- Refactor Soteria Program.cs
+- Relocate log files to `C:\inetpub\logs\Soteria`
 
 # Remaining milestone tasks
 
-- Relocate log files to c:\inetpub\logs\Soteria
-- Relocate data file to c:\inetpub\data\Soteria
+- Relocate data file to `C:\inetpub\data\Soteria`
 - Add 'latest version' field to projects table
 
 # Completed
@@ -41,3 +40,14 @@ where development should continue.
 - Cleared `RequiresPasswordChange` only after a successful password change and persisted the completed state.
 - Refreshed the authenticated session after the required password change and returned the user to their intended destination.
 - Preserved the existing voluntary password-change behaviour for users who do not require a password change.
+- Activated the required-password-change workflow for administrator-created users.
+- Required administrator-created users to replace their initial password after first authentication.
+- Enforced required password changes across authenticated navigation while preserving the requested return URL, including OpenID Connect authorization requests.
+- Required the replacement password to differ from the current password.
+- Cleared the required-password-change state only after the password change was successfully persisted and refreshed the authenticated session afterwards.
+- Refactored `Program.cs` into a concise application composition root while preserving existing startup and runtime behaviour.
+- Extracted persistence, Identity, Soteria authorization and OpenIddict registration into focused Soteria-specific service-registration extensions.
+- Consolidated Client, User, Client Membership and Application Role registrations behind `AddSoteriaFeatures()`.
+- Introduced `AddSoteriaValidator<TValidator, TRequest>()` to encapsulate the established FluentValidation and MudBlazor validator-registration pattern while preserving validator lifetimes.
+- Extracted application startup initialization behind `InitialiseSoteriaAsync()` while retaining explicit initialization order and environment-specific behaviour.
+- Retained Development environment configuration, Production logging lifecycle, middleware ordering and endpoint mapping explicitly in `Program.cs`.
