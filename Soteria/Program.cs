@@ -60,84 +60,12 @@ public class Program
 
             builder.Services.AddSoteriaDataProtection(builder.Environment, builder.Configuration);
             
-            builder.Services.AddSoteriaAuthorization();
-
-            builder.Services.AddScoped<IOpenIdClientMembershipResolver, OpenIdClientMembershipResolver>();
-            builder.Services.AddScoped<IOpenIdAuthorizationContext, OpenIdAuthorizationContext>();
-            builder.Services.AddScoped<IOpenIdPrincipalFactory, OpenIdPrincipalFactory>();
-
             builder.Services.AddSoteriaPersistence(builder.Configuration);
+            
             builder.Services.AddSoteriaIdentity(builder.Environment, builder.Configuration);
+            builder.Services.AddSoteriaAuthorization();
+            builder.Services.AddSoteriaOpenIddict(builder.Environment, builder.Configuration);
 
-            var tokenConfiguration = builder.Configuration.GetRequiredSection("OpenIddict:Tokens");
-
-            var accessTokenLifetimeMinutes = tokenConfiguration.GetValue<int>("AccessTokenLifetimeMinutes");
-            if (accessTokenLifetimeMinutes <= 0)
-            {
-                throw new InvalidOperationException("OpenIddict:Tokens:AccessTokenLifetimeMinutes must be greater than zero.");
-            }
-
-            var refreshTokenLifetimeDays = tokenConfiguration.GetValue<int>("RefreshTokenLifetimeDays");
-            if (refreshTokenLifetimeDays <= 0)
-            {
-                throw new InvalidOperationException("OpenIddict:Tokens:RefreshTokenLifetimeDays must be greater than zero.");
-            }
-
-            builder.Services.AddOpenIddict()
-                .AddCore(options =>
-                {
-                    options.UseEntityFrameworkCore()
-                        .UseDbContext<SoteriaDbContext>()
-                        .ReplaceDefaultEntities<
-                            SoteriaApplication,
-                            SoteriaAuthorization,
-                            SoteriaScope,
-                            SoteriaToken,
-                            Guid>();
-                })
-                .AddServer(options =>
-                {
-                    options.SetAuthorizationEndpointUris("/connect/authorize")
-                        .SetEndSessionEndpointUris("/connect/logout")
-                        .SetTokenEndpointUris("/connect/token");
-
-                    options.SetAccessTokenLifetime(TimeSpan.FromMinutes(accessTokenLifetimeMinutes))
-                        .SetRefreshTokenLifetime(TimeSpan.FromDays(refreshTokenLifetimeDays));
-
-                    //options.DisableAccessTokenEncryption();
-
-                    options.RegisterScopes(
-                        OpenIddictConstants.Scopes.Email,
-                        OpenIddictConstants.Scopes.Profile,
-                        OpenIddictConstants.Scopes.OfflineAccess);
-
-                    options.AllowAuthorizationCodeFlow()
-                        .AllowRefreshTokenFlow()
-                        .RequireProofKeyForCodeExchange();
-
-                    options.AddEventHandler<ValidateAuthorizationRequestContext>(b => b
-                        .UseScopedHandler<ValidateClientIsEnabled>()
-                        .SetOrder(int.MaxValue - 100_000));
-
-                    options.AddEventHandler<ValidateTokenRequestContext>(b => b
-                        .UseScopedHandler<ValidateClientIsEnabled>()
-                        .SetOrder(int.MaxValue - 100_000));
-
-                    options.AddEventHandler<HandleTokenRequestContext>(b => b
-                        .UseScopedHandler<ValidateClientMembership>()
-                        .SetOrder(
-                            OpenIddictServerHandlers.Exchange.AttachPrincipal.Descriptor.Order +
-                            1_000));
-
-                    options.UseAspNetCore()
-                        .EnableAuthorizationEndpointPassthrough()
-                        .EnableEndSessionEndpointPassthrough()
-                        .EnableStatusCodePagesIntegration();
-
-                    options.AddSoteriaCredentials(builder.Environment, builder.Configuration);
-                });
-
-            builder.Services.AddScoped<OpenIddictInitializer>();
             builder.Services.AddSingleton<SoteriaAdministratorInitializer>();
 
             builder.Services.AddScoped<IClientApplicationLookup, ClientApplicationLookup>();
