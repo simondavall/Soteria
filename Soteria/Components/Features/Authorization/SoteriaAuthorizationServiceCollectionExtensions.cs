@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Soteria.Components.Features.Shared;
+using Soteria.Data.Authorization;
 
 namespace Soteria.Components.Features.Authorization;
 
@@ -32,9 +33,10 @@ internal static class SoteriaAuthorizationServiceCollectionExtensions
 
         services.AddScoped<IAuthorizationHandler, SoteriaAdminAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, AdministrationAuthorizationHandler>();
-        
         services.AddScoped<ICurrentUserContext, CurrentUserContext>();
-
+        
+        services.AddSingleton<SoteriaAdministratorInitializer>();
+        
         return services;
     }
 }

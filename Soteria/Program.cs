@@ -7,7 +7,6 @@ using Soteria.Components.Features;
 using Soteria.Components.Features.Authorization;
 using Soteria.Components.Features.OpenIdConnect;
 using Soteria.Data;
-using Soteria.Data.Authorization;
 
 namespace Soteria;
 
@@ -42,32 +41,16 @@ public class Program
             builder.Services.AddMudServices();
 
             builder.Services.AddSoteriaDataProtection(builder.Environment, builder.Configuration);
-            
             builder.Services.AddSoteriaPersistence(builder.Configuration);
-            
             builder.Services.AddSoteriaIdentity(builder.Environment, builder.Configuration);
             builder.Services.AddSoteriaAuthorization();
             builder.Services.AddSoteriaOpenIddict(builder.Environment, builder.Configuration);
-
-            builder.Services.AddSingleton<SoteriaAdministratorInitializer>();
-
             builder.Services.AddSoteriaFeatures();
             
             var app = builder.Build();
 
-            await using (var scope = app.Services.CreateAsyncScope())
-            {
-                if (app.Environment.IsDevelopment())
-                {
-                    var openIddictInitializer = scope.ServiceProvider.GetRequiredService<OpenIddictInitializer>();
-                    await openIddictInitializer.InitializeAsync();
-                }
-
-                var soteriaAdminInitializer = scope.ServiceProvider.GetRequiredService<SoteriaAdministratorInitializer>();
-                await soteriaAdminInitializer.InitializeAsync();
-            }
-
-            // Configure the HTTP request pipeline.
+            await app.InitialiseSoteriaAsync();
+            
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -75,7 +58,6 @@ public class Program
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
