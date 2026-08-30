@@ -383,13 +383,36 @@ Deployment fails immediately if any validation fails.
 
 Soteria uses Serilog for Production application logging.
 
-Production logs are stored at:
+### Production logging
 
-```text
-C:\ProgramData\Soteria\Logs
+Configure the Production log directory using:
+
+`Logging__Directory=C:\inetpub\logs\Soteria`
+
+`Logging:Directory` is required when Soteria starts in the Production environment.
+Soteria fails startup if the setting is missing.
+
+The log directory should be created during deployment and the Soteria IIS Application 
+Pool identity must have Modify permission on it.
+
+The log directory is persistent operational state and is stored outside the published 
+application directory.
+
+Use the following the create and configure the log diretory:
+
+```powershell
+$logDirectory = "C:\inetpub\logs\Soteria"
+$appPoolIdentity = "IIS AppPool\Soteria"
+
+New-Item -ItemType Directory -Path $logDirectory -Force
+icacls $logDirectory /grant "${appPoolIdentity}:(OI)(CI)(M)"
 ```
-The log directory is persistent operational state and is stored outside the
-published application directory.
+
+and use this to verify permissions after created:
+
+```powershell
+icacls "C:\inetpub\logs\Soteria"
+```
 
 Logging uses:
 

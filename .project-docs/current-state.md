@@ -13,11 +13,10 @@ where development should continue.
 
 # Current task
 
-- Relocate log files to `C:\inetpub\logs\Soteria`
+- Relocate data file to `C:\inetpub\data\Soteria`
 
 # Remaining milestone tasks
 
-- Relocate data file to `C:\inetpub\data\Soteria`
 - Add 'latest version' field to projects table
 
 # Completed
@@ -51,3 +50,9 @@ where development should continue.
 - Introduced `AddSoteriaValidator<TValidator, TRequest>()` to encapsulate the established FluentValidation and MudBlazor validator-registration pattern while preserving validator lifetimes.
 - Extracted application startup initialization behind `InitialiseSoteriaAsync()` while retaining explicit initialization order and environment-specific behaviour.
 - Retained Development environment configuration, Production logging lifecycle, middleware ordering and endpoint mapping explicitly in `Program.cs`.
+- Relocated Production logging from `C:\ProgramData\Soteria\Logs` to the deployment-managed `C:\inetpub\logs\Soteria` location.
+- Made the Production log directory configurable through `Soteria:Logging:Directory`, supplied in Production using the `Soteria__Logging__Directory` environment variable.
+- Made the Production log-directory configuration mandatory so that missing configuration fails startup explicitly rather than silently selecting a filesystem location.
+- Preserved the existing Serilog daily rolling, 10 MB file-size limit, 14-day retention, filtering, formatting and flush behaviour.
+- Relocated `SoteriaLogging` from the application root to `Infrastructure/Logging`.
+- Configured `C:\inetpub\logs\Soteria` with Modify permission for the Soteria IIS Application Pool identity.
