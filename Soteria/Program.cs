@@ -59,65 +59,15 @@ public class Program
             builder.Services.AddMudServices();
 
             builder.Services.AddSoteriaDataProtection(builder.Environment, builder.Configuration);
-
-            builder.Services.AddCascadingAuthenticationState();
-
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy(SoteriaAuthorizationPolicies.SoteriaAdministrator, policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                    policy.AddRequirements(new SoteriaAdminRequirement());
-                });
-
-                options.AddPolicy(SoteriaAuthorizationPolicies.Administration, policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                    policy.AddRequirements(new AdministrationRequirement());
-                });
-            });
-
-            builder.Services.AddHttpContextAccessor();
-
-            builder.Services.AddScoped<IAuthorizationHandler, SoteriaAdminAuthorizationHandler>();
-            builder.Services.AddScoped<IAuthorizationHandler, AdministrationAuthorizationHandler>();
-            builder.Services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+            
+            builder.Services.AddSoteriaAuthorization();
 
             builder.Services.AddScoped<IOpenIdClientMembershipResolver, OpenIdClientMembershipResolver>();
             builder.Services.AddScoped<IOpenIdAuthorizationContext, OpenIdAuthorizationContext>();
             builder.Services.AddScoped<IOpenIdPrincipalFactory, OpenIdPrincipalFactory>();
 
-            builder.Services.AddScoped<IdentityRedirectManager>();
-            builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
-            builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-                })
-                .AddIdentityCookies();
-
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "Soteria.Identity";
-                options.LoginPath = "/Account/Login";
-                options.ReturnUrlParameter = "ReturnUrl";
-            });
-
-            var connectionString = builder.Configuration.GetConnectionString("SoteriaDb")
-                                   ?? throw new InvalidOperationException("Connection string 'SoteriaDb' not found.");
-
-            builder.Services.AddDbContext<SoteriaDbContext>(options => options.UseSqlite(connectionString));
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-            builder.Services.AddIdentityCore<ApplicationUser>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = true;
-                    options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
-                })
-                .AddEntityFrameworkStores<SoteriaDbContext>()
-                .AddSignInManager()
-                .AddDefaultTokenProviders();
+            builder.Services.AddSoteriaPersistence(builder.Configuration);
+            builder.Services.AddSoteriaIdentity(builder.Environment, builder.Configuration);
 
             var tokenConfiguration = builder.Configuration.GetRequiredSection("OpenIddict:Tokens");
 
@@ -186,19 +136,6 @@ public class Program
 
                     options.AddSoteriaCredentials(builder.Environment, builder.Configuration);
                 });
-
-            if (builder.Environment.IsDevelopment())
-            {
-                builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
-            }
-            else
-            {
-                var emailOptions = EmailOptionsLoader.Load(builder.Configuration);
-                builder.Services.AddSingleton(emailOptions);
-                builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
-            }
-
-            //builder.Services.AddSingleton<IEmailSender<ApplicationUser>, DevelopmentEmailSender>();
 
             builder.Services.AddScoped<OpenIddictInitializer>();
             builder.Services.AddSingleton<SoteriaAdministratorInitializer>();
