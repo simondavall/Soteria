@@ -60,7 +60,10 @@ public sealed class UserService
             throw new CreateUserValidationException(validationResult.Errors);
         }
 
-        var user = new ApplicationUser();
+        var user = new ApplicationUser
+        {
+            RequiresPasswordChange = true
+        };
 
         await _userStore.SetUserNameAsync(user, request.Email, cancellationToken);
 

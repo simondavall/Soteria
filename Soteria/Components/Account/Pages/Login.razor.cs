@@ -71,6 +71,20 @@ public partial class Login
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
+
+            var user = await SignInManager.UserManager.FindByEmailAsync(Input.Email);
+            if (user?.RequiresPasswordChange == true)
+            {
+                RedirectManager.RedirectTo(
+                    "Account/Manage/ChangePassword",
+                    new Dictionary<string, object?>
+                    {
+                        ["ReturnUrl"] = ReturnUrl
+                    });
+
+                return;
+            }
+
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)
