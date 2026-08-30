@@ -886,6 +886,6 @@ reference resource API.
 
 - ✓ Add users to Client details page, and rearrange the display to use tabs.
 - ✓ Remove test and sample pages from site.
-- Replace Windows DPAPI with cross platform Data Protection
+- ✓ Replace Windows DPAPI with cross platform Data Protection
 - Activate Required Password Change
 - Refactor Soteria Program.cs
