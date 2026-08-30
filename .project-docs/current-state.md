@@ -13,11 +13,11 @@ where development should continue.
 
 # Current task
 
-- Relocate data file to `C:\inetpub\data\Soteria`
+- Add 'latest version' field to projects table
 
 # Remaining milestone tasks
 
-- Add 'latest version' field to projects table
+- None
 
 # Completed
 
@@ -56,3 +56,10 @@ where development should continue.
 - Preserved the existing Serilog daily rolling, 10 MB file-size limit, 14-day retention, filtering, formatting and flush behaviour.
 - Relocated `SoteriaLogging` from the application root to `Infrastructure/Logging`.
 - Configured `C:\inetpub\logs\Soteria` with Modify permission for the Soteria IIS Application Pool identity.
+- Relocated the Production SQLite database to the deployment-managed `C:\inetpub\data\Soteria` location.
+- Removed the Production `SoteriaDb` connection string from application settings and supplied it through the `ConnectionStrings__SoteriaDb` environment variable.
+- Scoped the Production application connection string to the Soteria IIS Application Pool.
+- Configured `C:\inetpub\data\Soteria` with Modify permission for the Soteria IIS Application Pool identity.
+- Preserved the existing `SoteriaDb` configuration contract and Entity Framework Core SQLite configuration.
+- Established that Production Entity Framework migrations receive `ConnectionStrings__SoteriaDb` as a process-scoped environment variable in the PowerShell session running `dotnet ef`.
+- Verified the relocated database and connection-string configuration in both Development and Production.
