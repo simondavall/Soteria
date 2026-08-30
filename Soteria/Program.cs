@@ -7,6 +7,7 @@ using Soteria.Components.Features;
 using Soteria.Components.Features.Authorization;
 using Soteria.Components.Features.OpenIdConnect;
 using Soteria.Data;
+using Soteria.Infrastructure.Logging;
 
 namespace Soteria;
 
