@@ -13,11 +13,12 @@ where development should continue.
 
 # Current task
 
-- Remove test and sample pages from site.
+- Replace Windows DPAPI with cross platform Data Protection
 
 # Remaining milestone tasks
 
-- None
+- Activate Required Password Change
+- Refactor Soteria Program.cs
 
 # Completed
 
