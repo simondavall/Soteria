@@ -18,6 +18,7 @@ public partial class ChangePassword
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
     [SupplyParameterFromForm] private InputModel Input { get; set; } = null!;
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,6 +47,14 @@ public partial class ChangePassword
             return;
         }
 
+        if (await UserManager.CheckPasswordAsync(_user, Input.NewPassword))
+        {
+            _message = "Error: Your new password must be different from your current password.";
+            return;
+        }
+        
+        var passwordChangeRequired = _user.RequiresPasswordChange;
+
         var result = await UserManager.ChangePasswordAsync(_user, Input.OldPassword, Input.NewPassword);
         if (!result.Succeeded)
         {
@@ -53,8 +62,27 @@ public partial class ChangePassword
             return;
         }
 
+        if (passwordChangeRequired)
+        {
+            _user.RequiresPasswordChange = false;
+
+            var updateResult = await UserManager.UpdateAsync(_user);
+            if (!updateResult.Succeeded)
+            {
+                _user.RequiresPasswordChange = true;
+                _message = $"Error: {string.Join(", ", updateResult.Errors.Select(error => error.Description))}";
+                return;
+            }
+        }
+
         await SignInManager.RefreshSignInAsync(_user);
         Logger.LogInformation("User changed their password successfully.");
+
+        if (passwordChangeRequired)
+        {
+            RedirectManager.RedirectTo(ReturnUrl);
+            return;
+        }
 
         RedirectManager.RedirectToCurrentPageWithStatus("Your password has been changed.", HttpContext);
     }

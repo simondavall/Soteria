@@ -13,11 +13,13 @@ where development should continue.
 
 # Current task
 
-- Activate Required Password Change
+- Refactor Soteria Program.cs
 
 # Remaining milestone tasks
 
-- Refactor Soteria Program.cs
+- Relocate log files to c:\inetpub\logs\Soteria
+- Relocate data file to c:\inetpub\data\Soteria
+- Add 'latest version' field to projects table
 
 # Completed
 
@@ -30,3 +32,12 @@ where development should continue.
 - Verified persisted Data Protection keys are encrypted at rest.
 - Verified authentication cookies remain valid across IIS application-pool recycling and application restart.
 - Preserved existing Development Data Protection behaviour.
+- Activated required password change for administrator-created users.
+- Marked newly created users as requiring a password change before normal application access.
+- Redirected authenticated users requiring a password change to the Change Password workflow.
+- Enforced required password change across authenticated application navigation so the requirement cannot be bypassed by direct navigation.
+- Preserved the user's intended destination through the required password-change workflow.
+- Prevented the current password from being reused as the replacement password.
+- Cleared `RequiresPasswordChange` only after a successful password change and persisted the completed state.
+- Refreshed the authenticated session after the required password change and returned the user to their intended destination.
+- Preserved the existing voluntary password-change behaviour for users who do not require a password change.
