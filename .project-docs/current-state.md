@@ -13,12 +13,20 @@ where development should continue.
 
 # Current task
 
-- Remove test and sample pages from site.
+- Activate Required Password Change
 
 # Remaining milestone tasks
 
-- None
+- Refactor Soteria Program.cs
 
 # Completed
 
-`<completed phase deliverables>`
+- Replaced Windows DPAPI Data Protection key protection with cross-platform X.509 certificate protection.
+- Retained filesystem-backed persistent Data Protection keys and the stable `Soteria` application name.
+- Moved Production Data Protection key storage to `C:\inetpub\keys\Soteria`.
+- Stored the Production Data Protection certificate under `C:\inetpub\certificates\Soteria`.
+- Made the Data Protection key path, certificate path and certificate password host-configurable through environment variables.
+- Restricted the IIS application-pool identity to the required key and certificate filesystem permissions.
+- Verified persisted Data Protection keys are encrypted at rest.
+- Verified authentication cookies remain valid across IIS application-pool recycling and application restart.
+- Preserved existing Development Data Protection behaviour.

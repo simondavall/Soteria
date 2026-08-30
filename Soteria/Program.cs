@@ -58,7 +58,7 @@ public class Program
                 .AddInteractiveServerComponents();
             builder.Services.AddMudServices();
 
-            builder.Services.AddSoteriaDataProtection(builder.Environment);
+            builder.Services.AddSoteriaDataProtection(builder.Environment, builder.Configuration);
 
             builder.Services.AddCascadingAuthenticationState();
 

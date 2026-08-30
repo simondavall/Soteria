@@ -396,3 +396,23 @@ visibility is bypassed.
 Keeping System Roles out of authentication and OpenID Connect claims preserves
 the boundary between internal Soteria administration and consuming-application
 authorisation.
+
+2026-08-30
+
+Decision:
+
+Production ASP.NET Core Data Protection keys will be persisted to a host-configured filesystem location and protected at rest using an X.509 certificate loaded from a password-protected PFX file.
+
+The key-ring path, certificate path and certificate password are supplied through environment-specific configuration rather than hard-coded application paths.
+
+The Production IIS deployment stores the Soteria key ring under `C:\inetpub\keys\Soteria` and the Data Protection certificate under `C:\inetpub\certificates\Soteria`.
+
+Development retains the framework's existing Development Data Protection behaviour and does not require the Production Data Protection configuration.
+
+Reason:
+
+X.509 certificate protection removes the Windows-specific DPAPI dependency while retaining encrypted-at-rest persistent Data Protection keys and authentication-cookie persistence across application restarts.
+
+Loading the certificate from a PFX file keeps the application configuration cross-platform rather than depending on a Windows certificate store.
+
+Host-configured paths keep deployment-specific filesystem locations outside application code and allow different hosting environments to provide appropriate storage locations without changing Soteria.
