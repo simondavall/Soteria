@@ -118,9 +118,10 @@ state.
 | Purpose | Location |
 |---------|----------|
 | Published application | `C:\inetpub\wwwroot\Soteria` |
-| SQLite database | `C:\ProgramData\Soteria\Database` |
-| Data Protection key ring | `C:\ProgramData\Soteria\DataProtection` |
-| Application logs | `C:\ProgramData\Soteria\Logs` |
+| SQLite database | `C:\inetpub\data\Soteria` |
+| Data Protection key ring | `C:\inetpub\keys\Soteria` |
+| Data Protection certificate | `C:\inetpub\certificates\Soteria` |
+| Application logs | `C:\inetpub\logs\Soteria` |
 
 This separation allows application updates to replace the published binaries
 without affecting authentication state or persisted application data.
@@ -272,7 +273,13 @@ Production deployments must configure:
 
 ```
 ASPNETCORE_ENVIRONMENT=Production
+ConnectionStrings__SoteriaDb=Data Source=C:\inetpub\data\Soteria\Soteria.db
 ```
+The Production SQLite connection string is deployment configuration and is not
+stored in `appsettings.Production.json`.
+
+When Soteria runs under IIS, `ConnectionStrings__SoteriaDb` is configured for
+the Soteria Application Pool.
 
 SMTP configuration is also supplied through environment variables.
 
@@ -383,13 +390,36 @@ Deployment fails immediately if any validation fails.
 
 Soteria uses Serilog for Production application logging.
 
-Production logs are stored at:
+### Production logging
 
-```text
-C:\ProgramData\Soteria\Logs
+Configure the Production log directory using:
+
+`Logging__Directory=C:\inetpub\logs\Soteria`
+
+`Logging:Directory` is required when Soteria starts in the Production environment.
+Soteria fails startup if the setting is missing.
+
+The log directory should be created during deployment and the Soteria IIS Application 
+Pool identity must have Modify permission on it.
+
+The log directory is persistent operational state and is stored outside the published 
+application directory.
+
+Use the following the create and configure the log diretory:
+
+```powershell
+$logDirectory = "C:\inetpub\logs\Soteria"
+$appPoolIdentity = "IIS AppPool\Soteria"
+
+New-Item -ItemType Directory -Path $logDirectory -Force
+icacls $logDirectory /grant "${appPoolIdentity}:(OI)(CI)(M)"
 ```
-The log directory is persistent operational state and is stored outside the
-published application directory.
+
+and use this to verify permissions after created:
+
+```powershell
+icacls "C:\inetpub\logs\Soteria"
+```
 
 Logging uses:
 
@@ -432,12 +462,24 @@ application log retention policy.
 
 The Production SQLite database is stored at:
 
-```
-C:\ProgramData\Soteria\Database\soteria.db
+```text
+C:\inetpub\data\Soteria\Soteria.db
 ```
 
 The database is intentionally stored outside the published application
 directory.
+
+The Production connection string is supplied through:
+
+```text
+ConnectionStrings__SoteriaDb=Data Source=C:\inetpub\data\Soteria\Soteria.db
+```
+
+The Soteria IIS Application Pool identity requires Modify permission on:
+
+```text
+C:\inetpub\data\Soteria
+```
 
 Redeploying the application must not replace or recreate this database.
 
@@ -478,12 +520,21 @@ Migration procedure:
 
 1. Stop the Soteria IIS Application Pool.
 2. Verify the target database location.
+   ```text
+   C:\inetpub\data\Soteria\Soteria.db
+   ```
 3. If the database already exists, create a backup.
 4. Apply the Entity Framework Core migrations. From the solution root execute:
 
    ```bash
+   $env:ConnectionStrings__SoteriaDb = "Data Source=C:\inetpub\data\Soteria\Soteria.db"
+   
    dotnet ef database update --project .\Soteria --configuration Release
    ```
+   The IIS Application Pool environment variables are available to the deployed application but are not inherited by the separate dotnet ef process. Therefore the Production connection string must also be supplied to the PowerShell process running the migration. 
+
+    This environment variable is process-scoped and remains set only for the lifetime of the current PowerShell session.
+
 5. Verify that the migration completed successfully.
 6. Start the IIS Application Pool.
 7. Verify successful application startup.
@@ -505,7 +556,7 @@ migrations to an existing database.
 The backup consists of a complete copy of:
 
 ```text
-C:\ProgramData\Soteria\Database\soteria.db
+C:\inetpub\data\Soteria\Soteria.db
 ```
 
 The backup must be retained until:
@@ -565,8 +616,12 @@ Before starting the application verify:
 - Certificate thumbprints configured.
 - IIS Application Pool has Read access to both certificate private keys.
 - SQLite database directory exists.
-- Data Protection directory exists.
-- IIS Application Pool has Modify permission to all three persistent directories.
+- Data Protection key-ring directory exists.
+- Data Protection certificate directory exists.
+- Production log directory exists.
+- IIS Application Pool has the required permissions on each persistent directory.
+- `ConnectionStrings__SoteriaDb` is configured for the Soteria IIS Application Pool.
+- `Soteria__Logging__Directory` is configured.
 - Required SMTP environment variables are configured.
 - ASPNETCORE_ENVIRONMENT is set to `Production`.
 
@@ -723,9 +778,6 @@ Replace all placeholder values before starting the application.
 
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=C:/ProgramData/Soteria/Database/soteria.db"
-  },
   "OpenIddict": {
     "Certificates": {
       "SigningThumbprint": "<SIGNING_CERTIFICATE_THUMBPRINT>",
@@ -750,6 +802,9 @@ Soteria__Email__DisplayName=<SENDER_DISPLAY_NAME>
 Soteria__Email__SenderAddress=<SENDER_EMAIL_ADDRESS>
 Soteria__Email__Username=<SMTP_USERNAME>
 Soteria__Email__Password=<SMTP_PASSWORD>
+
+ConnectionStrings__SoteriaDb=Data Source=C:\inetpub\data\Soteria\Soteria.db
+Logging__Directory=C:\inetpub\logs\Soteria
 ```
 
 A.3 IIS Application Pool Environment Variables
@@ -769,40 +824,41 @@ The following values are implementation conventions and are not currently
 deployment-configurable:
 
 | Setting | Value |
-|----------|------------|
-| Canonical URL	| https://soteria.local |
-| Published application	| C:\inetpub\wwwroot\Soteria |
-| SQLite database	| C:\ProgramData\Soteria\Database\soteria.db |
-| Data Protection key ring	| C:\ProgramData\Soteria\DataProtection |
-| Data Protection application name	| Soteria |
-| Application logs	| C:\ProgramData\Soteria\Logs |
-| Certificate store	| LocalMachine\My |
-| IIS Application Pool	| Soteria |
-| IIS identity	| IIS AppPool\Soteria |
+|---------|-------|
+| Canonical URL | https://soteria.local |
+| Published application | C:\inetpub\wwwroot\Soteria |
+| Data Protection application name | Soteria |
+| Certificate store | LocalMachine\My |
+| IIS Application Pool | Soteria |
+| IIS identity | IIS AppPool\Soteria |
 
 
 ## Appendix B - Directory Layout
 
 ```
 C:\
-├── inetpub
-│   └── wwwroot
-│       └── Soteria
-│           ├── Soteria.exe
-│           ├── web.config
-│           ├── *.dll
-│           └── wwwroot
-│
-└── ProgramData
-    └── Soteria
-        ├── Database
-        │   └── soteria.db
-        │
-        ├── DataProtection
-        │   ├── key-xxxxxxxx.xml
-        │   └── ...
-        │
-        └── Logs
+└── inetpub
+    ├── wwwroot
+    │   └── Soteria
+    │       ├── Soteria.exe
+    │       ├── web.config
+    │       ├── *.dll
+    │       └── wwwroot
+    │
+    ├── data
+    │   └── Soteria
+    │       └── Soteria.db
+    │
+    ├── keys
+    │   └── Soteria
+    │       ├── key-xxxxxxxx.xml
+    │       └── ...
+    │
+    ├── certificates
+    │   └── Soteria
+    │
+    └── logs
+        └── Soteria
             ├── soteria-yyyyMMdd.log
             └── ...
 ```

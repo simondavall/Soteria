@@ -396,3 +396,47 @@ visibility is bypassed.
 Keeping System Roles out of authentication and OpenID Connect claims preserves
 the boundary between internal Soteria administration and consuming-application
 authorisation.
+
+2026-08-30
+
+Decision:
+
+Production ASP.NET Core Data Protection keys will be persisted to a host-configured filesystem location and protected at rest using an X.509 certificate loaded from a password-protected PFX file.
+
+The key-ring path, certificate path and certificate password are supplied through environment-specific configuration rather than hard-coded application paths.
+
+The Production IIS deployment stores the Soteria key ring under `C:\inetpub\keys\Soteria` and the Data Protection certificate under `C:\inetpub\certificates\Soteria`.
+
+Development retains the framework's existing Development Data Protection behaviour and does not require the Production Data Protection configuration.
+
+Reason:
+
+X.509 certificate protection removes the Windows-specific DPAPI dependency while retaining encrypted-at-rest persistent Data Protection keys and authentication-cookie persistence across application restarts.
+
+Loading the certificate from a PFX file keeps the application configuration cross-platform rather than depending on a Windows certificate store.
+
+Host-configured paths keep deployment-specific filesystem locations outside application code and allow different hosting environments to provide appropriate storage locations without changing Soteria.
+
+2026-08-30
+
+Decision:
+
+Administrator-created Soteria users will be required to replace their initial password before they can access normal authenticated application functionality.
+
+New administrator-created users are persisted with `RequiresPasswordChange` enabled. After authentication, users with this state are directed to the Change Password workflow.
+
+Required password change is enforced across authenticated application navigation rather than only during the login workflow, preventing users from bypassing the requirement by navigating directly to another authenticated page.
+
+The Change Password page remains accessible while the restriction is active. The user's intended destination is preserved through the password-change workflow.
+
+A required password change must result in a different password from the user's current password. `RequiresPasswordChange` is cleared only after the password has been successfully changed and the updated user state has been persisted. The authenticated session is then refreshed before the user continues to their intended destination.
+
+Reason:
+
+Administrator-created accounts are initially supplied with a temporary password known outside the control of the account owner. Requiring the user to replace that password ensures the initial credential cannot continue to be used as the user's normal credential.
+
+Enforcing the requirement across authenticated navigation makes `RequiresPasswordChange` an application access restriction rather than a login-time recommendation and prevents direct navigation from bypassing it.
+
+Clearing the requirement only after the password change and user update have succeeded ensures failures leave the account in the restricted state.
+
+Preserving the original destination allows required password change to participate correctly in both direct Soteria authentication and OpenID Connect authentication workflows without discarding the request that caused authentication to begin.
