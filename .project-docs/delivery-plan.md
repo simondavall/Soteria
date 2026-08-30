@@ -891,4 +891,3 @@ reference resource API.
 - ✓ Refactor Soteria Program.cs
 - ✓ Relocate log files to `C:\inetpub\logs\Soteria`
 - ✓ Relocate data file to `C:\inetpub\data\Soteria`
-- Add 'latest version' field to projects table

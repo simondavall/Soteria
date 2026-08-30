@@ -13,7 +13,7 @@ where development should continue.
 
 # Current task
 
-- Add 'latest version' field to projects table
+- None
 
 # Remaining milestone tasks
 
