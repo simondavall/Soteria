@@ -890,5 +890,5 @@ reference resource API.
 - ✓ Activate Required Password Change
 - ✓ Refactor Soteria Program.cs
 - ✓ Relocate log files to `C:\inetpub\logs\Soteria`
-- Relocate data file to c:\inetpub\data\Soteria
+- ✓ Relocate data file to `C:\inetpub\data\Soteria`
 - Add 'latest version' field to projects table

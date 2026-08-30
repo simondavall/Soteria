@@ -50,9 +50,11 @@ Reference.
 5. Apply the Entity Framework Core migrations from the solution root:
 
    ```bash
+   $env:ConnectionStrings__SoteriaDb = "Data Source=C:\inetpub\data\Soteria\Soteria.db"
+
    dotnet ef database update --project .\Soteria --configuration Release
    ```
-
+    The process-scoped connection string is required because dotnet ef does not inherit the environment variables configured for the IIS Application Pool.
 6. Start the **Soteria** IIS Application Pool.
 
 7. Complete the post-deployment verification checklist.
