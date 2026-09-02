@@ -1,5 +1,6 @@
 using DotNetEnv;
 using MudBlazor.Services;
+using Serilog;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Features;
@@ -29,7 +30,8 @@ public class Program
         }
 
         builder.AddSoteriaLogging();
-
+        Log.Information("Soteria is starting...");
+        
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         builder.Services.AddMudServices();
@@ -74,5 +76,7 @@ public class Program
         app.MapSoteriaLogoutEndpoint();
 
         await app.RunAsync();
+        
+        Log.Information("Soteria is shutting down...");
     }
 }
