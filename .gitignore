@@ -9,3 +9,4 @@ obj/
 # Hidden folders
 .idea
 .data
+.logs

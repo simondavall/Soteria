@@ -1,6 +1,5 @@
 using DotNetEnv;
 using MudBlazor.Services;
-using Serilog;
 using Soteria.Components;
 using Soteria.Components.Account;
 using Soteria.Components.Features;
@@ -15,89 +14,65 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var productionLoggingConfigured = false;
+        var builder = WebApplication.CreateBuilder(args);
 
-        try
+        _ = bool.TryParse(Environment.GetEnvironmentVariable("SOTERIA_LOCAL_EXECUTION"), out var isLocalExecution);
+        if (isLocalExecution)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            Env.NoClobber()
+                .TraversePath()
+                .Load();
 
-            if (builder.Environment.IsDevelopment())
-            {
-                Env.NoClobber()
-                    .TraversePath()
-                    .Load();
+            builder.Configuration.AddEnvironmentVariables();
 
-                builder.Configuration.AddEnvironmentVariables();
-            }
-            else
-            {
-                SoteriaLogging.Configure(builder);
-                productionLoggingConfigured = true;
-
-                Log.Information("Starting Soteria in {EnvironmentName}", builder.Environment.EnvironmentName);
-            }
-
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents();
-            builder.Services.AddMudServices();
-
-            builder.Services.AddSoteriaDataProtection(builder.Environment, builder.Configuration);
-            builder.Services.AddSoteriaPersistence(builder.Configuration);
-            builder.Services.AddSoteriaIdentity(builder.Environment, builder.Configuration);
-            builder.Services.AddSoteriaAuthorization();
-            builder.Services.AddSoteriaOpenIddict(builder.Environment, builder.Configuration);
-            builder.Services.AddSoteriaFeatures();
-            
-            var app = builder.Build();
-
-            await app.InitialiseSoteriaAsync();
-            
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
-
-            app.UseStatusCodePagesWithReExecute("/connect/error", createScopeForStatusCodePages: true);
-            app.UseHttpsRedirection();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseAntiforgery();
-
-            app.MapStaticAssets();
-            app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode();
-
-            // Add additional endpoints required by the Identity /Account Razor components.
-            app.MapAdditionalIdentityEndpoints();
-
-            app.MapSoteriaAuthorizationEndpoint();
-            app.MapSoteriaLogoutEndpoint();
-
-            await app.RunAsync();
-
-            if (productionLoggingConfigured)
-            {
-                Log.Information("Soteria stopped normally");
-            }
+            builder.WebHost.UseStaticWebAssets();
         }
-        catch (Exception exception) when (productionLoggingConfigured)
+
+        builder.AddSoteriaLogging();
+
+        builder.Services.AddRazorComponents()
+            .AddInteractiveServerComponents();
+        builder.Services.AddMudServices();
+
+        builder.Services.AddSoteriaDataProtection(builder.Environment, builder.Configuration);
+        builder.Services.AddSoteriaPersistence(builder.Configuration);
+        builder.Services.AddSoteriaIdentity(builder.Environment, builder.Configuration);
+        builder.Services.AddSoteriaAuthorization();
+        builder.Services.AddSoteriaOpenIddict(builder.Environment, builder.Configuration);
+        builder.Services.AddSoteriaFeatures();
+
+        var app = builder.Build();
+
+        await app.InitialiseSoteriaAsync();
+
+        if (app.Environment.IsDevelopment())
         {
-            Log.Fatal(exception, "Soteria terminated unexpectedly");
-            throw;
+            app.UseMigrationsEndPoint();
         }
-        finally
+        else
         {
-            if (productionLoggingConfigured)
-            {
-                await Log.CloseAndFlushAsync();
-            }
+            app.UseExceptionHandler("/Error");
+            app.UseHsts();
         }
+
+        app.UseStatusCodePagesWithReExecute("/connect/error", createScopeForStatusCodePages: true);
+        app.UseHttpsRedirection();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseAntiforgery();
+
+        app.MapStaticAssets();
+        app.MapRazorComponents<App>()
+            .AddInteractiveServerRenderMode();
+
+        // Add additional endpoints required by the Identity /Account Razor components.
+        app.MapAdditionalIdentityEndpoints();
+
+        app.MapSoteriaAuthorizationEndpoint();
+        app.MapSoteriaLogoutEndpoint();
+
+        await app.RunAsync();
     }
 }
