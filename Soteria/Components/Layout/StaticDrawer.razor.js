@@ -1,5 +1,7 @@
 ﻿const closedClass = "static-drawer--closed";
+const openClass = "static-drawer--open";
 const layoutClosedClass = "soteria-static-layout--drawer-closed";
+const layoutOpenClass = "soteria-static-layout--drawer-open";
 
 function initialiseStaticDrawer() {
     const layout = document.querySelector("[data-static-layout]");
@@ -14,11 +16,22 @@ function initialiseStaticDrawer() {
     layout.dataset.staticDrawerInitialised = "true";
 
     function isOpen() {
-        return !drawer.classList.contains(closedClass);
+        if (drawer.classList.contains(openClass)) {
+            return true;
+        }
+
+        if (drawer.classList.contains(closedClass)) {
+            return false;
+        }
+
+        return window.matchMedia("(min-width: 960px)").matches;
     }
 
     function setOpen(open) {
+        drawer.classList.toggle(openClass, open);
         drawer.classList.toggle(closedClass, !open);
+
+        layout.classList.toggle(layoutOpenClass, open);
         layout.classList.toggle(layoutClosedClass, !open);
 
         drawer.setAttribute("aria-hidden", (!open).toString());
@@ -39,7 +52,7 @@ function initialiseStaticDrawer() {
         }
     });
 
-    setOpen(true);
+    setOpen(isOpen());
 }
 
 if (document.readyState === "loading") {
@@ -51,5 +64,3 @@ if (document.readyState === "loading") {
 else {
     initialiseStaticDrawer();
 }
-
-document.addEventListener("enhancedload", initialiseStaticDrawer);
