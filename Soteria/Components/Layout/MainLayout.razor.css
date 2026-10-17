@@ -19,8 +19,7 @@
     top: 0.5rem;
 }
 
-.soteria-static-layout
-::deep .mud-appbar {
+.soteria-static-layout ::deep .mud-appbar {
     left: var(--mud-drawer-width-left);
     width: calc(100% - var(--mud-drawer-width-left));
     transition:
@@ -28,19 +27,28 @@
             width 225ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.soteria-static-layout
-::deep .mud-main-content {
+.soteria-static-layout ::deep .mud-main-content {
     margin-left: var(--mud-drawer-width-left);
     transition: margin-left 225ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.soteria-static-layout.soteria-static-layout--drawer-closed
-::deep .mud-appbar {
+.soteria-static-layout.soteria-static-layout--drawer-closed ::deep .mud-appbar,
+.soteria-static-layout.soteria-static-layout--drawer-closed ::deep .mud-main-content {
     left: 0;
+    margin-left: 0;
+}
+
+.soteria-static-layout.soteria-static-layout--drawer-closed ::deep .mud-appbar {
     width: 100%;
 }
 
-.soteria-static-layout.soteria-static-layout--drawer-closed
-::deep .mud-main-content {
-    margin-left: 0;
+@media (max-width: 959.98px) {
+    .soteria-static-layout:not(.soteria-static-layout--drawer-open) ::deep .mud-appbar {
+        left: 0;
+        width: 100%;
+    }
+
+    .soteria-static-layout:not(.soteria-static-layout--drawer-open) ::deep .mud-main-content {
+        margin-left: 0;
+    }
 }

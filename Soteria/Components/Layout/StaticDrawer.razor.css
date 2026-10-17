@@ -18,8 +18,20 @@
     transform: translateX(-100%);
 }
 
+.static-drawer--open {
+    visibility: visible;
+    transform: translateX(0);
+}
+
 .static-drawer__content {
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+@media (max-width: 959.98px) {
+    .static-drawer:not(.static-drawer--open) {
+        visibility: hidden;
+        transform: translateX(-100%);
+    }
 }

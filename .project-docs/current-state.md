@@ -63,3 +63,9 @@ where development should continue.
 - Preserved the existing `SoteriaDb` configuration contract and Entity Framework Core SQLite configuration.
 - Established that Production Entity Framework migrations receive `ConnectionStrings__SoteriaDb` as a process-scoped environment variable in the PowerShell session running `dotnet ef`.
 - Verified the relocated database and connection-string configuration in both Development and Production.
+- Implemented responsive navigation drawer behaviour across interactive and static SSR pages:
+    - Navigation defaults open on desktop and closed on mobile/tablet.
+    - Preserved MudDrawer for interactive pages and the lightweight static drawer for Identity pages.
+    - Made static drawer defaults CSS-driven, with JavaScript limited to manual toggling.
+    - Disabled enhanced navigation for Identity management links to prevent unexpected drawer state changes.
+    - Verified responsive defaults, manual toggling, navigation and page refresh across desktop and mobile viewports.

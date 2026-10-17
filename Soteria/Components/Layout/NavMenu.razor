@@ -26,7 +26,8 @@
 
                 <MudNavLink  Href="/Account/Manage"
                              Match="NavLinkMatch.Prefix"
-                             Icon="@Icons.Material.Filled.Person">
+                             Icon="@Icons.Material.Filled.Person"
+                             data-enhance-nav="false">
                     @authContext.User.Identity?.Name
                 </MudNavLink>
             
